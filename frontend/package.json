@@ -96,6 +96,7 @@
   },
   "dependencies": {
     "@mantine/core": "^6.0.11",
+    "@mantine/dropzone": "^6.0.11",
     "@mantine/ds": "^6.0.11",
     "@mantine/form": "^6.0.11",
     "@mantine/hooks": "^6.0.11",

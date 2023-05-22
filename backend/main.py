@@ -20,8 +20,11 @@ app.add_middleware(
 
 @app.get("/config/")
 def get_config():
-    config = {"key": "value"}
-    return config
+    from database.database import Database
+    db = Database().get_session()
+    if db.execute(text("SELECT * FROM config")).first() is None:
+        return False
+    return True
 
 @app.post("/config/")
 def add_config(config: Config):
@@ -30,21 +33,6 @@ def add_config(config: Config):
     res = db.execute(text("INSERT INTO config (openai_api_key) VALUES (:api_key)"), {"api_key": config.apiKey})
     db.commit()
     return config
-
-
-@app.route("/config/", methods=["POST", "GET"])
-def handle_config(request):
-    if request.method == "POST":
-        # Handle POST request
-        config = request.json()
-        print(config)
-        # Process the received config data
-        return config
-    elif request.method == "GET":
-        # Handle GET request
-        # Retrieve and return the config
-        config = {"key": "value"}
-        return config
 
 
 if __name__ == "__main__":

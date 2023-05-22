@@ -1,18 +1,18 @@
 import { MemoryRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { MantineProvider } from '@mantine/core';
 import './App.css';
-import Car from './files';
-import {HeaderResponsive} from './components/Menu';
+import Upload from './pages/file-upload/Upload';
+import { HeaderResponsive } from './components/Menu';
 import Footer from './components/Footer';
+import GettingStarted from './components/Start';
 import axios from 'axios';
 import Config from './pages/config/Config'
 import config from './config.js';
-
-
+import {useState, useEffect} from "react";
 
 const randomLinks = [
   { link: '/home', label: 'Home' },
-  { link: '/files', label: 'Files' },
+  { link: '/upload', label: 'Files' },
   { link: '/chat', label: 'Chat' },
   { link: '/config', label: 'Config' },
 ];
@@ -23,12 +23,11 @@ function checkConfig() {
   return axios.get(`${config.REACT_APP_BACKEND_URL}/config`)
     .then((response) => {
       const fetchedConfig = response.data;
-
-      if (Object.keys(fetchedConfig).length === 0) {
+      console.log(fetchedConfig);
+      if (fetchedConfig === false) {
         // The fetched config is an empty object, return false
         return false;
       }
-
       // The fetched config is not an empty object, save it and return true
       localStorage.setItem('config', JSON.stringify(fetchedConfig));
       console.log(fetchedConfig);
@@ -42,26 +41,26 @@ function checkConfig() {
 }
 
 
-function Hello() {
+export default function Hello() {
+  const [isConfigValid, setConfigValid] = useState(null);
+
+  useEffect(() => {
+    checkConfig().then((isValid) => {
+      setConfigValid(isValid);
+    });
+  }, []);
+
+  if (isConfigValid === null) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div>
-      {checkConfig() ? <Config />: <p>Config not loaded</p>}
-      <Link to="/files">Blogs</Link>
+      <MantineProvider>
+        <HeaderResponsive links={randomLinks} />
+        {isConfigValid ? <GettingStarted /> : <Config />}
+        <Footer />
+      </MantineProvider>
     </div>
-  );
-}
-
-export default function App() {
-  return (
-    <MantineProvider>
-      <HeaderResponsive links={randomLinks} />
-      <Router>
-        <Routes>
-          <Route path="/" element={<Hello />} />
-          <Route path="files" element={<Car />} />
-        </Routes>
-      </Router>
-      <Footer />
-    </MantineProvider>
   );
 }
