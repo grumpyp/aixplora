@@ -7,8 +7,7 @@ function saveConfig(OPENAI_API_KEY) {
   const payload = {
     apiKey: OPENAI_API_KEY
   };
-
-  return axios.post('http://localhost:8000/config/', payload)
+  return axios.post(`${config.REACT_APP_BACKEND_URL}/config`, payload)
     .then((response) => {
       const fetchedConfig = response.data;
 

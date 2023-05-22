@@ -1,4 +1,4 @@
-import { MemoryRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 import { MantineProvider } from '@mantine/core';
 import './App.css';
 import Upload from './pages/file-upload/Upload';
@@ -11,7 +11,7 @@ import config from './config.js';
 import {useState, useEffect} from "react";
 
 const randomLinks = [
-  { link: '/home', label: 'Home' },
+  { link: '/', label: 'Home' },
   { link: '/upload', label: 'Files' },
   { link: '/chat', label: 'Chat' },
   { link: '/config', label: 'Config' },
@@ -57,9 +57,16 @@ export default function Hello() {
   return (
     <div>
       <MantineProvider>
-        <HeaderResponsive links={randomLinks} />
-        {isConfigValid ? <GettingStarted /> : <Config />}
-        <Footer />
+        <Router>
+          <HeaderResponsive links={randomLinks} />
+          <Routes>
+            <Route path="/" element={isConfigValid ? <GettingStarted /> : <Config />} />
+            <Route path="/upload" element={<Upload />} />
+            <Route path="/chat" element={<div>Chat Component Here</div>} />
+            <Route path="/config" element={<Config />} />
+          </Routes>
+          <Footer />
+        </Router>
       </MantineProvider>
     </div>
   );
