@@ -37,21 +37,13 @@ def add_config(config: Config):
 
 @app.get("/files/")
 def get_files():
-    files = [
-    {"name": 'File 1', "type": 'image/png', "size": 100},
-    {"name": 'File 2', "type": 'image/png', "size": 100},
-    {"name": 'File 3', "type": 'image/png', "size": 100},
-    {"name": 'File 4', "type": 'image/png', "size": 100},
-    {"name": 'File 5', "type": 'image/png', "size": 100},
-    {"name": 'File 6', "type": 'image/png', "size": 100},
-    {"name": 'File 7', "type": 'image/png', "size": 100},
-    {"name": 'File 8', "type": 'image/png', "size": 100},
-    {"name": 'File 9', "type": 'image/png', "size": 100},
-    {"name": 'File 10', "type": 'image/png', "size": 100},
-    {"name": 'File 11', "type": 'image/png', "size": 100},
-    {"name": 'File 12', "type": 'image/png', "size": 100},
-    ]
-    return files
+    db = Database().get_session()
+    files = db.execute(text("SELECT * FROM files")).fetchall()
+    res = []
+    for file in files:
+        res.append({"name": file[1], "type": file[2], "size": file[3]})
+    print(res)
+    return res
 
 @app.post("/files/")
 async def upload_files(files: List[UploadFile] = File(...)):
