@@ -6,6 +6,8 @@ from typing import List
 from database.database import Database
 from schemas.config import Config
 # from schemas.file import File
+from utils import FILE_HANDLERS
+import os
 
 # TODO: use best practise for routing
 
@@ -49,6 +51,12 @@ def get_files():
 async def upload_files(files: List[UploadFile] = File(...)):
     from database.models.files import File
     for file in files:
+        file_extension = os.path.splitext(file.filename)[1]
+
+        if file_extension in FILE_HANDLERS:
+            file_content = await file.read()
+            FILE_HANDLERS[file_extension](file)
+
         entry = File(file_name=file.filename, file_type=file.content_type, file_size=file.size)
         db = Database().get_session()
         db.add(entry)
