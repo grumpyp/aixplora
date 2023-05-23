@@ -3,7 +3,7 @@ from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from typing import List
-
+from database.database import Database
 from schemas.config import Config
 # from schemas.file import File
 
@@ -22,7 +22,6 @@ app.add_middleware(
 
 @app.get("/config/")
 def get_config():
-    from database.database import Database
     db = Database().get_session()
     if db.execute(text("SELECT * FROM config")).first() is None:
         return False
@@ -30,7 +29,6 @@ def get_config():
 
 @app.post("/config/")
 def add_config(config: Config):
-    from database.database import Database
     db = Database().get_session()
     res = db.execute(text("INSERT INTO config (openai_api_key) VALUES (:api_key)"), {"api_key": config.apiKey})
     db.commit()
@@ -57,8 +55,13 @@ def get_files():
 
 @app.post("/files/")
 async def upload_files(files: List[UploadFile] = File(...)):
+    from database.models.files import File
     for file in files:
-        print(file.filename)
+        entry = File(file_name=file.filename, file_type=file.content_type, file_size=file.size)
+        db = Database().get_session()
+        db.add(entry)
+        db.commit()
+        print(f"added {file.filename} to db")
     return {"message": "Files uploaded successfully"}
 
 
