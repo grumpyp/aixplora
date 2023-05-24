@@ -62,8 +62,8 @@ export default function Hello() {
           <HeaderResponsive links={randomLinks} />
           <Routes>
             <Route path="/" element={isConfigValid ? <GettingStarted /> : <Config />} />
-            <Route path="/upload" element={isConfigValid ? <GettingStarted /> : <Upload />} />
-            <Route path="/chat" element={isConfigValid ? <GettingStarted /> : <Chat />} />
+            <Route path="/upload" element={<Upload />} />
+            <Route path="/chat" element={<Chat />} />
             <Route path="/config" element={<Config />} />
           </Routes>
           <Footer />
