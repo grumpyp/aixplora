@@ -8,8 +8,8 @@
 AIxplora is your new personal assistant, an open-source project that opens up unlimited possibilities.
 It leverages AI and LLMs to understand all types of documents, unrestricted by their length or format.
 
-Imagine being able to query PDF files, MP3 audio, videos, and other types of documents with equal ease and proficiency. 
-Yes, that's the limitless world AIxplora is inviting you into!*
+**Imagine being able to query PDF files, MP3 audio, videos, and other types of documents with equal ease and proficiency. 
+Yes, that's the limitless world AIxplora is inviting you into!***
 
 *Currently in our PoC version 0.0.1 only .pdf files are supported. We are releasing new file-types and features soon!
 
