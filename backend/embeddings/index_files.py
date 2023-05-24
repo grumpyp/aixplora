@@ -47,21 +47,6 @@ class Genie:
         # self.genie = RetrievalQA.from_chain_type(llm=OpenAI(openai_api_key=OPENAI_API_KEY), chain_type="stuff",
         #                                         retriever=self.vectordb.as_retriever())
         # TODO: seems like LangChain has a bug in creating a db / collection, so I create everything on init - needs refactor
-        # as collection name should be a parameter
-
-        self.client = chromadb.Client(Settings(
-            persist_directory="chroma_db",
-            chroma_db_impl="duckdb+parquet",
-            anonymized_telemetry=False
-        ))
-
-        try:
-            self.collection = self.client.get_collection("aixplora",
-                                                         embedding_function=openai_embedding_function)
-        except Exception as e:
-            print(e)
-            self.collection = self.client.create_collection("aixplora",
-                                                            embedding_function=openai_embedding_function)
 
     @staticmethod
     def text_split(documents: TextLoader):
@@ -89,6 +74,8 @@ class Genie:
         if not query_embedding and not query_texts:
             raise ValueError("Either query_embedding or query_texts must be provided")
 
+
+
         # if query_embedding:
         #     res = collection.query(
         #         query_embeddings=query_embedding,
@@ -99,29 +86,15 @@ class Genie:
         #
         # else:
 
-        # TODO: duplicated workaround because of LangChain bug (init of this class)
-        client = chromadb.Client(Settings(
-            persist_directory="chroma_db",
-            chroma_db_impl="duckdb+parquet",
-            anonymized_telemetry=False
-        ))
-
-        try:
-            collection = client.get_collection("aixplora",
-                                               embedding_function=openai_embedding_function)
-        except Exception as e:
-            print(e)
-            collection = client.create_collection("aixplora",
-                                                  embedding_function=openai_embedding_function)
 
         res = collection.query(
-            query_texts=query_texts,
-            n_results=n_results,
-            where=where or None,
-            where_document=where_document or None
-        )
+                query_texts=query_texts,
+                n_results=n_results,
+                where=where or None,
+                where_document=where_document or None
+            )
         print(res)
-        print("---" * 100)
+        print("---"*100)
         relevant_docs = [doc for doc in res["documents"]]
 
         answer = openai_ask(context=relevant_docs, question=query_texts, openai_api_key=OPENAI_API_KEY)
