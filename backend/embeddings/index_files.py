@@ -65,14 +65,14 @@ class Genie:
 
     @staticmethod
     def text_split(documents: TextLoader):
-        # TODO: think about split words (make sense out of it for LLM), not 1000 characters as it is now
+         # TODO: think about split words (make sense out of it for LLM), not 1000 characters as it is now
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
         texts = text_splitter.split_documents(documents)
         return texts
 
     @staticmethod
     def embeddings(texts: List[Document]):
-        embeddings = OpenAIEmbeddings()
+        embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
         vectordb = Chroma.from_documents(texts, embeddings, persist_directory="chroma_db", collection_name="aixplora")
         return vectordb
 

@@ -26,7 +26,7 @@ const handleFileUpload = () => {
     });
 
     axios
-      .post(`${config.REACT_APP_BACKEND_URL}/files/`, formData, {
+      .post(`${config.REACT_APP_BACKEND_URL}/files`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
