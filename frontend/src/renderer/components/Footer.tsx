@@ -1,5 +1,5 @@
 import { createStyles, Container, Group, ActionIcon, rem } from '@mantine/core';
-import { IconBrandTwitter, IconBrandYoutube, IconBrandInstagram } from '@tabler/icons-react';
+import { IconBrandGithub, IconBrandYoutube, IconBrandInstagram, IconBrandDiscord } from '@tabler/icons-react';
 import { MantineLogo } from '@mantine/ds';
 
 const useStyles = createStyles((theme) => ({
@@ -10,9 +10,8 @@ const useStyles = createStyles((theme) => ({
     backgroundColor: theme.white,
 
     bottom: 0,
-    borderTop: `${rem(1)} solid ${
-      theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2]
-    }`,
+    borderTop: `${rem(1)} solid ${theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2]
+      }`,
   },
 
   inner: {
@@ -42,15 +41,15 @@ export function Footer() {
       <Container className={classes.inner}>
         <b>Version 0.0.1</b>
         <Group spacing={0} className={classes.links} position="right" noWrap>
-          <ActionIcon size="lg">
-            <IconBrandTwitter size="1.05rem" stroke={1.5} />
-          </ActionIcon>
-          <ActionIcon size="lg">
-            <IconBrandYoutube size="1.05rem" stroke={1.5} />
-          </ActionIcon>
-          <ActionIcon size="lg">
-            <IconBrandInstagram size="1.05rem" stroke={1.5} />
-          </ActionIcon>
+          <a href="https://github.com/grumpyp/aixplora"><ActionIcon size="lg">
+            <IconBrandGithub color='black' size="1.5rem" stroke={1.5} />
+          </ActionIcon></a>
+          <a href="https://www.youtube.com/@patrick-gerard/videos"><ActionIcon size="lg">
+            <IconBrandYoutube color='black' size="1.5rem" stroke={1.5} />
+          </ActionIcon></a>
+          <a href="https://discord.gg/M2AuGZvgHq"><ActionIcon size="lg">
+            <IconBrandDiscord color='black' size="1.5rem" stroke={1.5} />
+          </ActionIcon></a>
         </Group>
       </Container>
     </div>

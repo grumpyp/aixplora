@@ -36,7 +36,7 @@ def add_config(config: Config):
     db = Database().get_session()
     res = db.execute(text("INSERT INTO config (openai_api_key) VALUES (:api_key)"), {"api_key": config.apiKey})
     db.commit()
-    return config
+    return res
 
 
 @app.get("/files/")
