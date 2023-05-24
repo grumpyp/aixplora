@@ -6,6 +6,7 @@ venv
 __pycache__
 *.db
 chroma_db
+*.pyc
 
 # frontend
 node_modules
