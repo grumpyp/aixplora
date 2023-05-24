@@ -8,3 +8,4 @@
 discord: xyz
 
 
+# translations -> embeddings -> to make sense

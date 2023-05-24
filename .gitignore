@@ -5,6 +5,8 @@ venv
 .idea
 __pycache__
 *.db
+chroma_db
 
 # frontend
 node_modules
+

@@ -5,8 +5,10 @@ from sqlalchemy import text
 from typing import List
 from database.database import Database
 from schemas.config import Config
+from schemas.question import Question
 # from schemas.file import File
 from utils import FILE_HANDLERS
+from embeddings.index_files import Genie
 import os
 
 # TODO: use best practise for routing
@@ -54,8 +56,13 @@ async def upload_files(files: List[UploadFile] = File(...)):
         file_extension = os.path.splitext(file.filename)[1]
 
         if file_extension in FILE_HANDLERS:
-            file_content = await file.read()
-            FILE_HANDLERS[file_extension](file)
+            transcription = FILE_HANDLERS[file_extension](file)
+            print(f"{file.filename} file text extracted")
+            # TODO: implement table which tracks costs of API usage OpenAI
+            # TODO: implement async task for indexing
+            Genie(transcription)
+            print(f"{file.filename} file indexed")
+
 
         entry = File(file_name=file.filename, file_type=file.content_type, file_size=file.size)
         db = Database().get_session()
@@ -63,6 +70,13 @@ async def upload_files(files: List[UploadFile] = File(...)):
         db.commit()
         print(f"added {file.filename} to db")
     return {"message": "Files uploaded successfully"}
+
+
+@app.post("/chat/")
+def chat(question: Question):
+    answer = Genie.query(query_texts=question.question)
+    print(answer)
+    return {"question": question.question, "answer": answer}
 
 
 if __name__ == "__main__":

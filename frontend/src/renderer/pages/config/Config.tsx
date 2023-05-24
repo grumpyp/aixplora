@@ -24,7 +24,6 @@ function saveConfig(OPENAI_API_KEY) {
     })
     .catch((error) => {
       console.log('Error fetching config:', error);
-      // Return false if there's an error
       return false;
     });
 }
@@ -33,7 +32,6 @@ function Config() {
   const form = useForm({
     initialValues: { OPENAI_API_KEY: ''},
 
-    // functions will be used to validate values at corresponding key
     validate: {
       OPENAI_API_KEY: (value) => (value.startsWith("sk-") ? null : "Invalid API Key"),
     },

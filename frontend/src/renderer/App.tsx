@@ -7,8 +7,9 @@ import Footer from './components/Footer';
 import GettingStarted from './components/Start';
 import axios from 'axios';
 import Config from './pages/config/Config'
+import Chat from './pages/Chat/Chat';
 import config from './config.js';
-import {useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 
 const randomLinks = [
   { link: '/', label: 'Home' },
@@ -62,7 +63,7 @@ export default function Hello() {
           <Routes>
             <Route path="/" element={isConfigValid ? <GettingStarted /> : <Config />} />
             <Route path="/upload" element={<Upload />} />
-            <Route path="/chat" element={<div>Chat Component Here</div>} />
+            <Route path="/chat" element={<Chat />} />
             <Route path="/config" element={<Config />} />
           </Routes>
           <Footer />
