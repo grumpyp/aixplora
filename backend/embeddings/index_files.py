@@ -77,7 +77,7 @@ class Genie:
     def embeddings(self, texts: List[Document]):
         texts = [text.page_content for text in texts]
         print(texts)
-        vectordb = self.collection.add(documents=texts, ids=[random.randint(1, 100000000) for i in range(len(texts))])
+        vectordb = self.collection.add(documents=texts, ids=[str(random.randint(1, 100000000)) for i in range(len(texts))])
         return vectordb
 
     # This is used to ask questions on a specific document
