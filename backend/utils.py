@@ -1,10 +1,20 @@
+# loaders
 from loaders.pdf_loader import load_pdf
 from loaders.txt_loader import load_txt
+from loaders.audio_loader import Whisperexporter
+
 import openai
 
 FILE_HANDLERS = {
     ".pdf": lambda file: load_pdf(file.file, filename=file.filename),
-    ".txt": lambda file: load_txt(file.file, filename=file.filename)
+    ".txt": lambda file: load_txt(file.file, filename=file.filename),
+    ".mp3": lambda file: Whisperexporter().whisper_to_text(file.file, filename=file.filename),
+    ".mp4": lambda file: Whisperexporter().whisper_to_text(file.file, filename=file.filename),
+    ".mpeg": lambda file: Whisperexporter().whisper_to_text(file.file, filename=file.filename),
+    ".mpga": lambda file: Whisperexporter().whisper_to_text(file.file, filename=file.filename),
+    ".wav": lambda file: Whisperexporter().whisper_to_text(file.file, filename=file.filename),
+    ".webm": lambda file: Whisperexporter().whisper_to_text(file.file, filename=file.filename),
+    ".m4a": lambda file: Whisperexporter().whisper_to_text(file.file, filename=file.filename),
     }
 
 

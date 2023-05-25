@@ -6,6 +6,9 @@ from sqlalchemy.sql.sqltypes import Enum
 # TODO: loader for each file type
 class Filetype(Enum):
     """enum for file types"""
+    M4A = "m4a"
+    MPEG = "mpeg"
+    WEBM = "webm"
     PDF = "pdf"
     TXT = "text"
     DOC = "doc"

@@ -60,7 +60,7 @@ async def upload_files(files: List[UploadFile] = File(...)):
     from database.models.files import File
     for file in files:
         file_extension = os.path.splitext(file.filename)[1]
-
+        print(file_extension*10)
         if file_extension in FILE_HANDLERS:
             transcription = FILE_HANDLERS[file_extension](file)
             print(f"{file.filename} file text extracted")
