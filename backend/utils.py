@@ -1,9 +1,10 @@
+from loaders.txt_loader import load_txt
 from loaders.pdf_loader import load_pdf
 import openai
 
 FILE_HANDLERS = {
-    ".pdf": lambda file: load_pdf(file.file, filename=file.filename)
-
+    ".pdf": lambda file: load_pdf(file.file, filename=file.filename),
+    ".txt": lambda file: load_txt(file.file, filename=file.filename)
     }
 
 # TODO: make model configurable in config
