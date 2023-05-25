@@ -8,6 +8,7 @@ __pycache__
 *.db
 chroma_db
 *.pyc
+/qdrant_data/
 
 # frontend
 node_modules
