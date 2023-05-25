@@ -65,7 +65,6 @@ class Genie:
 
     def embeddings(self, texts: List[Document]):
         texts = [text.page_content for text in texts]
-        print(texts)
 
         openai.api_key = self.openai_api_key
         for i in texts:
@@ -96,7 +95,7 @@ class Genie:
             model="text-embedding-ada-002"
         )
         embeddings = response['data'][0]['embedding']
-        print(embeddings)
+
         results = self.qu.search(
             collection_name="aixplora",
             query_vector=embeddings,
