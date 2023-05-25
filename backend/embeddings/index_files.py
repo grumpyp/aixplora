@@ -14,45 +14,34 @@ from langchain.schema import Document
 import os
 from database.database import Database
 from sqlalchemy import text
-import chromadb
-from chromadb.config import Settings
-from chromadb.utils import embedding_functions
 from utils import openai_ask
 import random
-
-# TODO: Tests!
-# Workaround Start-up first time
-try:
-    OPENAI_KEY = Database().get_session().execute(text("SELECT openai_api_key FROM config")).fetchall()[-1][0]
-    OPENAI_API_KEY = OPENAI_KEY or os.getenv("OPENAI_API_KEY")
-except:
-    OPENAI_API_KEY = "notdefined"
-
-# Move this to embedding functions if more are added
-openai_embedding_function = embedding_functions.OpenAIEmbeddingFunction(
-    api_key=OPENAI_API_KEY,
-    model_name="text-embedding-ada-002"
-)
+from qdrant_client import QdrantClient
+from qdrant_client.http import models
+import openai
 
 
 # TODO: This is just a base implementation extend it with metadata,..
-# 25.05.2023: Quickfix for now removed langchain components to make it work asap, needs refactor
+# 25.05.2023: Quickfix for now removed langchain components to make it work asap, needs refactor - old
+# 25.05.2023: Quickfix, seems also to be a problem with chromadb, now using qudrant vector db, needs refactor
 class Genie:
 
     def __init__(self, file_path: str = None):
-        self.client = chromadb.Client(Settings(
-            persist_directory="chroma_db",
-            chroma_db_impl="duckdb+parquet",
-            anonymized_telemetry=False
-        ))
-
         try:
-            self.collection = self.client.get_collection("aixplora",
-                                                         embedding_function=openai_embedding_function)
-        except Exception as e:
-            print(e)
-            self.collection = self.client.create_collection("aixplora",
-                                                            embedding_function=openai_embedding_function)
+            self.openai_api_key = Database().get_session().execute(text("SELECT openai_api_key FROM config")).fetchall()[-1][0]
+        except:
+            self.openai_api_key = "notdefined"
+        self.qu = QdrantClient(path="./qdrant_data")
+        try:
+            if self.qu.get_collection(collection_name="aixplora").vectors_count == 0:
+                self.qu.recreate_collection(
+                    collection_name="aixplora", vectors_config=models.VectorParams(size=1536, distance=models.Distance.COSINE),
+                )
+        except:
+            self.qu.recreate_collection(
+                collection_name="aixplora",
+                vectors_config=models.VectorParams(size=1536, distance=models.Distance.COSINE),
+            )
 
         if file_path:
             self.file_path = file_path
@@ -77,49 +66,55 @@ class Genie:
     def embeddings(self, texts: List[Document]):
         texts = [text.page_content for text in texts]
         print(texts)
-        vectordb = self.collection.add(documents=texts, ids=[str(random.randint(1, 100000000)) for i in range(len(texts))])
-        return vectordb
 
-    # This is used to ask questions on a specific document
-    def ask(self, query: str):
-        return self.genie.run(query)
+        openai.api_key = self.openai_api_key
+        for i in texts:
+            response = openai.Embedding.create(
+                input=i,
+                model="text-embedding-ada-002"
+            )
+            embeddings = response['data'][0]['embedding']
+
+            return self.qu.upsert(
+                collection_name="aixplora",
+                wait=True,
+                points=[
+                    models.PointStruct(
+                        id=random.randint(1, 100000000),
+                        payload={
+                            "chunk": texts[0],
+                        },
+                        vector=embeddings,
+                    ),
+                ]
+            )
+
+    def search(self, query: str):
+        openai.api_key = self.openai_api_key
+        response = openai.Embedding.create(
+            input=query,
+            model="text-embedding-ada-002"
+        )
+        embeddings = response['data'][0]['embedding']
+        print(embeddings)
+        results = self.qu.search(
+            collection_name="aixplora",
+            query_vector=embeddings,
+            limit=3,
+            with_payload=True
+        )
+
+        return results
 
     # This is used to ask questions on all documents
     # TODO: evaluate how many embeddings are in db, based on that change n_results dynamcially
-    def query(self, n_results: int = 1, collection_name: str = None, where: str = None, where_document: str = None,
-              query_embedding: List[List[float]] = None, query_texts: str = None):
+    def query(self, query_embedding: List[List[float]] = None, query_texts: str = None):
 
         if not query_embedding and not query_texts:
             raise ValueError("Either query_embedding or query_texts must be provided")
 
-        # if query_embedding:
-        #     res = collection.query(
-        #         query_embeddings=query_embedding,
-        #         n_results=n_results,
-        #         where=where or None,
-        #         where_document=where_document or None
-        #     )
-        #
-        # else:
-
-        try:
-            collection = self.client.get_collection("aixplora",
-                                               embedding_function=openai_embedding_function)
-        except Exception as e:
-            print(e)
-            collection = self.client.create_collection("aixplora",
-                                                  embedding_function=openai_embedding_function)
-
-        res = self.collection.query(
-            query_texts=query_texts,
-            n_results=n_results,
-            where=where or None,
-            where_document=where_document or None
-        )
-        print(res)
-        print("---" * 100)
-        relevant_docs = [doc for doc in res["documents"]]
-
-        answer = openai_ask(context=relevant_docs, question=query_texts, openai_api_key=OPENAI_API_KEY)
+        results = self.search(query_texts)
+        relevant_docs = [doc.payload["chunk"] for doc in results]
+        answer = openai_ask(context=relevant_docs, question=query_texts, openai_api_key=self.openai_api_key)
 
         return answer
