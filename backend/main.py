@@ -74,7 +74,8 @@ async def upload_files(files: List[UploadFile] = File(...)):
 
 @app.post("/chat/")
 def chat(question: Question):
-    answer = Genie.query(query_texts=question.question)
+    genie = Genie()
+    answer = genie.query(query_texts=question.question)
     print(answer)
     return {"question": question.question, "answer": answer}
 

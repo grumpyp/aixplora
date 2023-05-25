@@ -35,20 +35,10 @@ openai_embedding_function = embedding_functions.OpenAIEmbeddingFunction(
 
 
 # TODO: This is just a base implementation extend it with metadata,..
-#  https://python.langchain.com/en/latest/modules/indexes/retrievers/examples/chroma_self_query.html
+# 25.05.2023: Quickfix for now removed langchain components to make it work asap, needs refactor
 class Genie:
 
-    def __init__(self, file_path: str):
-        self.file_path = file_path
-        self.loader = TextLoader(self.file_path)
-        self.documents = self.loader.load()
-        self.texts = self.text_split(self.documents)
-        self.vectordb = self.embeddings(self.texts)
-        # self.genie = RetrievalQA.from_chain_type(llm=OpenAI(openai_api_key=OPENAI_API_KEY), chain_type="stuff",
-        #                                         retriever=self.vectordb.as_retriever())
-        # TODO: seems like LangChain has a bug in creating a db / collection, so I create everything on init - needs refactor
-        # as collection name should be a parameter
-
+    def __init__(self, file_path: str = None):
         self.client = chromadb.Client(Settings(
             persist_directory="chroma_db",
             chroma_db_impl="duckdb+parquet",
@@ -63,6 +53,19 @@ class Genie:
             self.collection = self.client.create_collection("aixplora",
                                                             embedding_function=openai_embedding_function)
 
+        if file_path:
+            self.file_path = file_path
+            self.loader = TextLoader(self.file_path)
+            self.documents = self.loader.load()
+            self.texts = self.text_split(self.documents)
+            self.vectordb = self.embeddings(self.texts)
+        # self.genie = RetrievalQA.from_chain_type(llm=OpenAI(openai_api_key=OPENAI_API_KEY), chain_type="stuff",
+        #                                         retriever=self.vectordb.as_retriever())
+        # TODO: seems like LangChain has a bug in creating a db / collection, so I create everything on init - needs refactor
+        # as collection name should be a parameter
+
+
+
     @staticmethod
     def text_split(documents: TextLoader):
         # TODO: think about split words (make sense out of it for LLM), not 1000 characters as it is now
@@ -70,10 +73,10 @@ class Genie:
         texts = text_splitter.split_documents(documents)
         return texts
 
-    @staticmethod
-    def embeddings(texts: List[Document]):
-        embeddings = OpenAIEmbeddings()
-        vectordb = Chroma.from_documents(texts, embeddings, persist_directory="chroma_db", collection_name="aixplora")
+    def embeddings(self, texts: List[Document]):
+        texts = [text.page_content for text in texts]
+        print(texts)
+        vectordb = self.collection.add(documents=texts, ids=[str(i) for i in range(len(texts))])
         return vectordb
 
     # This is used to ask questions on a specific document
@@ -82,8 +85,7 @@ class Genie:
 
     # This is used to ask questions on all documents
     # TODO: evaluate how many embeddings are in db, based on that change n_results dynamcially
-    @staticmethod
-    def query(n_results: int = 1, collection_name: str = None, where: str = None, where_document: str = None,
+    def query(self, n_results: int = 1, collection_name: str = None, where: str = None, where_document: str = None,
               query_embedding: List[List[float]] = None, query_texts: str = None):
 
         if not query_embedding and not query_texts:
@@ -99,22 +101,15 @@ class Genie:
         #
         # else:
 
-        # TODO: duplicated workaround because of LangChain bug (init of this class)
-        client = chromadb.Client(Settings(
-            persist_directory="chroma_db",
-            chroma_db_impl="duckdb+parquet",
-            anonymized_telemetry=False
-        ))
-
         try:
-            collection = client.get_collection("aixplora",
+            collection = self.client.get_collection("aixplora",
                                                embedding_function=openai_embedding_function)
         except Exception as e:
             print(e)
-            collection = client.create_collection("aixplora",
+            collection = self.client.create_collection("aixplora",
                                                   embedding_function=openai_embedding_function)
 
-        res = collection.query(
+        res = self.collection.query(
             query_texts=query_texts,
             n_results=n_results,
             where=where or None,

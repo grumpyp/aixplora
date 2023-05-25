@@ -44,7 +44,8 @@ npm install frontend
 ### 3. Run the backend and the frontend
 ```
 python backend/main.py
-npm start frontend
+cd frontend
+npm start
 ```
 
 
