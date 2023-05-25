@@ -9,6 +9,7 @@ from schemas.question import Question
 # from schemas.file import File
 from utils import FILE_HANDLERS
 from embeddings.index_files import Genie
+from sqlalchemy.exc import DatabaseError
 import os
 
 # TODO: use best practise for routing
@@ -41,13 +42,18 @@ def add_config(config: Config):
 
 @app.get("/files/")
 def get_files():
-    db = Database().get_session()
-    files = db.execute(text("SELECT * FROM files")).fetchall()
-    res = []
-    for file in files:
-        res.append({"name": file[1], "type": file[2], "size": file[3]})
-    print(res)
-    return res
+    try:
+        db = Database().get_session()
+        files = db.execute(text("SELECT * FROM files")).fetchall()
+        res = []
+        if files is not None:
+            for file in files:
+                res.append({"name": file[1], "type": file[2], "size": file[3]})
+        else:
+            return {"error": "No files found."}
+        return res
+    except DatabaseError as e:
+        return {"error": str(e)}
 
 @app.post("/files/")
 async def upload_files(files: List[UploadFile] = File(...)):
