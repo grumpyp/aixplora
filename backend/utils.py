@@ -7,9 +7,9 @@ FILE_HANDLERS = {
     ".txt": lambda file: load_txt(file.file, filename=file.filename)
     }
 
+
 # TODO: make model configurable in config
 def openai_ask(context: str = None, question: str = None, openai_api_key: str = None, model: str = "gpt-3.5-turbo"):
-    print("-"*90)
     print(question)
     print(context)
     # TODO: make answer to same language

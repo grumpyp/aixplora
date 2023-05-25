@@ -14,54 +14,47 @@ from langchain.schema import Document
 import os
 from database.database import Database
 from sqlalchemy import text
-import chromadb
-from chromadb.config import Settings
-from chromadb.utils import embedding_functions
 from utils import openai_ask
-
-# TODO: Tests!
-# Workaround Start-up first time
-try:
-    OPENAI_KEY = Database().get_session().execute(text("SELECT openai_api_key FROM config")).fetchall()[-1][0]
-    OPENAI_API_KEY = OPENAI_KEY or os.getenv("OPENAI_API_KEY")
-except:
-    OPENAI_API_KEY = "notdefined"
-
-# Move this to embedding functions if more are added
-openai_embedding_function = embedding_functions.OpenAIEmbeddingFunction(
-    api_key=OPENAI_API_KEY,
-    model_name="text-embedding-ada-002"
-)
+import random
+from qdrant_client import QdrantClient
+from qdrant_client.http import models
+import openai
 
 
 # TODO: This is just a base implementation extend it with metadata,..
-#  https://python.langchain.com/en/latest/modules/indexes/retrievers/examples/chroma_self_query.html
+# 25.05.2023: Quickfix for now removed langchain components to make it work asap, needs refactor - old
+# 25.05.2023: Quickfix, seems also to be a problem with chromadb, now using qudrant vector db, needs refactor
 class Genie:
 
-    def __init__(self, file_path: str):
-        self.file_path = file_path
-        self.loader = TextLoader(self.file_path)
-        self.documents = self.loader.load()
-        self.texts = self.text_split(self.documents)
-        self.vectordb = self.embeddings(self.texts)
+    def __init__(self, file_path: str = None):
+        try:
+            self.openai_api_key = Database().get_session().execute(text("SELECT openai_api_key FROM config")).fetchall()[-1][0]
+        except:
+            self.openai_api_key = "notdefined"
+        self.qu = QdrantClient(path="./qdrant_data")
+        try:
+            if self.qu.get_collection(collection_name="aixplora").vectors_count == 0:
+                self.qu.recreate_collection(
+                    collection_name="aixplora", vectors_config=models.VectorParams(size=1536, distance=models.Distance.COSINE),
+                )
+        except:
+            self.qu.recreate_collection(
+                collection_name="aixplora",
+                vectors_config=models.VectorParams(size=1536, distance=models.Distance.COSINE),
+            )
+
+        if file_path:
+            self.file_path = file_path
+            self.loader = TextLoader(self.file_path)
+            self.documents = self.loader.load()
+            self.texts = self.text_split(self.documents)
+            self.vectordb = self.embeddings(self.texts)
         # self.genie = RetrievalQA.from_chain_type(llm=OpenAI(openai_api_key=OPENAI_API_KEY), chain_type="stuff",
         #                                         retriever=self.vectordb.as_retriever())
         # TODO: seems like LangChain has a bug in creating a db / collection, so I create everything on init - needs refactor
         # as collection name should be a parameter
 
-        self.client = chromadb.Client(Settings(
-            persist_directory="chroma_db",
-            chroma_db_impl="duckdb+parquet",
-            anonymized_telemetry=False
-        ))
 
-        try:
-            self.collection = self.client.get_collection("aixplora",
-                                                         embedding_function=openai_embedding_function)
-        except Exception as e:
-            print(e)
-            self.collection = self.client.create_collection("aixplora",
-                                                            embedding_function=openai_embedding_function)
 
     @staticmethod
     def text_split(documents: TextLoader):
@@ -70,60 +63,57 @@ class Genie:
         texts = text_splitter.split_documents(documents)
         return texts
 
-    @staticmethod
-    def embeddings(texts: List[Document]):
-        embeddings = OpenAIEmbeddings()
-        vectordb = Chroma.from_documents(texts, embeddings, persist_directory="chroma_db", collection_name="aixplora")
-        return vectordb
+    def embeddings(self, texts: List[Document]):
+        texts = [text.page_content for text in texts]
 
-    # This is used to ask questions on a specific document
-    def ask(self, query: str):
-        return self.genie.run(query)
+        openai.api_key = self.openai_api_key
+        for i in texts:
+            response = openai.Embedding.create(
+                input=i,
+                model="text-embedding-ada-002"
+            )
+            embeddings = response['data'][0]['embedding']
+
+            return self.qu.upsert(
+                collection_name="aixplora",
+                wait=True,
+                points=[
+                    models.PointStruct(
+                        id=random.randint(1, 100000000),
+                        payload={
+                            "chunk": texts[0],
+                        },
+                        vector=embeddings,
+                    ),
+                ]
+            )
+
+    def search(self, query: str):
+        openai.api_key = self.openai_api_key
+        response = openai.Embedding.create(
+            input=query,
+            model="text-embedding-ada-002"
+        )
+        embeddings = response['data'][0]['embedding']
+
+        results = self.qu.search(
+            collection_name="aixplora",
+            query_vector=embeddings,
+            limit=3,
+            with_payload=True
+        )
+
+        return results
 
     # This is used to ask questions on all documents
     # TODO: evaluate how many embeddings are in db, based on that change n_results dynamcially
-    @staticmethod
-    def query(n_results: int = 1, collection_name: str = None, where: str = None, where_document: str = None,
-              query_embedding: List[List[float]] = None, query_texts: str = None):
+    def query(self, query_embedding: List[List[float]] = None, query_texts: str = None):
 
         if not query_embedding and not query_texts:
             raise ValueError("Either query_embedding or query_texts must be provided")
 
-        # if query_embedding:
-        #     res = collection.query(
-        #         query_embeddings=query_embedding,
-        #         n_results=n_results,
-        #         where=where or None,
-        #         where_document=where_document or None
-        #     )
-        #
-        # else:
-
-        # TODO: duplicated workaround because of LangChain bug (init of this class)
-        client = chromadb.Client(Settings(
-            persist_directory="chroma_db",
-            chroma_db_impl="duckdb+parquet",
-            anonymized_telemetry=False
-        ))
-
-        try:
-            collection = client.get_collection("aixplora",
-                                               embedding_function=openai_embedding_function)
-        except Exception as e:
-            print(e)
-            collection = client.create_collection("aixplora",
-                                                  embedding_function=openai_embedding_function)
-
-        res = collection.query(
-            query_texts=query_texts,
-            n_results=n_results,
-            where=where or None,
-            where_document=where_document or None
-        )
-        print(res)
-        print("---" * 100)
-        relevant_docs = [doc for doc in res["documents"]]
-
-        answer = openai_ask(context=relevant_docs, question=query_texts, openai_api_key=OPENAI_API_KEY)
+        results = self.search(query_texts)
+        relevant_docs = [doc.payload["chunk"] for doc in results]
+        answer = openai_ask(context=relevant_docs, question=query_texts, openai_api_key=self.openai_api_key)
 
         return answer

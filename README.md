@@ -44,7 +44,8 @@ npm install frontend
 ### 3. Run the backend and the frontend
 ```
 python backend/main.py
-npm start frontend
+cd frontend
+npm start
 ```
 
 
@@ -59,4 +60,9 @@ npm start frontend
 
 
 ## Contributors tbd.
+
+## ToDo:
+
+- Delete unnessesary deps from requirements.txt (Chroma, LangChain,..)
+- Make index_files.py nice again
 
