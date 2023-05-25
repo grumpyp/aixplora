@@ -1,5 +1,12 @@
 import { useRef, useState } from 'react';
-import { Text, Group, Button, createStyles, rem } from '@mantine/core';
+import {
+  Text,
+  Group,
+  Button,
+  createStyles,
+  rem,
+  ActionIcon,
+} from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { IconCloudUpload, IconX, IconDownload } from '@tabler/icons-react';
 import axios from 'axios';
@@ -15,35 +22,43 @@ export function DropzoneButton() {
   const [selectedFiles, setSelectedFiles] = useState([]);
 
   const handleFileDrop = (files) => {
-    setSelectedFiles(files);
+    const isSelected = selectedFiles.find((f) => f.name === files[0].name);
+    if (!isSelected) {
+      setSelectedFiles((prevSelectedFiles) => [...prevSelectedFiles, ...files]);
+    }
+  };
+  
+  
+
+  const handleFileUpload = () => {
+    if (selectedFiles.length > 0) {
+      const formData = new FormData();
+      selectedFiles.forEach((file) => {
+        formData.append('files', file);
+      });
+
+      axios
+        .post(`${config.REACT_APP_BACKEND_URL}/files/`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        })
+        .then((response) => {
+          // Handle API response data
+          console.log(response.data);
+          window.location.reload();
+        })
+        .catch((error) => {
+          // Handle API request error
+          console.error(error);
+        });
+    }
   };
 
-const handleFileUpload = () => {
-  if (selectedFiles.length > 0) {
-    const formData = new FormData();
-    selectedFiles.forEach((file) => {
-      formData.append('files', file);
-    });
-
-    axios
-      .post(`${config.REACT_APP_BACKEND_URL}/files/`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-      .then((response) => {
-        // Handle API response data
-        console.log(response.data);
-        window.location.reload();
-      })
-      .catch((error) => {
-        // Handle API request error
-        console.error(error);
-      });
-  }
-};
-
-
+  const removeSelectedFile = (fileName) => {
+    const newFiles = selectedFiles.filter((file) => file.name !== fileName);
+    setSelectedFiles(newFiles);
+  };
 
   return (
     <div className={classes.wrapper}>
@@ -54,7 +69,24 @@ const handleFileUpload = () => {
           </Text>
           <ul>
             {selectedFiles.map((item, index) => (
-              <li key={index}>{item.name}</li>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
+                <li style={{fontFamily: 'Poppins'}}>{item.name}</li>
+                <ActionIcon
+                color='red'
+                  onClick={() => {
+                    removeSelectedFile(item.name);
+                  }}
+                >
+                  <IconX />
+                </ActionIcon>
+              </div>
             ))}
           </ul>
         </div>
@@ -110,6 +142,7 @@ const handleFileUpload = () => {
         <Button
           className={classes.control}
           size="md"
+          style={{margin: '1em 0'}}
           radius="xl"
           onClick={handleFileUpload}
         >
