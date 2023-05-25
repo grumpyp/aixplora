@@ -61,3 +61,8 @@ npm start
 
 ## Contributors tbd.
 
+## ToDo:
+
+- Delete unnessesary deps from requirements.txt (Chroma, LangChain,..)
+- Make index_files.py nice again
+
