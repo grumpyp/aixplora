@@ -2,16 +2,10 @@
 # TODO: Implement other embeddings algorithm than OpenAI
 
 # TODO: Split class into a class which indexes and which does the querying
-
-from langchain.vectorstores import Chroma
-from langchain.embeddings import OpenAIEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.llms import OpenAI
-from langchain.chains import RetrievalQA
 from langchain.document_loaders import TextLoader
 from typing import List
 from langchain.schema import Document
-import os
 from database.database import Database
 from sqlalchemy import text
 from utils import openai_ask
