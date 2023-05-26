@@ -1,8 +1,10 @@
 from loaders.pdf_loader import load_pdf
+from loaders.ppt_loader import load_presentation
 import openai
 
 FILE_HANDLERS = {
     ".pdf": lambda file: load_pdf(file.file, filename=file.filename)
+    ".ppt": lambda file: load_presentation(file.file, filename=file.filename)
 
     }
 
