@@ -4,10 +4,12 @@
 # backend
 venv
 .idea
-__pycache__
+/__pycache__
+/backend/database/__pycache__
 *.db
 chroma_db
 *.pyc
+/qdrant_data/
 
 # frontend
 node_modules
