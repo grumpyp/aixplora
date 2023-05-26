@@ -1,16 +1,27 @@
+# loaders
 from loaders.pdf_loader import load_pdf
 from loaders.ppt_loader import load_presentation
+from loaders.txt_loader import load_txt
+from loaders.audio_loader import Whisperexporter
+
 import openai
 
 FILE_HANDLERS = {
-    ".pdf": lambda file: load_pdf(file.file, filename=file.filename)
+    ".pdf": lambda file: load_pdf(file.file, filename=file.filename),
     ".ppt": lambda file: load_presentation(file.file, filename=file.filename)
-
+    ".txt": lambda file: load_txt(file.file, filename=file.filename),
+    ".mp3": lambda file: Whisperexporter().whisper_to_text(file.file, filename=file.filename),
+    ".mp4": lambda file: Whisperexporter().whisper_to_text(file.file, filename=file.filename),
+    ".mpeg": lambda file: Whisperexporter().whisper_to_text(file.file, filename=file.filename),
+    ".mpga": lambda file: Whisperexporter().whisper_to_text(file.file, filename=file.filename),
+    ".wav": lambda file: Whisperexporter().whisper_to_text(file.file, filename=file.filename),
+    ".webm": lambda file: Whisperexporter().whisper_to_text(file.file, filename=file.filename),
+    ".m4a": lambda file: Whisperexporter().whisper_to_text(file.file, filename=file.filename),
     }
+
 
 # TODO: make model configurable in config
 def openai_ask(context: str = None, question: str = None, openai_api_key: str = None, model: str = "gpt-3.5-turbo"):
-    print("-"*90)
     print(question)
     print(context)
     # TODO: make answer to same language
