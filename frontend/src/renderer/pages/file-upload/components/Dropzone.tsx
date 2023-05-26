@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {
   Text,
   Group,
@@ -21,14 +21,18 @@ export function DropzoneButton() {
   const openRef = useRef();
   const [selectedFiles, setSelectedFiles] = useState([]);
 
-  const handleFileDrop = (files) => {
+  useEffect(() => {
+    console.log(selectedFiles);
+  }, [selectedFiles]);
+
+  const handleFileDrop = async (files) => {
     const isSelected = selectedFiles.find((f) => f.name === files[0].name);
     if (!isSelected) {
       setSelectedFiles((prevSelectedFiles) => [...prevSelectedFiles, ...files]);
     }
   };
-  
-  
+
+
 
   const handleFileUpload = () => {
     if (selectedFiles.length > 0) {
