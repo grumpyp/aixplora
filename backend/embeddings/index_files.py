@@ -63,30 +63,37 @@ class Genie:
         texts = text_splitter.split_documents(documents)
         return texts
 
-    def embeddings(self, texts: List[Document]):
-        texts = [text.page_content for text in texts]
-
-        openai.api_key = self.openai_api_key
-        for i in texts:
+    def upload_embedding(self, texts: List[Document],  collection_name: str = "aixplora") -> None:
+        print(len(texts))
+        for i in range(len(texts)):
+            print(i)
+            print("-"*10)
             response = openai.Embedding.create(
-                input=i,
+                input=texts[i],
                 model="text-embedding-ada-002"
             )
             embeddings = response['data'][0]['embedding']
 
-            return self.qu.upsert(
-                collection_name="aixplora",
+            self.qu.upsert(
+                collection_name=collection_name,
                 wait=True,
                 points=[
                     models.PointStruct(
                         id=random.randint(1, 100000000),
                         payload={
-                            "chunk": texts[0],
+                            "chunk": texts[i]
                         },
                         vector=embeddings,
                     ),
                 ]
             )
+        return
+
+    def embeddings(self, texts: List[Document]):
+        texts = [text.page_content for text in texts]
+        openai.api_key = self.openai_api_key
+        print(len(texts))
+        self.upload_embedding(texts=texts)
 
     def search(self, query: str):
         openai.api_key = self.openai_api_key
