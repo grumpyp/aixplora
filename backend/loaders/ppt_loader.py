@@ -1,7 +1,7 @@
 from pptx import Presentation
 import os
 
-def load_presentation(presentation_file: bytes, filename: str) -> str:
+def load_presentation(presentation_file: bytes, filename: str, file_meta: UploadFile) -> str:
     presentation = Presentation(presentation_file)
     text_content = ""
 
@@ -23,4 +23,4 @@ def load_presentation(presentation_file: bytes, filename: str) -> str:
     with open(text_file_path, "w") as f:
         f.write(text_content)
 
-    return text_file_path
+    return text_file_path, file_meta
