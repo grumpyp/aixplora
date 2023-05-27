@@ -8,7 +8,7 @@ import openai
 
 FILE_HANDLERS = {
     ".pdf": lambda file: load_pdf(file.file, filename=file.filename),
-    ".ppt": lambda file: load_presentation(file.file, filename=file.filename)
+    ".ppt": lambda file: load_presentation(file.file, filename=file.filename),
     ".txt": lambda file: load_txt(file.file, filename=file.filename),
     ".mp3": lambda file: Whisperexporter().whisper_to_text(file.file, filename=file.filename),
     ".mp4": lambda file: Whisperexporter().whisper_to_text(file.file, filename=file.filename),
