@@ -2,16 +2,10 @@
 # TODO: Implement other embeddings algorithm than OpenAI
 
 # TODO: Split class into a class which indexes and which does the querying
-
-from langchain.vectorstores import Chroma
-from langchain.embeddings import OpenAIEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.llms import OpenAI
-from langchain.chains import RetrievalQA
 from langchain.document_loaders import TextLoader
 from typing import List
 from langchain.schema import Document
-import os
 from database.database import Database
 from sqlalchemy import text
 from utils import openai_ask
@@ -19,6 +13,7 @@ import random
 from qdrant_client import QdrantClient
 from qdrant_client.http import models
 import openai
+from fastapi import UploadFile
 
 
 # TODO: This is just a base implementation extend it with metadata,..
@@ -26,7 +21,7 @@ import openai
 # 25.05.2023: Quickfix, seems also to be a problem with chromadb, now using qudrant vector db, needs refactor
 class Genie:
 
-    def __init__(self, file_path: str = None):
+    def __init__(self, file_path: str = None, file_meta: UploadFile = None):
         try:
             self.openai_api_key = Database().get_session().execute(text("SELECT openai_api_key FROM config")).fetchall()[-1][0]
         except:
@@ -44,6 +39,7 @@ class Genie:
             )
 
         if file_path:
+            self.file_meta = file_meta
             self.file_path = file_path
             self.loader = TextLoader(self.file_path)
             self.documents = self.loader.load()
@@ -63,30 +59,39 @@ class Genie:
         texts = text_splitter.split_documents(documents)
         return texts
 
-    def embeddings(self, texts: List[Document]):
-        texts = [text.page_content for text in texts]
-
-        openai.api_key = self.openai_api_key
-        for i in texts:
+    def upload_embedding(self, texts: List[Document],  collection_name: str = "aixplora") -> None:
+        print(len(texts))
+        for i in range(len(texts)):
+            print(i)
+            print("-"*10)
             response = openai.Embedding.create(
-                input=i,
+                input=texts[i],
                 model="text-embedding-ada-002"
             )
             embeddings = response['data'][0]['embedding']
 
-            return self.qu.upsert(
-                collection_name="aixplora",
+            self.qu.upsert(
+                collection_name=collection_name,
                 wait=True,
                 points=[
                     models.PointStruct(
                         id=random.randint(1, 100000000),
                         payload={
-                            "chunk": texts[0],
+                            "chunk": texts[i],
+                            "metadata": {"filename": self.file_meta.filename,
+                                         "filetype": self.file_meta.content_type}
                         },
                         vector=embeddings,
                     ),
                 ]
             )
+        return
+
+    def embeddings(self, texts: List[Document]):
+        texts = [text.page_content for text in texts]
+        openai.api_key = self.openai_api_key
+        print(len(texts))
+        self.upload_embedding(texts=texts)
 
     def search(self, query: str):
         openai.api_key = self.openai_api_key
@@ -114,6 +119,8 @@ class Genie:
 
         results = self.search(query_texts)
         relevant_docs = [doc.payload["chunk"] for doc in results]
+        meta_data = [doc.payload["metadata"] for doc in results]
         answer = openai_ask(context=relevant_docs, question=query_texts, openai_api_key=self.openai_api_key)
-
-        return answer
+        _answer = {"answer": answer, "meta_data": meta_data}
+        print(meta_data)
+        return _answer

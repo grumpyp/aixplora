@@ -66,7 +66,7 @@ async def upload_files(files: List[UploadFile] = File(...)):
             print(f"{file.filename} file text extracted")
             # TODO: implement table which tracks costs of API usage OpenAI
             # TODO: implement async task for indexing
-            Genie(transcription)
+            Genie(file_path=transcription[0], file_meta=transcription[1])
             print(f"{file.filename} file indexed")
 
 
@@ -83,7 +83,7 @@ def chat(question: Question):
     genie = Genie()
     answer = genie.query(query_texts=question.question)
     print(answer)
-    return {"question": question.question, "answer": answer}
+    return {"question": question.question, "answer": answer["answer"], "meta_data": answer["meta_data"]}
 
 
 if __name__ == "__main__":

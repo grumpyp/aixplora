@@ -1,8 +1,9 @@
 from pypdf import PdfReader
 import os
+from fastapi import UploadFile
 
 
-def load_pdf(file: bytes, filename: str):
+def load_pdf(file: bytes, filename: str, file_meta: UploadFile):
     reader = PdfReader(file)
     number_of_pages = len(reader.pages)
 
@@ -16,4 +17,4 @@ def load_pdf(file: bytes, filename: str):
 
         f.close()
 
-    return f"{misc_dir}/{filename}.txt"
+    return f"{misc_dir}/{filename}.txt", file_meta
