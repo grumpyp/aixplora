@@ -16,7 +16,7 @@ FILE_HANDLERS = {
     ".wav": lambda file: Whisperexporter().whisper_to_text(file.file, filename=file.filename),
     ".webm": lambda file: Whisperexporter().whisper_to_text(file.file, filename=file.filename),
     ".m4a": lambda file: Whisperexporter().whisper_to_text(file.file, filename=file.filename, file_meta=file),
-    ".docx": lambda file: load_docx(file.file, filename=file.filename),
+    ".docx": lambda file: load_docx(file.file, filename=file.filename, file_meta=file),
     }
 
 

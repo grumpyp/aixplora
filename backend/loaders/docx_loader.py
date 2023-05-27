@@ -1,8 +1,9 @@
 from docx import Document
 import os
+from fastapi import UploadFile
 
 
-def load_docx(file: bytes, filename: str):
+def load_docx(file: bytes, filename: str, file_meta: UploadFile):
 
     # write files to misc folder
     misc_dir = os.path.join(os.getcwd(), "misc")
@@ -19,4 +20,4 @@ def load_docx(file: bytes, filename: str):
     except Exception as e:
         print(f"Error: {e}")
 
-    return f"{misc_dir}/{filename}.txt"
+    return f"{misc_dir}/{filename}.txt", file_meta
