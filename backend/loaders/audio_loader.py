@@ -3,6 +3,8 @@ import openai
 import tempfile
 from sqlalchemy import text
 from database.database import Database
+from fastapi import UploadFile
+
 
 class Whisperexporter:
     """
@@ -16,7 +18,7 @@ class Whisperexporter:
         except:
             self.openai_api_key = "notdefined"
 
-    def whisper_to_text(self, file: bytes, filename: str):
+    def whisper_to_text(self, file: bytes, filename: str, file_meta: UploadFile):
         misc_dir = os.path.join(os.getcwd(), "misc")
         with tempfile.NamedTemporaryFile(delete=False, suffix=filename) as tmp_file:
             content = file.read()
@@ -33,7 +35,7 @@ class Whisperexporter:
             with open(f"{misc_dir}/{filename}.txt", "w", encoding="utf-8") as f:
                 f.write(transcript_text)
 
-        return f"{misc_dir}/{filename}.txt"
+        return f"{misc_dir}/{filename}.txt", file_meta
 
 
     @property
