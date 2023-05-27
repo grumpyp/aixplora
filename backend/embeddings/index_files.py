@@ -13,6 +13,7 @@ import random
 from qdrant_client import QdrantClient
 from qdrant_client.http import models
 import openai
+from fastapi import UploadFile
 
 
 # TODO: This is just a base implementation extend it with metadata,..
@@ -20,7 +21,7 @@ import openai
 # 25.05.2023: Quickfix, seems also to be a problem with chromadb, now using qudrant vector db, needs refactor
 class Genie:
 
-    def __init__(self, file_path: str = None):
+    def __init__(self, file_path: str = None, file_meta: UploadFile = None):
         try:
             self.openai_api_key = Database().get_session().execute(text("SELECT openai_api_key FROM config")).fetchall()[-1][0]
         except:
@@ -38,6 +39,7 @@ class Genie:
             )
 
         if file_path:
+            self.file_meta = file_meta
             self.file_path = file_path
             self.loader = TextLoader(self.file_path)
             self.documents = self.loader.load()
@@ -75,7 +77,9 @@ class Genie:
                     models.PointStruct(
                         id=random.randint(1, 100000000),
                         payload={
-                            "chunk": texts[i]
+                            "chunk": texts[i],
+                            "metadata": {"filename": self.file_meta.filename,
+                                         "filetype": self.file_meta.content_type}
                         },
                         vector=embeddings,
                     ),
@@ -115,6 +119,8 @@ class Genie:
 
         results = self.search(query_texts)
         relevant_docs = [doc.payload["chunk"] for doc in results]
+        meta_data = [doc.payload["metadata"] for doc in results]
         answer = openai_ask(context=relevant_docs, question=query_texts, openai_api_key=self.openai_api_key)
-
-        return answer
+        _answer = {"answer": answer, "meta_data": meta_data}
+        print(meta_data)
+        return _answer
