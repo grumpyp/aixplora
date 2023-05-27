@@ -7,14 +7,14 @@ from loaders.docx_loader import load_docx
 import openai
 
 FILE_HANDLERS = {
-    ".pdf": lambda file: load_pdf(file.file, filename=file.filename),
+    ".pdf": lambda file: load_pdf(file.file, filename=file.filename, file_meta=file),
     ".txt": lambda file: load_txt(file.file, filename=file.filename, file_meta=file),
-    ".mp3": lambda file: Whisperexporter().whisper_to_text(file.file, filename=file.filename),
-    ".mp4": lambda file: Whisperexporter().whisper_to_text(file.file, filename=file.filename),
-    ".mpeg": lambda file: Whisperexporter().whisper_to_text(file.file, filename=file.filename),
-    ".mpga": lambda file: Whisperexporter().whisper_to_text(file.file, filename=file.filename),
-    ".wav": lambda file: Whisperexporter().whisper_to_text(file.file, filename=file.filename),
-    ".webm": lambda file: Whisperexporter().whisper_to_text(file.file, filename=file.filename),
+    ".mp3": lambda file: Whisperexporter().whisper_to_text(file.file, filename=file.filename, file_meta=file),
+    ".mp4": lambda file: Whisperexporter().whisper_to_text(file.file, filename=file.filename, file_meta=file),
+    ".mpeg": lambda file: Whisperexporter().whisper_to_text(file.file, filename=file.filename, file_meta=file),
+    ".mpga": lambda file: Whisperexporter().whisper_to_text(file.file, filename=file.filename, file_meta=file),
+    ".wav": lambda file: Whisperexporter().whisper_to_text(file.file, filename=file.filename, file_meta=file),
+    ".webm": lambda file: Whisperexporter().whisper_to_text(file.file, filename=file.filename, file_meta=file),
     ".m4a": lambda file: Whisperexporter().whisper_to_text(file.file, filename=file.filename, file_meta=file),
     ".docx": lambda file: load_docx(file.file, filename=file.filename, file_meta=file),
     }
