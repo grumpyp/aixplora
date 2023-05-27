@@ -1,7 +1,7 @@
 from pptx import Presentation
 import os
 
-def load_presentation(presentation_file: bytes, filename: str, file_meta: UploadFile) -> str:
+def load_presentation(presentation_file: bytes, filename: str) -> str:
     presentation = Presentation(presentation_file)
     text_content = ""
 
@@ -17,10 +17,10 @@ def load_presentation(presentation_file: bytes, filename: str, file_meta: Upload
 
     # Write files to misc folder
     misc_dir = os.path.join(os.getcwd(), "misc")
-    filename = filename[:-4]  #to remove the .ppt extension from the filename
+    filename = filename.split(".")[0]  #to remove the .ppt extension from the filename
     text_file_path = f"{misc_dir}/{filename}.txt"
 
     with open(text_file_path, "w") as f:
         f.write(text_content)
 
-    return text_file_path, file_meta
+    return text_file_path
