@@ -1,5 +1,4 @@
 from sqlalchemy import create_engine, text
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from database.models.config import Config
 from database.models.base import Base
