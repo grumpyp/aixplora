@@ -4,7 +4,7 @@ import Answer from './Answer';
 
 function Block(props: { answer: string; question: string }) {
   return (
-    <div>
+    <div className='flex flex-row'>
       <Question content={props.question} />
       <Answer content={props.answer} />
     </div>

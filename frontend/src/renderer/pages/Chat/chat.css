@@ -66,14 +66,12 @@
   border: 1px solid rgba(255, 255, 255, 0.3);
   padding: 1em 0.8em;
 }
-
 .discussion {
   height: 100%;
   width: 50%;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  align-items: flex-end;
   gap: 2em;
   margin-bottom: 4em;
 }
@@ -85,10 +83,17 @@
   padding: 0.5em 0.4em;
   display: flex;
   flex-direction: row;
+  align-items: center;
+  justify-content: start;
 }
 .avatar {
   flex: 1;
   height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: start;
 }
 
 .content {
