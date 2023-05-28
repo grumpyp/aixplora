@@ -42,6 +42,7 @@ pydantic==1.10.7
 pypdf==3.9.0
 PyPDF2==3.0.1
 python-dateutil==2.8.2
+python-docx==0.8.11
 python-dotenv==1.0.0
 python-multipart==0.0.6
 python-pptx==0.6.19
@@ -69,3 +70,4 @@ websockets==11.0.3
 yarl==1.9.2
 zstandard==0.21.0
 qdrant-client==1.2.0
+openpyxl==3.1.2
