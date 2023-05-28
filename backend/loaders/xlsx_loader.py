@@ -20,7 +20,6 @@ def load_xlsx(file: BinaryIO, filename: str, file_meta: UploadFile):
 
         # Iterate over all worksheets
         for sheet_name in workbook.sheetnames:
-            writer.writerow([f'Sheet name: {sheet_name}'])
             worksheet = workbook[sheet_name]
 
             for row in worksheet.iter_rows(values_only=True):
