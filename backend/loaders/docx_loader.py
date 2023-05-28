@@ -7,7 +7,6 @@ def load_docx(file: bytes, filename: str, file_meta: UploadFile):
 
     # write files to misc folder
     misc_dir = os.path.join(os.getcwd(), "misc")
-    print("yessir"*100)
     try:
         # Load the DOCX file
         document = Document(file)
