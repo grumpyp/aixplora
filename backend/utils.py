@@ -3,6 +3,7 @@ from loaders.pdf_loader import load_pdf
 from loaders.txt_loader import load_txt
 from loaders.audio_loader import Whisperexporter
 from loaders.docx_loader import load_docx
+from loaders.xlsx_loader import load_xlsx
 
 import openai
 
@@ -17,6 +18,8 @@ FILE_HANDLERS = {
     ".webm": lambda file: Whisperexporter().whisper_to_text(file.file, filename=file.filename, file_meta=file),
     ".m4a": lambda file: Whisperexporter().whisper_to_text(file.file, filename=file.filename, file_meta=file),
     ".docx": lambda file: load_docx(file.file, filename=file.filename, file_meta=file),
+    ".xlsx": lambda file: load_xlsx(file.file, filename=file.filename, file_meta=file),
+    ".csv": lambda file: load_txt(file.file, filename=file.filename, file_meta=file),
     }
 
 
