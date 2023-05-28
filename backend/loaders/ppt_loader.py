@@ -6,7 +6,6 @@ from fastapi import UploadFile
 def load_presentation(presentation_file: bytes, filename: str, file_meta: UploadFile) -> str:
     presentation = Presentation(presentation_file)
     text_content = ""
-
     for slide in presentation.slides:
         slide_text = ""
         for shape in slide.shapes:
