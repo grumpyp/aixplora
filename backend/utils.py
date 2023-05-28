@@ -19,6 +19,7 @@ FILE_HANDLERS = {
     ".m4a": lambda file: Whisperexporter().whisper_to_text(file.file, filename=file.filename, file_meta=file),
     ".docx": lambda file: load_docx(file.file, filename=file.filename, file_meta=file),
     ".xlsx": lambda file: load_xlsx(file.file, filename=file.filename, file_meta=file),
+    ".csv": lambda file: load_txt(file.file, filename=file.filename, file_meta=file),
     }
 
 
