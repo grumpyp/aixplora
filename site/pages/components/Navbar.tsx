@@ -2,14 +2,14 @@ import React from "react";
 import Image from "next/image";
 import { AiFillYoutube } from "react-icons/ai";
 import {FaDiscord} from 'react-icons/fa'
-import '../styles/styles.css'
+import logo from '../../public/logo.png'
 
 
 function Navbar() {
   return (
     <header id="header" className="navbar flex flex-row w-full py-10 px-96 justify-between items-center max-xl:px-48">
       <div className="logo">
-        <Image className="logo_image" src='/../public/logo.png' alt="logo" width={70} height={70}/>
+        <Image className="logo_image" src={logo} alt="logo" width={70} height={70}/>
         
       </div>
       <div className="socials_callto_action flex flex-row items-center gap-x-6">
