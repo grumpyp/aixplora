@@ -14,3 +14,4 @@ chroma_db
 # frontend
 node_modules
 
+.next/

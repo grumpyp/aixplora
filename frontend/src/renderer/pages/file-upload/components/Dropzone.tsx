@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Text,
   Group,
@@ -19,20 +19,18 @@ const useStyles = createStyles((theme) => ({
 export function DropzoneButton() {
   const { classes, theme } = useStyles();
   const openRef = useRef();
-  const [selectedFiles, setSelectedFiles] = useState([]);
-
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     console.log(selectedFiles);
   }, [selectedFiles]);
 
-  const handleFileDrop = async (files) => {
+  const handleFileDrop = async (files: File[]) => {
     const isSelected = selectedFiles.find((f) => f.name === files[0].name);
     if (!isSelected) {
       setSelectedFiles((prevSelectedFiles) => [...prevSelectedFiles, ...files]);
     }
   };
-
-
 
   const handleFileUpload = () => {
     if (selectedFiles.length > 0) {
@@ -40,6 +38,7 @@ export function DropzoneButton() {
       selectedFiles.forEach((file) => {
         formData.append('files', file);
       });
+      setIsLoading(true);
 
       axios
         .post(`${config.REACT_APP_BACKEND_URL}/files/`, formData, {
@@ -56,10 +55,11 @@ export function DropzoneButton() {
           // Handle API request error
           console.error(error);
         });
+      setIsLoading(false);
     }
   };
 
-  const removeSelectedFile = (fileName) => {
+  const removeSelectedFile = (fileName: string) => {
     const newFiles = selectedFiles.filter((file) => file.name !== fileName);
     setSelectedFiles(newFiles);
   };
@@ -81,9 +81,9 @@ export function DropzoneButton() {
                   alignItems: 'center',
                 }}
               >
-                <li style={{fontFamily: 'Poppins'}}>{item.name}</li>
+                <li style={{ fontFamily: 'Poppins' }}>{item.name}</li>
                 <ActionIcon
-                color='red'
+                  color="red"
                   onClick={() => {
                     removeSelectedFile(item.name);
                   }}
@@ -146,7 +146,7 @@ export function DropzoneButton() {
         <Button
           className={classes.control}
           size="md"
-          style={{margin: '1em 0'}}
+          style={{ margin: '1em 0' }}
           radius="xl"
           onClick={handleFileUpload}
         >

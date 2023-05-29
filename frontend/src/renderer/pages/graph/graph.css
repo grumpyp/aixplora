@@ -1,0 +1,51 @@
+
+
+.graph{
+    height: 100%;
+    width: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.user_input_graph{
+    position: absolute;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    width: 40%;
+    display: flex;
+    top: 5em;
+    flex-direction: row;
+    justify-content: space-between;
+    height: 2.8em;
+    position: fixed;
+}
+
+
+ 
+  @media (max-width: 700px) {
+    .user_input_graph {
+      width: 90%;
+    } 
+  }
+  
+  @media (max-width: 1024px) {
+    .user_input_graph {
+      width: 70%;
+    } 
+  }
+  
+  
+  @media (max-width: 1299px) {
+    .user_input_graph {
+      width: 60%;
+    } 
+  }
+  
+  @media (min-width: 1300px) {
+    .user_input_graph {
+      width: 50%;
+    }
+ 
+  }
+  
