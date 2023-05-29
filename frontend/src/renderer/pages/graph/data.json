@@ -1,0 +1,46 @@
+{
+  "main_idea": {
+    "title": "Out-of-time-ordered-correlator in quantum optical models",
+    "description": "This article discusses the evolution of out-of-time-ordered correlator for various quantum optical models and identifies the regime showing chaotic behavior.",
+    "sub_idea": [
+      {
+        "title": "OTOC in the generalized Dicke model",
+        "description": "The behavior of OTOC for the generalized Dicke model is studied using hermitian operators and master equations.",
+        "sub_idea": null
+      },
+      {
+        "title": "Identification of quantum chaos",
+        "description": "The study of quantum chaos seeks to find a relationship between the classical and quantum dynamics of chaotic systems using various strategies.",
+        "sub_idea": [
+          {
+            "title": "Random matrix theory ideas",
+            "description": "Random matrix theory ideas formulated by Wigner and Dyson are used to understand the spectra of complex atomic nuclei and probe quantum systems with chaotic classical counterparts.",
+            "sub_idea": null
+          }
+        ]
+      },
+      {
+        "title": "Study of various quantum optical models",
+        "description": "The time-dependent interaction strength between the atom and cavity field for the Floquet Dicke model and the boundaries of phase transitions for various models are studied.",
+        "sub_idea": [
+          {
+            "title": "Phase transition between normal and superradiant phases",
+            "description": "The phase transition between normal and superradiant phases is discussed for the generalized, N-qubit, Tavis-Cummings and Floquet Dicke models.",
+            "sub_idea": null
+          }
+        ]
+      },
+      {
+        "title": "Connection between OTOCs",
+        "description": "The various forms of OTOCs and their connection using Wigner-Yanase skew information are discussed, along with the relationship between out-of-time-ordered and time-ordered correlators.",
+        "sub_idea": [
+          {
+            "title": "Non-unitary evolution and adjoint form of the GKSL quantum master equation",
+            "description": "A non-unitary evolution of operators and adjoint form of the GKSL quantum master equation are considered to calculate OTOC in a more realistic picture.",
+            "sub_idea": null
+          }
+        ]
+      }
+    ]
+  }
+}

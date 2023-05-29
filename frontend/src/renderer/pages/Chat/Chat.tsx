@@ -1,4 +1,4 @@
-import { useState, CSSProperties, useEffect } from 'react';
+import { useState, CSSProperties, useEffect, useRef } from 'react';
 import './chat.css';
 import axios from 'axios';
 import config from '../../config.js';
@@ -6,7 +6,7 @@ import { Message } from 'renderer/utils';
 import Question from './components/Question';
 import Answer from './components/Answer';
 import { IconSend, IconTrash } from '@tabler/icons-react';
-import PulseLoader from 'react-spinners/PulseLoader';
+
 import { Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import Block from './components/Block';
@@ -31,11 +31,10 @@ const styles = {
 
 function Chat() {
   const [queue, setQueue] = useState<Message[]>([]);
-
+  const bottomRef = useRef();
   const [isLoading, setIsLoading] = useState(false);
   const [lastQuestion, setLastQuestion] = useState('');
   const [error, setError] = useState(false);
-  const [pass, setPass] = useState(true);
   const [input, setInput] = useState('');
 
   useEffect(() => {
@@ -53,14 +52,21 @@ function Chat() {
     close();
   };
 
+  const scrollToMyRef = () => {
+    const scroll =
+      bottomRef.current.scrollHeight - bottomRef.current.clientHeight;
+    bottomRef.current.scrollTo(0, scroll);
+  };
+
   const sendMessage = async () => {
+    scrollToMyRef();
     setLastQuestion(input);
+    window.scrollTo(0, document.documentElement.scrollHeight);
 
     setInput('');
 
     setIsLoading(true);
     setError(false);
-    setPass(false);
 
     try {
       const response = await axios.post(
@@ -79,7 +85,6 @@ function Chat() {
       setError(true);
     }
     setIsLoading(false);
-    setPass(true);
   };
 
   useEffect(() => {
@@ -116,7 +121,7 @@ function Chat() {
           </Modal.Body>
         </Modal.Content>
       </Modal.Root>
-      <div className="discussion">
+      <div ref={bottomRef} className="discussion">
         {queue.map((message, index) => (
           <Block question={message.question} answer={message.answer} />
         ))}

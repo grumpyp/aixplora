@@ -59,7 +59,7 @@
 .paragraph_content {
   /* From https://css.glass */
   background: rgba(189, 125, 69, 0.21);
-  border-radius: 16px;
+  border-radius: 10px;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
@@ -78,14 +78,43 @@
 
 .container {
   width: 100%;
-  border-radius: 20px;
+  border-radius: 10px;
   font-size: 14px;
   padding: 0.5em 0.4em;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: start;
+  position: relative;
 }
+
+.copy_button{
+  position: absolute;
+  z-index: 5;
+  top: 25px;
+  right: 10px;
+  background-color: rgba(255, 255, 255, 0.303);
+  color: black;
+  font-size: 14px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: .4em .4em;
+  transition: .2s all ease-in-out;
+}
+
+
+.copy_button:hover{
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  background-color: rgb(255, 255, 255);
+
+  backdrop-filter: blur(5px);
+}
+
 .avatar {
   flex: 1;
   height: 100%;
