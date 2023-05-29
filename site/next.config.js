@@ -8,6 +8,4 @@ module.exports = {
       // add more routes here
     };
   },
-  // Add this configuration
-  output: 'export',
 };
