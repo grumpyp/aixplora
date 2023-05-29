@@ -19,13 +19,13 @@ const useStyles = createStyles((theme) => ({
 export function DropzoneButton() {
   const { classes, theme } = useStyles();
   const openRef = useRef();
-  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   useEffect(() => {
     console.log(selectedFiles);
   }, [selectedFiles]);
 
-  const handleFileDrop = async (files) => {
+  const handleFileDrop = async (files: File[]) => {
     const isSelected = selectedFiles.find((f) => f.name === files[0].name);
     if (!isSelected) {
       setSelectedFiles((prevSelectedFiles) => [...prevSelectedFiles, ...files]);
@@ -59,7 +59,7 @@ export function DropzoneButton() {
     }
   };
 
-  const removeSelectedFile = (fileName) => {
+  const removeSelectedFile = (fileName: string) => {
     const newFiles = selectedFiles.filter((file) => file.name !== fileName);
     setSelectedFiles(newFiles);
   };
