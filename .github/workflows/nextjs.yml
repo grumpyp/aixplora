@@ -3,9 +3,22 @@ name: Deploy Next.js site to Pages
 on:
   push:
     paths:
-      - 'site/**'  # Trigger on changes within the /site directory
+      - './site'
 
-# ... rest of the workflow configuration ...
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
   # Build job
@@ -17,6 +30,7 @@ jobs:
       - name: Detect package manager
         id: detect-package-manager
         run: |
+          cd site
           if [ -f "${{ github.workspace }}/site/yarn.lock" ]; then
             echo "manager=yarn" >> $GITHUB_OUTPUT
             echo "command=install" >> $GITHUB_OUTPUT
@@ -44,24 +58,28 @@ jobs:
         uses: actions/cache@v3
         with:
           path: |
-            site/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('site/**/package-lock.json', 'site/**/yarn.lock') }}-${{ hashFiles('site/**/*.js', 'site/**/*.jsx') }}
+            .next/cache
+          # Generate a new cache whenever packages or source files change.
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('./site/**/package-lock.json', './site/**/yarn.lock') }}-${{ hashFiles('./site/**.[jt]s', './site/**.[jt]sx') }}
+          # If source files changed but packages didn't, rebuild from a prior cache.
           restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('site/**/package-lock.json', 'site/**/yarn.lock') }}-
+            ${{ runner.os }}-nextjs-${{ hashFiles('./site/**/package-lock.json', './site/**/yarn.lock') }}-
       - name: Install dependencies
-        working-directory: site
-        run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
+        run: |
+          cd site
+          ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
       - name: Build with Next.js
-        working-directory: site
-        run: ${{ steps.detect-package-manager.outputs.runner }} next build
+        run: |
+          cd site
+          ${{ steps.detect-package-manager.outputs.runner }} next build
       - name: Static HTML export with Next.js
-        working-directory: site
-        run: ${{ steps.detect-package-manager.outputs.runner }} next export
+        run: |
+          cd site
+          ${{ steps.detect-package-manager.outputs.runner }} next export
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-pages-artifact@v1
         with:
-          name: site
-          path: site/out
+          path: ./site/out
 
   # Deployment job
   deploy:
@@ -71,16 +89,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Download artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: site
-          path: site
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
         with:
-          # Specify the directory to deploy
-          target_folder: site/out
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site/out
