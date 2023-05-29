@@ -9,9 +9,5 @@ module.exports = {
     };
   },
   // Add the output configuration
-  output: {
-    // Configure the export options
-    exportTrailingSlash: true,
-    // Other export options can be added here
-  },
+  output: export
 };
