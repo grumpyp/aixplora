@@ -9,5 +9,5 @@ module.exports = {
     };
   },
   // Add the output configuration
-  output: export
+  output: "export"
 };
