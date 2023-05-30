@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { createStyles, Table, ScrollArea, rem } from '@mantine/core';
 
-
 const useStyles = createStyles((theme) => ({
   header: {
     position: 'sticky',
     top: 0,
-    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
+    backgroundColor:
+      theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
     transition: 'box-shadow 150ms ease',
 
     '&::after': {
@@ -16,7 +16,9 @@ const useStyles = createStyles((theme) => ({
       right: 0,
       bottom: 0,
       borderBottom: `${rem(1)} solid ${
-        theme.colorScheme === 'dark' ? theme.colors.dark[3] : theme.colors.gray[2]
+        theme.colorScheme === 'dark'
+          ? theme.colors.dark[3]
+          : theme.colors.gray[2]
       }`,
     },
   },
@@ -38,12 +40,15 @@ export default function UploadedTable({ data }: TableScrollAreaProps) {
     <tr key={row.name}>
       <td>{row.name}</td>
       <td>{row.type}</td>
-      <td>{row.size}</td>
+      <td>{Math.floor(row.size / 1000)} kb</td>
     </tr>
   ));
 
   return (
-    <ScrollArea h={300} onScrollPositionChange={({ y }) => setScrolled(y !== 0)}>
+    <ScrollArea
+      h={300}
+      onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
+    >
       <Table miw={700}>
         <thead className={cx(classes.header, { [classes.scrolled]: scrolled })}>
           <tr>

@@ -1,0 +1,206 @@
+.chat_container {
+  width: 100%;
+  color: black;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 10em;
+  align-items: center;
+  position: relative;
+}
+
+#question {
+  overflow: hidden;
+  overflow-y: auto;
+  border: none;
+  outline: none;
+  padding: 0 1em;
+  height: 100%;
+  font-size: 18px;
+  flex: 7;
+  font-family: 'Poppins';
+}
+
+.temp_question {
+  width: 100%;
+  height: 100%;
+}
+
+.user_input {
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  width: 40%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  height: 2.8em;
+  position: fixed;
+  bottom: 8em;
+}
+
+.question_submit {
+  height: 100%;
+  padding: 0 1em;
+  background: rgba(189, 125, 69, 1);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  cursor: pointer;
+  transition: all 0.4s ease-in-out;
+}
+
+.question_submit:hover {
+  transform: scale(1.01);
+
+  background-color: rgb(158, 0, 158);
+}
+
+.paragraph_content {
+  /* From https://css.glass */
+  background: rgba(189, 125, 69, 0.21);
+  border-radius: 10px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 1em 0.8em;
+}
+.discussion {
+  height: 100%;
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 2em;
+  margin-bottom: 4em;
+}
+
+.container {
+  width: 100%;
+  border-radius: 10px;
+  font-size: 14px;
+  padding: 0.5em 0.4em;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: start;
+  position: relative;
+}
+
+.copy_button{
+  position: absolute;
+  z-index: 5;
+  top: 25px;
+  right: 10px;
+  background-color: rgba(255, 255, 255, 0.303);
+  color: black;
+  font-size: 14px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: .4em .4em;
+  transition: .2s all ease-in-out;
+}
+
+
+.copy_button:hover{
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  background-color: rgb(255, 255, 255);
+
+  backdrop-filter: blur(5px);
+}
+
+.avatar {
+  flex: 1;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: start;
+}
+
+.content {
+  flex: 9;
+  height: 100%;
+}
+
+.avatar_image {
+  border-radius: 50%;
+  object-fit: cover;
+  width: 50px;
+  height: 50px;
+}
+p {
+  font-size: 16px;
+}
+
+.delete_discussion {
+  background-color: red;
+  position: fixed;
+  top: 5em;
+  left: 0;
+  width: 50px;
+  text-align: end;
+  padding: 0.5em 0.5em;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  cursor: pointer;
+}
+
+@media (min-width: 400px) {
+  .discussion {
+    width: 95%;
+  }
+  .user_input {
+    width: 98%;
+    bottom: 10em;
+  }
+}
+
+@media (min-width: 700px) {
+  .discussion {
+    width: 90%;
+  }
+  .user_input {
+    width: 85%;
+    bottom: 10em;
+  }
+}
+
+@media (min-width: 1024px) {
+  .discussion {
+    width: 70%;
+  }
+  .user_input {
+    width: 70%;
+  }
+}
+
+
+@media (min-width: 1299px) {
+  .discussion {
+    width: 60%;
+  }
+  .user_input {
+    width: 70%;
+  }
+}
+
+@media (min-width: 1300px) {
+  .discussion {
+    width: 50%;
+  }
+  .user_input {
+    width: 50%;
+  }
+}
