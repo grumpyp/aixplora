@@ -10,14 +10,13 @@ import Config from './pages/config/Config'
 import Chat from './pages/Chat/Chat';
 import config from './config.js';
 import { useState, useEffect } from "react";
-import Graph from './pages/graph/Graph';
-
+ 
 const randomLinks = [
   { link: '/', label: 'Home' },
   { link: '/upload', label: 'Files' },
   { link: '/chat', label: 'Chat' },
   { link: '/config', label: 'Config' },
-  { link: '/graph', label: 'Graph' },
+ 
 
 ];
 
@@ -68,8 +67,7 @@ export default function Hello() {
             <Route path="/upload" element={<Upload />} />
             <Route path="/chat" element={<Chat />} />
             <Route path="/config" element={<Config />} />
-            <Route path="/graph" element={<Graph />} />
-
+ 
           </Routes>
           <Footer />
         </Router>
