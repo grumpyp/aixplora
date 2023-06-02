@@ -1,0 +1,40 @@
+import ebooklib
+import os
+from fastapi import UploadFile
+from ebooklib import epub
+from bs4 import BeautifulSoup
+from tempfile import SpooledTemporaryFile
+from io import BytesIO, UnsupportedOperation
+from pathlib import Path
+import shutil
+def load_epub(file: bytes, filename: str, file_meta: UploadFile):
+    misc_dir = os.path.join(os.getcwd(), "misc")
+    
+    file_location = f"{misc_dir}/{filename}.txt"
+    with open(file_location, 'w') as fp:
+        pass
+    with open(file_location, "wb+") as file_object:
+        shutil.copyfileobj(file, file_object)
+    book = epub.read_epub(file_location)
+
+    text=""
+    for doc in book.get_items_of_type(ebooklib.ITEM_DOCUMENT):
+       
+        text=text + BeautifulSoup(doc.content).get_text()
+    with open(f"{misc_dir}/{filename}.txt", "w") as f:
+        f.write(text)
+
+    f.close()
+    return f"{misc_dir}/{filename}.txt", file_meta
+# misc_dir = os.path.join(os.getcwd(), "misc")
+# book = epub.read_epub(f"{misc_dir}/sample2.epub")
+# print(book, "book")
+
+
+# for doc in book.get_items_of_type(ebooklib.ITEM_DOCUMENT):
+#     print("start reading*****")
+#     text=BeautifulSoup(doc.content).get_text()
+#     print("end reading")
+#     break
+
+# print(text)

@@ -6,7 +6,7 @@ from loaders.audio_loader import Whisperexporter
 from loaders.docx_loader import load_docx
 from loaders.xlsx_loader import load_xlsx
 from loaders.xls_loader import load_xls
-
+from loaders.epub_loader import load_epub
 import openai
 
 FILE_HANDLERS = {
@@ -25,6 +25,7 @@ FILE_HANDLERS = {
     ".xlsx": lambda file: load_xlsx(file.file, filename=file.filename, file_meta=file),
     ".xls": lambda file: load_xls(file.file, filename=file.filename, file_meta=file),
     ".csv": lambda file: load_txt(file.file, filename=file.filename, file_meta=file),
+    ".epub": lambda file: load_epub(file.file, filename=file.filename, file_meta=file),
     }
 
 
