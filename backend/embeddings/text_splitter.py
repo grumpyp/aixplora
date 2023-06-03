@@ -3,7 +3,7 @@ import nltk
 
 class TextSplitter(BaseSplit):
 
-    def __init__(self, text, context_type, text_length = len):
+    def __init__(self, text, context_type, text_length=len):
         super().__init__(text, context_type, text_length)
 
     def split(self):
