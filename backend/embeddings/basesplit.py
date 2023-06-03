@@ -14,19 +14,6 @@ class ContextTypes(Enum):
     EMBEDDING = 6
 
 
-@dataclass
-class Page:
-    page_content: str
-    context_type: ContextTypes
-    page_number: int
-
-
-@dataclass
-class Chunk:
-    chunk_content: str
-    page: Page
-
-
 class BaseSplit(ABC):
     """
     Base class for splitting text into chunks.
