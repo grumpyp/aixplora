@@ -26,7 +26,7 @@ class BaseSplit(ABC):
         self.text_length = text_length
 
     @abstractmethod
-    def split(self) -> List[Page]:
+    def split(self) -> List[str]:
         """
         Split's file into chunks
         """
