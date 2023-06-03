@@ -9,9 +9,11 @@ services:
     command: python backend/main.py
     volumes:
       - ./backend/:/usr/src/app/backend
+      - ./misc/:/usr/src/app/misc
+      - ./qdrant_data/:/usr/src/app/qdrant_data
     ports:
       - 8000:8000
-  
+
   frontend:
     build:
       context: frontend
@@ -19,5 +21,7 @@ services:
     # command: sh -c "cd frontend && npm start"
     command: npm start
     volumes:
-      - ./frontend:./usr/src/app/frontend
-      - ./frontend/node_modules/:/usr/src/app/frontend/
+      - ./frontend/:/usr/src/app/frontend
+      - ./frontend/node_modules/:/usr/src/app/frontend/node_modules
+    ports:
+      - 1212:1212
