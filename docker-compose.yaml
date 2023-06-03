@@ -16,12 +16,12 @@ services:
 
   frontend:
     build:
-      context: frontend
-      dockerfile: Dockerfile
+      context: ./frontend
     container_name: aix-fe
-    command: npm start
+    command: sh -c "npm install && npm start"
     volumes:
       - ./frontend/:/usr/src/app/
-      - ./frontend/node_modules/:/usr/src/app/node_modules
     ports:
       - 1212:1212
+    environment:
+      NODE_ENV: development

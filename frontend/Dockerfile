@@ -7,11 +7,11 @@ RUN apt-get update && apt-get install -y build-essential
 RUN apt-get install python -y
 
 COPY package.json ./
-# todo: copy ebj first then the rest
+# todo: copy only the .ebj first then the rest later?
 COPY . .
 
 RUN npm install
-RUN npm run anotherinstall
+RUN npm install ts-node@10.9.1 --global
 
 EXPOSE 1212
 
