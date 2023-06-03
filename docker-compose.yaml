@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: aix-be
+    command: python backend/main.py
+    volumes:
+      - ./backend/:/usr/src/app/backend
+    ports:
+      - 8000:8000
+  
+  frontend:
+    build:
+      context: frontend
+    container_name: aix-fe
+    # command: sh -c "cd frontend && npm start"
+    command: npm start
+    volumes:
+      - ./frontend:./usr/src/app/frontend
+      - ./frontend/node_modules/:/usr/src/app/frontend/
