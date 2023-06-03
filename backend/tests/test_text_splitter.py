@@ -31,6 +31,4 @@ def test_text_splitter():
     # Generate a random text with between 8000 and 2200 characters using random sentences
     text = " ".join([generate_random_sentence() for _ in range(random.randint(8, 100))])
     chunks = TextSplitter(text=text, context_type=ContextTypes.TEXT).chunk_document()
-    print(len(list(text)))
-    print(len(chunks))
     assert math.floor(len(text) / 1000) == len(chunks) or math.ceil(len(text) / 1000) == len(chunks)
