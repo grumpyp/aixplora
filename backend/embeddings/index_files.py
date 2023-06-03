@@ -8,12 +8,15 @@ from typing import List
 from langchain.schema import Document
 from database.database import Database
 from sqlalchemy import text
-from utils import openai_ask
+from embeddings.utils import openai_ask
 import random
 from qdrant_client import QdrantClient
 from qdrant_client.http import models
 import openai
 from fastapi import UploadFile
+from embeddings.text_splitter import TextSplitter
+from embeddings.basesplit import ContextTypes
+import re
 
 
 # TODO: This is just a base implementation extend it with metadata,..
@@ -41,10 +44,14 @@ class Genie:
         if file_path:
             self.file_meta = file_meta
             self.file_path = file_path
-            self.loader = TextLoader(self.file_path)
-            self.documents = self.loader.load()
-            self.texts = self.text_split(self.documents)
-            self.vectordb = self.embeddings(self.texts)
+            # if self.file_path isn't a list create one
+            if not isinstance(self.file_path, list):
+                self.file_path = [self.file_path]
+            for i in self.file_path:
+                self.loader = TextLoader(i)
+                self.documents = self.loader.load()
+                self.texts = self.text_split(self.documents)
+                self.vectordb = self.embeddings(self.texts, page=i)
         # self.genie = RetrievalQA.from_chain_type(llm=OpenAI(openai_api_key=OPENAI_API_KEY), chain_type="stuff",
         #                                         retriever=self.vectordb.as_retriever())
         # TODO: seems like LangChain has a bug in creating a db / collection, so I create everything on init - needs refactor
@@ -54,9 +61,6 @@ class Genie:
 
     @staticmethod
     def text_split(documents: TextLoader):
-        from embeddings.text_splitter import TextSplitter
-        from embeddings.basesplit import ContextTypes
-        import re
         # TODO: think about split words (make sense out of it for LLM), not 1000 characters as it is now
         # text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
         # texts = text_splitter.split_documents(documents)
@@ -80,11 +84,12 @@ class Genie:
         print(fixed_whitespaces)
         return fixed_whitespaces
 
-    def upload_embedding(self, texts: List[Document],  collection_name: str = "aixplora") -> None:
+    def upload_embedding(self, texts: List[Document],  collection_name: str = "aixplora", page: int = 0) -> None:
         print(len(texts))
         for i in range(len(texts)):
             print(i)
             print("-"*10)
+            print(texts[i])
             response = openai.Embedding.create(
                 input=texts[i],
                 model="text-embedding-ada-002"
@@ -100,7 +105,8 @@ class Genie:
                         payload={
                             "chunk": texts[i],
                             "metadata": {"filename": self.file_meta.filename,
-                                         "filetype": self.file_meta.content_type}
+                                         "filetype": self.file_meta.content_type,
+                                         "page": page}
                         },
                         vector=embeddings,
                     ),
@@ -108,11 +114,12 @@ class Genie:
             )
         return
 
-    def embeddings(self, texts: List[Document]):
+    def embeddings(self, texts: List[Document], page: int):
         texts = [text for text in texts]
         openai.api_key = self.openai_api_key
         print(len(texts))
-        self.upload_embedding(texts=texts)
+        self.upload_embedding(texts=texts, page=page)
+        return
 
     def search(self, query: str):
         openai.api_key = self.openai_api_key
