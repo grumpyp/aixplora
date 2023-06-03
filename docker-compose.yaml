@@ -8,7 +8,7 @@ services:
     container_name: aix-be
     command: python backend/main.py
     volumes:
-      - ./backend/:/usr/src/app/backend
+      - ./:/usr/src/app
       - ./misc/:/usr/src/app/misc
       - ./qdrant_data/:/usr/src/app/qdrant_data
     ports:
@@ -17,11 +17,11 @@ services:
   frontend:
     build:
       context: frontend
+      dockerfile: Dockerfile
     container_name: aix-fe
-    # command: sh -c "cd frontend && npm start"
     command: npm start
     volumes:
-      - ./frontend/:/usr/src/app/frontend
-      - ./frontend/node_modules/:/usr/src/app/frontend/node_modules
+      - ./frontend/:/usr/src/app/
+      - ./frontend/node_modules/:/usr/src/app/node_modules
     ports:
       - 1212:1212
