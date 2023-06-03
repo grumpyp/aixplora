@@ -11,16 +11,16 @@ def load_epub(file: bytes, filename: str, file_meta: UploadFile):
     misc_dir = os.path.join(os.getcwd(), "misc")
     
     file_location = f"{misc_dir}/{filename}.txt"
-    with open(file_location, 'w') as fp:
-        pass
     with open(file_location, "wb+") as file_object:
         shutil.copyfileobj(file, file_object)
     book = epub.read_epub(file_location)
 
-    text=""
+    contents = []
     for doc in book.get_items_of_type(ebooklib.ITEM_DOCUMENT):
-       
-        text=text + BeautifulSoup(doc.content).get_text()
+        content = BeautifulSoup(doc.content).get_text().strip()
+        contents.append(content)
+    
+    text = "\n".join(contents)
     with open(f"{misc_dir}/{filename}.txt", "w") as f:
         f.write(text)
 
