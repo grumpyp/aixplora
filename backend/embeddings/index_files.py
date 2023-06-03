@@ -54,10 +54,31 @@ class Genie:
 
     @staticmethod
     def text_split(documents: TextLoader):
+        from embeddings.text_splitter import TextSplitter
+        from embeddings.basesplit import ContextTypes
+        import re
         # TODO: think about split words (make sense out of it for LLM), not 1000 characters as it is now
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
-        texts = text_splitter.split_documents(documents)
-        return texts
+        # text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+        # texts = text_splitter.split_documents(documents)
+
+        # fix whitespaces in text
+        document_str = "".join([document.page_content for document in documents])
+        text_splitter = TextSplitter(document_str, ContextTypes.TEXT).chunk_document()
+
+        fixed_whitespaces = []
+        for document in text_splitter:
+            replaced = document
+            replaced = re.sub('\s*\.\s*', '. ', replaced)  # replace ' . ' with '. '
+            replaced = re.sub('\s*,\s*', ', ', replaced)  # replace ' , ' with ', '
+            replaced = re.sub('\s*:\s*', ': ', replaced)  # replace ' : ' with ': '
+            replaced = re.sub('\s*\(\s*', ' (', replaced)  # replace ' ( ' with ' ('
+            replaced = re.sub('\s*\)\s*', ') ', replaced)  # replace ' ) ' with ') '
+            replaced = re.sub('\s+', ' ', replaced)  # replace multiple spaces with one space
+            replaced = replaced.replace('\n', '')
+            fixed_whitespaces.append(replaced)
+
+        print(fixed_whitespaces)
+        return fixed_whitespaces
 
     def upload_embedding(self, texts: List[Document],  collection_name: str = "aixplora") -> None:
         print(len(texts))
@@ -88,7 +109,7 @@ class Genie:
         return
 
     def embeddings(self, texts: List[Document]):
-        texts = [text.page_content for text in texts]
+        texts = [text for text in texts]
         openai.api_key = self.openai_api_key
         print(len(texts))
         self.upload_embedding(texts=texts)
