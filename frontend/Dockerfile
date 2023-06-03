@@ -10,8 +10,9 @@ COPY package.json ./
 # todo: copy only the .ebj first then the rest later?
 COPY . .
 
-RUN npm install
-RUN npm install ts-node@10.9.1 --global
+# can probably skip these lines if we install in docker-compose command
+# RUN npm install
+# RUN npm install ts-node@10.9.1 --global
 
 EXPOSE 1212
 
