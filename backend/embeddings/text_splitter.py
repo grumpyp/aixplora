@@ -24,23 +24,31 @@ class TextSplitter(BaseSplit):
         sentences = nltk.sent_tokenize(self.text)
 
         parsed_sentences = []
+        buffer = ""
         for sentence in sentences:
-            # Tokenize each sentence into words
-            words = nltk.word_tokenize(sentence)
+            # Add the current sentence to the buffer
+            buffer += " " + sentence
 
-            # Perform part-of-speech tagging on the words
+            # Check if buffer already exceeds the desired length
+            if len(buffer) > 1000:
+                # If it does, process the buffer
+                words = nltk.word_tokenize(buffer)
+                tagged_words = nltk.pos_tag(words)
+                chunks = nltk.ne_chunk(tagged_words)
+                phrases = TextSplitter.extract_phrases(chunks)
+                parsed_sentence = ' '.join(phrases)
+                parsed_sentences.append(parsed_sentence)
+
+                # Clear the buffer
+                buffer = ""
+
+        # Process any remaining sentences in the buffer
+        if buffer:
+            words = nltk.word_tokenize(buffer)
             tagged_words = nltk.pos_tag(words)
-
-            # Use ne_chunk for chunking
             chunks = nltk.ne_chunk(tagged_words)
-
-            # Extract the chunked phrases from the parse tree
             phrases = TextSplitter.extract_phrases(chunks)
-
-            # Combine the phrases into a sentence
             parsed_sentence = ' '.join(phrases)
-
-            # Append the parsed sentence to the result
             parsed_sentences.append(parsed_sentence)
 
         return parsed_sentences
@@ -55,6 +63,7 @@ class TextSplitter(BaseSplit):
             phrases.append(tree[0])
         return phrases
 
+    # Not implemented yet, as it loses context of the text
     @staticmethod
     def remove_stopwords(text: str):
         try:
