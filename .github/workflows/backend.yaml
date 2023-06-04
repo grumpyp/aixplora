@@ -2,7 +2,7 @@ name: Python package
 
 on:
   pull_request:
-    types: [created, review_requested]
+    types: [created, review_requested, synchronize]
 
 jobs:
   build:
