@@ -10,6 +10,7 @@ venv
 chroma_db
 *.pyc
 /qdrant_data/
+.pytest_cache
 
 # frontend
 node_modules
