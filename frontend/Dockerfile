@@ -4,8 +4,7 @@ WORKDIR /usr/src/app
 
 # Install necessary build dependencies
 # can merge the below two commands
-RUN apt-get update && apt-get install -y build-essential
-RUN apt-get install python -y
+RUN apt-get update && apt-get install -y build-essential python
 
 # install electron dependencies
 RUN apt-get update && apt-get install \
@@ -15,18 +14,8 @@ RUN apt-get update && apt-get install \
 
 RUN apt-get update && apt-get install -y libgbm-dev
 
-#COPY package.json ./
-# todo: copy only the .ebj first then the rest later?
 COPY . .
-
-#RUN chown -R node /usr/src/app
-#USER node
-
-# can probably skip this since we're installing packages in docker-compose.yml
-# RUN npm install
 
 EXPOSE 1212
 
-#USER node
-
-CMD [ "npm", "start" ]
+CMD [ "bash" ]
