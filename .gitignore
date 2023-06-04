@@ -16,3 +16,4 @@ chroma_db
 node_modules
 
 .next/
+.vscode/launch.json
