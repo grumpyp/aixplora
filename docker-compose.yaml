@@ -18,15 +18,6 @@ services:
     build:
       context: ./frontend
     container_name: aix-fe
-
-#    command: sh -c "npm install --ignore-scripts && npm start \
-#      && whoami && chown root /usr/src/app/node_modules/electron/dist/chrome-sandbox \
-#      && chmod 4755 /usr/src/app/node_modules/electron/dist/chrome-sandbox"
-
-    command: sh -c "chmod +x docker-fe-command.sh && ./docker-fe-command.sh"
-
-#    command: sh -c "npm install && npm start"
-#    command: sh -c "if [ \"$dev\" = \"true\" ]; then npm start; else npm install && npm start; fi"
     volumes:
       - ./frontend/:/usr/src/app/
     ports:
