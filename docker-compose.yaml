@@ -8,7 +8,7 @@ services:
     container_name: aix-be
     command: python backend/main.py
     volumes:
-      - ./:/usr/src/app
+      - ./backend:/usr/src/app/backend
       - ./misc/:/usr/src/app/misc
       - ./qdrant_data/:/usr/src/app/qdrant_data
     ports:
@@ -18,10 +18,21 @@ services:
     build:
       context: ./frontend
     container_name: aix-fe
-    command: sh -c "npm install && npm start"
+
+#    command: sh -c "npm install --ignore-scripts && npm start \
+#      && whoami && chown root /usr/src/app/node_modules/electron/dist/chrome-sandbox \
+#      && chmod 4755 /usr/src/app/node_modules/electron/dist/chrome-sandbox"
+
+    command: sh -c "chmod +x docker-fe-command.sh && ./docker-fe-command.sh"
+
+#    command: sh -c "npm install && npm start"
+#    command: sh -c "if [ \"$dev\" = \"true\" ]; then npm start; else npm install && npm start; fi"
     volumes:
       - ./frontend/:/usr/src/app/
     ports:
       - 1212:1212
     environment:
       NODE_ENV: development
+
+    depends_on:
+      - backend
