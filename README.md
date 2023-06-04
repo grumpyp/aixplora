@@ -29,7 +29,23 @@ There are several ways you can contribute as I just released a PoC of the projec
 https://youtu.be/2lNNKLM0o7U
 https://youtu.be/eKLmhJobVvc
 
-## How to run
+
+## How to run using Docker
+
+### 1. Clone the repo and Install dependencies
+```
+git clone git@github.com:grumpyp/aixplora.git
+```
+### 2. Build Docker image and run containers
+```
+docker compose build
+docker compose up
+```
+- **Note that** 
+  - After adding new packages in Frontend, you'll need to remove `node_modules` folder and then run `docker compose up`
+  - After adding new packages in `requirements.txt` you'll have to run `docker compose up --build`
+
+## How to run locally
 
 ### 1. Clone the repo and Install dependencies
 ```
