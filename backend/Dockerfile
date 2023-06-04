@@ -11,7 +11,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # copy required files/folders
 COPY backend .
 COPY misc .
-COPY qdrant_data .
+# COPY qdrant_data .
 
 EXPOSE 8000
 
