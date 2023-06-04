@@ -116,7 +116,6 @@
   },
   "devDependencies": {
     "@mui/material": "^5.13.2",
-    "@mui/types": "^7.2.4",
     "@electron/notarize": "^1.2.3",
     "@electron/rebuild": "^3.2.10",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
