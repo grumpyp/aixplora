@@ -26,15 +26,3 @@ def load_epub(file: bytes, filename: str, file_meta: UploadFile):
 
     f.close()
     return f"{misc_dir}/{filename}.txt", file_meta
-# misc_dir = os.path.join(os.getcwd(), "misc")
-# book = epub.read_epub(f"{misc_dir}/sample2.epub")
-# print(book, "book")
-
-
-# for doc in book.get_items_of_type(ebooklib.ITEM_DOCUMENT):
-#     print("start reading*****")
-#     text=BeautifulSoup(doc.content).get_text()
-#     print("end reading")
-#     break
-
-# print(text)
