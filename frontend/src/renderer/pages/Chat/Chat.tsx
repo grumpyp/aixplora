@@ -68,11 +68,16 @@ function Chat() {
     setIsLoading(true);
     setError(false);
 
-    try {
-      const response = await axios.post(
+          try {
+            const response = await axios.post(
         `${config.REACT_APP_BACKEND_URL}/chat`,
         {
-          question: input,
+          question: {
+            question: input,
+          },
+          document: {
+            document: null,
+          },
         }
       );
       const data = response.data;

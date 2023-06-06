@@ -5,7 +5,7 @@ from sqlalchemy import text
 from typing import List
 from database.database import Database
 from schemas.config import Config
-from schemas.question import Question
+from schemas.question import Question, Document
 # from schemas.file import File
 from utils import FILE_HANDLERS
 from embeddings.index_files import Genie
@@ -79,9 +79,9 @@ async def upload_files(files: List[UploadFile] = File(...)):
 
 
 @app.post("/chat/")
-def chat(question: Question):
+def chat(question: Question, document: Document):
     genie = Genie()
-    answer = genie.query(query_texts=question.question)
+    answer = genie.query(query_texts=question.question, specific_doc=document.document)
     print(answer)
     return {"question": question.question, "answer": answer["answer"], "meta_data": answer["meta_data"]}
 
