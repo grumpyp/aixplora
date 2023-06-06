@@ -145,8 +145,6 @@ class Genie:
 
         if not query_embedding and not query_texts:
             raise ValueError("Either query_embedding or query_texts must be provided")
-        print("specific doc"*10)
-        print(specific_doc)
         results = self.search(query_texts, specific_doc)
         relevant_docs = [doc.payload["chunk"] for doc in results]
         meta_data = [doc.payload["metadata"] for doc in results]
