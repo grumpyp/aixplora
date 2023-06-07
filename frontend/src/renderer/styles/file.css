@@ -1,0 +1,85 @@
+.dropzone {
+  background-color: var(--link-color);
+  color: var(--background-color);
+}
+.file_zone {
+  margin: 4em auto;
+
+  width: 50%;
+}
+
+.btn {
+  border: none;
+  outline: none;
+  background-color: var(--highlight-color);
+  color: var(--background-color);
+  font-size: 14px;
+  padding: 0.8em 1.5em;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.file_uploaded {
+  width: 50%;
+  margin: 0 auto;
+  color: var(--background-color);
+  background-color: var(--link-color);
+}
+
+.table {
+  background-color: var(--link-color);
+
+}
+
+@media screen and (max-width: 600px) {
+  .file_zone {
+    width: 100%;
+  }
+  .file_uploaded {
+    width: 100%;
+  }
+  /* CSS rules for smaller screens */
+}
+
+/* Styles for screens smaller than 600px */
+@media screen and (min-width: 601px) {
+  .file_zone {
+    width: 100%;
+  }
+  .file_uploaded {
+    width: 100%;
+  }
+}
+
+/* Styles for screens between 600px and 1024px */
+
+@media screen and (min-width: 800px) {
+  .file_zone {
+    width: 100%;
+  }
+  .file_uploaded {
+    width: 100%;
+  }
+}
+
+/* Styles for screens larger than 1024px */
+@media screen and (min-width: 1024px) {
+  .file_zone {
+    margin: 4em auto;
+    width: 70%;
+  }
+  .file_uploaded {
+    width: 70%;
+  }
+}
+
+/* Styles for screens larger than 1024px */
+@media screen and (min-width: 1524px) {
+  .file_zone {
+    margin: 4em auto;
+    width: 70%;
+  }
+  .file_uploaded {
+    width: 70%;
+  }
+}

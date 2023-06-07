@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { createStyles, Table, ScrollArea, rem } from '@mantine/core';
+import '../../../styles/file.css'
+
+
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -46,10 +49,11 @@ export default function UploadedTable({ data }: TableScrollAreaProps) {
 
   return (
     <ScrollArea
+    className='file_uploaded'
       h={300}
       onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
     >
-      <Table miw={700}>
+      <Table miw={700} className='table'>
         <thead className={cx(classes.header, { [classes.scrolled]: scrolled })}>
           <tr>
             <th>name</th>

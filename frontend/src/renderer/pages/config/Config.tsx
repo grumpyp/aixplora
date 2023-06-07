@@ -2,6 +2,7 @@ import { useForm } from '@mantine/form';
 import { TextInput, Button, Box } from '@mantine/core';
 import axios from 'axios';
 import config from '../../config.js';
+import '../../styles/components.css'
 
 function saveConfig(OPENAI_API_KEY) {
   const payload = {
@@ -50,9 +51,9 @@ function Config() {
     <Box maw={320} mx="auto">
       <form onSubmit={form.onSubmit(handleSuccess, handleFail)}>
         <TextInput mt="sm" label="OPENAI API Key" placeholder="OPENAI API Key" {...form.getInputProps('OPENAI_API_KEY')} />
-        <Button type="submit" mt="sm">
+        <button type="submit" className='save_ btn'>
           Save
-        </Button>
+        </button>
       </form>
     </Box>
   );
