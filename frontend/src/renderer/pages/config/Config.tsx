@@ -3,6 +3,7 @@ import { TextInput, Button, Box } from '@mantine/core';
 import axios from 'axios';
 import config from '../../config.js';
 import '../../styles/components.css'
+import Footer from '../../components/Footer';
 
 function saveConfig(OPENAI_API_KEY) {
   const payload = {
@@ -55,6 +56,7 @@ function Config() {
           Save
         </button>
       </form>
+      <Footer />
     </Box>
   );
 }

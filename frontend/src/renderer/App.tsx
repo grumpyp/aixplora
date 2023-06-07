@@ -68,7 +68,7 @@ export default function Hello() {
             <Route path="/config" element={<Config />} />
  
           </Routes>
-          <Footer />
+
         </Router>
       </MantineProvider>
     </div>

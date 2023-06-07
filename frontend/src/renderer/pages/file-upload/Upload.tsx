@@ -3,6 +3,7 @@ import { DropzoneButton } from "./components/Dropzone";
 import UploadedTable from "./components/Uploaded";
 import axios from "axios";
 import config from "../../config";
+import Footer from '../../components/Footer';
 
 type FileData = {
   name: string;
@@ -31,6 +32,7 @@ export function Upload() {
     <div>
       <DropzoneButton />
       <UploadedTable data={files} />
+      <Footer />
     </div>
   );
 }
