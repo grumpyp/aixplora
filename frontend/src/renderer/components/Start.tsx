@@ -1,4 +1,12 @@
-import { createStyles, Title, Text, Button, Container, rem } from '@mantine/core';
+import {
+  createStyles,
+  Title,
+  Text,
+  Button,
+  Container,
+  rem,
+} from '@mantine/core';
+import '../styles/components.css';
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -16,7 +24,6 @@ const useStyles = createStyles((theme) => ({
     position: 'relative',
     zIndex: 1,
   },
-    
 
   title: {
     textAlign: 'center',
@@ -34,7 +41,8 @@ const useStyles = createStyles((theme) => ({
   },
 
   highlight: {
-    color: theme.colors[theme.primaryColor][theme.colorScheme === 'dark' ? 4 : 6],
+    color:
+      theme.colors[theme.primaryColor][theme.colorScheme === 'dark' ? 4 : 6],
   },
 
   description: {
@@ -77,25 +85,27 @@ export default function GettingStarted() {
   const { classes } = useStyles();
 
   return (
-    <Container className={classes.wrapper} size={1400}>
+    <Container className="message_container" size={1400}>
       <div className={classes.inner}>
-        <Title className={classes.title}>
-          Thanks for using{' '}
-          <Text component="span" className={classes.highlight} inherit>
-            AIxplora
-          </Text>{' '}
-          - Enjoy 🎉
-        </Title>
+        <h2 className="title">
+          Thanks for using <span className="highlight">AIxplora</span>- Enjoy 🎉
+        </h2>
 
-        <Container p={0} size={600}>
-          <Text size="lg" color="dimmed" className={classes.description}>
-           Feel free to join our Discord server for help and support: <br/>
-              <a href="https://discord.gg/2G778kHG">https://discord.gg/2Y8b8GJ</a> <br/><br/>
-
-        We also appreciate contributions to the project, so feel free to check out our GitHub page: <br/>
-        <a href="https://github.com/grumpyp/aixplora/">https://github.com/grumpyp/aixplora/</a>
-          </Text>
-        </Container>
+        <div>
+          <p color="dimmed" className="description">
+            Feel free to join our Discord server for help and support: <br />
+            <a className="starter" href="https://discord.gg/2G778kHG">
+              https://discord.gg/2Y8b8GJ
+            </a>{' '}
+            <br />
+            <br />
+            We also appreciate contributions to the project, so feel free to
+            check out our GitHub page: <br />
+            <a className="starter" href="https://github.com/grumpyp/aixplora/">
+              https://github.com/grumpyp/aixplora/
+            </a>
+          </p>
+        </div>
       </div>
     </Container>
   );

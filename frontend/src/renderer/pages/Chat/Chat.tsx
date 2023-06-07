@@ -46,20 +46,27 @@ function Chat() {
     }
   }, []);
 
+ 
+
+  
+
   const deleteDiscussion = () => {
     setQueue([]);
     localStorage.removeItem('queue');
     close();
   };
 
-  const scrollToMyRef = () => {
-    const scroll =
-      bottomRef.current.scrollHeight - bottomRef.current.clientHeight;
-    bottomRef.current.scrollTo(0, scroll);
-  };
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    // Scroll to the bottom after rendering the last item
+    if (containerRef.current) {
+      containerRef.current.scrollTop = containerRef.current.scrollHeight;
+    }
+  }, [queue]);
 
   const sendMessage = async () => {
-    scrollToMyRef();
+ 
     setLastQuestion(input);
     window.scrollTo(0, document.documentElement.scrollHeight);
 
@@ -122,13 +129,19 @@ function Chat() {
         </Modal.Content>
       </Modal.Root>
       <div ref={bottomRef} className="discussion">
-        {queue.map((message, index) => (
-          <Block question={message.question} answer={message.answer} />
-        ))}
+      {queue.map((message, index) => (
+        <Block
+          key={index}
+          question={message.question}
+          answer={message.answer}
+          ref={index === queue.length - 1 ? containerRef : null}
+        />
+      ))}
         {isLoading ? (
           <div className="temp_question">
             {' '}
-            <Question content={lastQuestion} /> <Answer isLoading={true} />
+            <Question content={lastQuestion} />{' '}
+            <Answer content="" isLoading={true} />
           </div>
         ) : null}
       </div>

@@ -11,6 +11,7 @@ import { Dropzone } from '@mantine/dropzone';
 import { IconCloudUpload, IconX, IconDownload } from '@tabler/icons-react';
 import axios from 'axios';
 import config from '../../../config';
+import '../../../styles/file.css'
 
 const useStyles = createStyles((theme) => ({
   // Styles definition here
@@ -65,7 +66,7 @@ export function DropzoneButton() {
   };
 
   return (
-    <div className={classes.wrapper}>
+    <div className="file_zone">
       {selectedFiles.length > 0 && (
         <div className={classes.selectedFileWrapper}>
           <Text className={classes.selectedFileText}>
@@ -99,7 +100,7 @@ export function DropzoneButton() {
       <Dropzone
         openRef={openRef}
         onDrop={handleFileDrop}
-        className={classes.dropzone}
+        className="dropzone"
         radius="md"
       >
         <div style={{ pointerEvents: 'none' }}>
@@ -143,15 +144,15 @@ export function DropzoneButton() {
       </Dropzone>
 
       {selectedFiles.length > 0 && (
-        <Button
-          className={classes.control}
+        <button
+          className="upload_ btn"
           size="md"
           style={{ margin: '1em 0' }}
           radius="xl"
           onClick={handleFileUpload}
         >
           Upload to API
-        </Button>
+        </button>
       )}
     </div>
   );

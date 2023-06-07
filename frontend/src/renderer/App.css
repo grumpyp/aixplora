@@ -23,27 +23,16 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,700;0,800;1,100;1,300;1,400;1,600;1,700&display=swap');
 
-
-html{
-  font-family: 'Poppins'
-}
-button {
-  background-color: white;
-  padding: 10px 20px;
-  border-radius: 10px;
-  border: none;
-  appearance: none;
-  font-size: 1.3rem;
-  box-shadow: 0px 8px 28px -6px rgba(24, 39, 75, 0.12),
-    0px 18px 88px -4px rgba(24, 39, 75, 0.14);
-  transition: all ease-in 0.1s;
-  cursor: pointer;
-  opacity: 0.9;
+:root {
+  --background-color: #252422;
+  --text-color: #fffcf2;
+  --highlight-color: #eb5e28;
+  --forground-color: #403d39;
+  --link-color: #ccc5b9;
 }
 
-button:hover {
-  transform: scale(1.05);
-  opacity: 1;
+html {
+  font-family: 'Poppins';
 }
 
 li {
@@ -56,6 +45,19 @@ a {
   width: fit-content;
   margin: 10px;
 }
+body{
+  position: relative;
+}
+
+.btn {
+  margin-top: 1em;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  padding: 0.8em 1.5em;
+  border-radius: 10px;
+  cursor: pointer;
+}
 
 a:hover {
   opacity: 1;
@@ -67,4 +69,9 @@ a:hover {
   justify-content: center;
   align-items: center;
   margin: 20px 0;
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
 }

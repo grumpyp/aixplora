@@ -35,12 +35,14 @@
   height: 2.8em;
   position: fixed;
   bottom: 8em;
+  -webkit-box-shadow: 0px 0px 32px 5px rgba(0,0,0,0.45); 
+box-shadow: 0px 0px 32px 5px rgba(0,0,0,0.45);
 }
 
 .question_submit {
   height: 100%;
   padding: 0 1em;
-  background: rgba(189, 125, 69, 1);
+  background-color: var(--highlight-color);
   color: white;
   display: flex;
   justify-content: center;
@@ -51,19 +53,14 @@
 }
 
 .question_submit:hover {
-  transform: scale(1.01);
-
-  background-color: rgb(158, 0, 158);
+  background-color: #d2653a;
 }
 
 .paragraph_content {
   /* From https://css.glass */
-  background: rgba(189, 125, 69, 0.21);
+  background-color: var(--text-color);
+  color: var(--backgound-color);
   border-radius: 10px;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
   padding: 1em 0.8em;
 }
 .discussion {
@@ -88,7 +85,7 @@
   position: relative;
 }
 
-.copy_button{
+.copy_button {
   position: absolute;
   z-index: 5;
   top: 25px;
@@ -103,12 +100,11 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  padding: .4em .4em;
-  transition: .2s all ease-in-out;
+  padding: 0.4em 0.4em;
+  transition: 0.2s all ease-in-out;
 }
 
-
-.copy_button:hover{
+.copy_button:hover {
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   background-color: rgb(255, 255, 255);
 
@@ -185,7 +181,6 @@ p {
     width: 70%;
   }
 }
-
 
 @media (min-width: 1299px) {
   .discussion {
