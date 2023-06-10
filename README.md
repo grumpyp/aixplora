@@ -1,7 +1,9 @@
 # AIxplora - Your AI powered personal file explorer
 <p align="center">
+
   <img src="./docs/images/aixplora_logo.png" width="350" title="AIxplora logo"><br>
 <a href="https://discord.gg/2G778kHG">
+
   <img src="https://img.shields.io/badge/discord-join%20chat-blue.svg" alt="Join our Discord" height="40"></a>
 </p>
 
@@ -11,7 +13,6 @@ It leverages AI and LLMs to understand all types of documents, unrestricted by t
 **Imagine being able to query PDF files, MP3 audio, videos, and other types of documents with equal ease and proficiency. 
 Yes, that's the limitless world AIxplora is inviting you into!***
 
-*Currently in our PoC version 0.0.1 only .pdf files are supported. We are releasing new file-types and features soon!
 
 ## How Can You Contribute?
 There are several ways you can contribute as I just released a PoC of the project:
@@ -26,12 +27,9 @@ There are several ways you can contribute as I just released a PoC of the projec
 
 - Spread the Word: Share our project within your networks. The more people know about AIxplora, the better it can become!
 
-## Demo and introduction video
-<a href="https://youtu.be/eKLmhJobVvc" target="_blank">
- <img src="https://i9.ytimg.com/vi_webp/eKLmhJobVvc/mqdefault.webp?v=646e612f&sqp=COzbuaMG&rs=AOn4CLBO1JDjSaot7flQJMZt9uLWSyreAQ" alt="Watch the video" width="240" height="180" border="10" />
-</a>
-[![AIxplora - Your AI powered personal file explorer](https://i9.ytimg.com/vi_webp/eKLmhJobVvc/mqdefault.webp?v=646e612f&sqp=COzbuaMG&rs=AOn4CLBO1JDjSaot7flQJMZt9uLWSyreAQ)](https://youtu.be/eKLmhJobVvc)
-
+## Demo and introduction videos
+https://youtu.be/2lNNKLM0o7U
+https://youtu.be/eKLmhJobVvc
 
 ## How to run
 
@@ -61,11 +59,5 @@ npm start
 - Cloud deployment
 - Integrations (Google Drive, Dropbox, etc.)
 
-
-## Contributors tbd.
-
-## ToDo:
-
-- Delete unnessesary deps from requirements.txt (Chroma, LangChain,..)
-- Make index_files.py nice again
+[![Star History Chart](https://api.star-history.com/svg?repos=grumpyp/aixplora&type=Date)](https://star-history.com/#grumpyp/aixplora&Date)
 
