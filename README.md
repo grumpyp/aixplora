@@ -30,21 +30,6 @@ https://youtu.be/2lNNKLM0o7U
 https://youtu.be/eKLmhJobVvc
 
 
-## How to run using Docker
-
-### 1. Clone the repo and Install dependencies
-```
-git clone git@github.com:grumpyp/aixplora.git
-```
-### 2. Build Docker image and run containers
-```
-docker compose build
-docker compose up
-```
-- **Note that** 
-  - After adding new packages in Frontend, you'll need to remove `node_modules` folder and then run `docker compose up`
-  - After adding new packages in `requirements.txt` you'll have to run `docker compose up --build`
-
 ## How to run locally
 
 ### 1. Clone the repo and Install dependencies
@@ -62,6 +47,29 @@ python backend/main.py
 cd frontend
 npm start
 ```
+
+## How to run using Docker Compose
+
+### 1. Clone the repo and Install dependencies
+```
+git clone git@github.com:grumpyp/aixplora.git
+```
+### 2. Build Docker image and run containers
+```
+docker compose up --build
+```
+### 3. When running the above command for the first time, make sure `frontend/node_modules` folder does not exist. The initial build might take some time since it will install the the required dependencies.
+
+### 4. Once the build and the package installation is finished, it should show an error in the console `The SUID sandbox helper binary was found...` (We'll work on that to fix it).
+### 5. Navigate to the UI on `http://localhost:1212/`. It will also show an error `Cannot read properties of undefined (reading 'ipcRenderer')`. Close the error clicking the close button at the bottom of the screen, and you're good to go!
+### 6. Next time when starting the app you can simply use the following command
+```
+docker compose up
+```
+
+- **Note that** 
+  - After adding new packages in Frontend in `package.json` file, you'll need to remove `node_modules` folder and then run `docker compose up`
+  - After adding new packages in `requirements.txt` you'll have to run `docker compose up --build`
 
 
 ## Roadmap
