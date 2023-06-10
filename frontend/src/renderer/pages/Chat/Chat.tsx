@@ -1,93 +1,72 @@
-import { useState, CSSProperties, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './chat.css';
 import axios from 'axios';
 import config from '../../config.js';
-import { Message } from 'renderer/utils';
 import Question from './components/Question';
 import Answer from './components/Answer';
 import { IconSend, IconTrash } from '@tabler/icons-react';
-
 import { Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import Block from './components/Block';
 
-const override: CSSProperties = {
-  display: 'block',
-  margin: '0 auto',
-  borderColor: 'red',
-};
-
-const styles = {
-  position: 'absolute' as 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  backgroundColor: 'background.paper',
-  border: '2px solid #000',
-  borderShadow: 24,
-  p: 4,
+type Message = {
+  question: string;
+  answer: string;
+  isLoading: boolean;
 };
 
 function Chat() {
   const [queue, setQueue] = useState<Message[]>([]);
   const bottomRef = useRef();
   const [isLoading, setIsLoading] = useState(false);
-  const [lastQuestion, setLastQuestion] = useState('');
   const [error, setError] = useState(false);
   const [input, setInput] = useState('');
 
   useEffect(() => {
     const chatData = localStorage.getItem('queue');
     if (chatData) {
-      setQueue(JSON.parse(chatData)); // Parse the JSON string to retrieve the stored messages
+      setQueue(JSON.parse(chatData));
     } else {
       setQueue([]);
     }
   }, []);
 
- 
-
-  
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [queue]);
 
   const deleteDiscussion = () => {
     setQueue([]);
     localStorage.removeItem('queue');
-    close();
   };
 
-  const containerRef = useRef(null);
-
-  useEffect(() => {
-    // Scroll to the bottom after rendering the last item
-    if (containerRef.current) {
-      containerRef.current.scrollTop = containerRef.current.scrollHeight;
-    }
-  }, [queue]);
-
   const sendMessage = async () => {
- 
-    setLastQuestion(input);
-    window.scrollTo(0, document.documentElement.scrollHeight);
-
+    const currentQuestion = input;
     setInput('');
-
     setIsLoading(true);
     setError(false);
+
+    setQueue((prevQueue: Message[]) => [
+      ...prevQueue,
+      { question: currentQuestion, answer: '', isLoading: true },
+    ]);
 
     try {
       const response = await axios.post(
         `${config.REACT_APP_BACKEND_URL}/chat`,
         {
-          question: input,
+          question: currentQuestion,
         }
       );
       const data = response.data;
 
-      setQueue((prevQueue: Message[]) => [
-        ...prevQueue,
-        { question: input, answer: data.answer },
-      ]);
+      setQueue((prevQueue: Message[]) =>
+        prevQueue.map((message) =>
+          message.question === currentQuestion
+            ? { question: currentQuestion, answer: data.answer, isLoading: false }
+            : message
+        )
+      );
     } catch (error) {
       setError(true);
     }
@@ -128,22 +107,16 @@ function Chat() {
           </Modal.Body>
         </Modal.Content>
       </Modal.Root>
-      <div ref={bottomRef} className="discussion">
-      {queue.map((message, index) => (
-        <Block
-          key={index}
-          question={message.question}
-          answer={message.answer}
-          ref={index === queue.length - 1 ? containerRef : null}
-        />
-      ))}
-        {isLoading ? (
-          <div className="temp_question">
-            {' '}
-            <Question content={lastQuestion} />{' '}
-            <Answer content="" isLoading={true} />
-          </div>
-        ) : null}
+      <div className="discussion">
+        {queue.map((message, index) => (
+          <Block
+            key={index}
+            question={message.question}
+            answer={message.answer}
+            isLoading={message.isLoading}
+          />
+        ))}
+        <div ref={bottomRef} />
       </div>
       <div className="user_input">
         <input
@@ -153,25 +126,9 @@ function Chat() {
           }}
           placeholder="what is the meaning of life"
           type="text"
-          name="question"
-          id="question"
-          onKeyDown={(event) => {
-            if (input.length != 0 || isLoading) {
-              if (event.key === 'Enter') {
-                sendMessage();
-              }
-            }
-          }}
         />
-        <div
-          onClick={() => {
-            if (input.length != 0 || isLoading) {
-              sendMessage();
-            }
-          }}
-          className="question_submit"
-        >
-          <IconSend />
+        <div onClick={sendMessage} className="icon_send">
+          <IconSend color="white" />
         </div>
       </div>
     </div>
