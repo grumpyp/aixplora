@@ -1,6 +1,6 @@
 # AIxplora - Your AI powered personal file explorer
 <p align="center">
-  <img src="aixplora_logo.png" width="350" title="AIxplora logo"><br>
+  <img src="./docs/images/aixplora_logo.png" width="350" title="AIxplora logo"><br>
 <a href="https://discord.gg/2G778kHG">
   <img src="https://img.shields.io/badge/discord-join%20chat-blue.svg" alt="Join our Discord" height="40"></a>
 </p>
@@ -27,6 +27,9 @@ There are several ways you can contribute as I just released a PoC of the projec
 - Spread the Word: Share our project within your networks. The more people know about AIxplora, the better it can become!
 
 ## Demo and introduction video
+<a href="https://youtu.be/eKLmhJobVvc" target="_blank">
+ <img src="https://i9.ytimg.com/vi_webp/eKLmhJobVvc/mqdefault.webp?v=646e612f&sqp=COzbuaMG&rs=AOn4CLBO1JDjSaot7flQJMZt9uLWSyreAQ" alt="Watch the video" width="240" height="180" border="10" />
+</a>
 [![AIxplora - Your AI powered personal file explorer](https://i9.ytimg.com/vi_webp/eKLmhJobVvc/mqdefault.webp?v=646e612f&sqp=COzbuaMG&rs=AOn4CLBO1JDjSaot7flQJMZt9uLWSyreAQ)](https://youtu.be/eKLmhJobVvc)
 
 
