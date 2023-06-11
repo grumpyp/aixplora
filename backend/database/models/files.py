@@ -5,7 +5,18 @@ from sqlalchemy.sql.sqltypes import Enum
 
 # TODO: loader for each file type
 class Filetype(Enum):
-    """enum for file types"""
+    """
+    An enumeration for different file types.
+
+    This enum provides a set of file types and their corresponding values.
+    Each file type is associated with a string value.
+
+    Example Usage:
+    ```
+        filetype = Filetype.PDF
+        print(filetype.value)  # Output: "pdf"
+    ```
+    """
     M4A = "m4a"
     MPEG = "mpeg"
     WEBM = "webm"
@@ -32,7 +43,28 @@ class Filetype(Enum):
 
 
 class File(BaseModel):
-    """all indexed files"""
+    """
+    A SQLAlchemy model representing indexed files.
+
+    This model defines the structure and attributes of the 'files' table in the database.
+    It inherits from the BaseModel class.
+
+    Attributes:
+        id (int): The primary key
+        file_name (str): Stores file name.
+        file_type (str): Stores file type (represented by the `Filetype` enum).
+        file_size (int): Stores file size in bytes.
+
+    Example Usage:
+    ```
+        # Creating a new File object
+        file = File(file_name='example.txt', file_type=Filetype.TXT, file_size=1024)
+
+        # Saving the File object to the database
+        session.add(file)
+        session.commit()
+    ```
+    """
     __tablename__ = 'files'
     id = Column(Integer, primary_key=True)  # primary key field
     file_name = Column(String, nullable=False)

@@ -102,7 +102,7 @@
     "@mantine/ds": "^6.0.11",
     "@mantine/form": "^6.0.11",
     "@mantine/hooks": "^6.0.11",
-    "@mui/material": "^5.13.2",
+    "@mui/material": "^5.13.3",
     "@radix-ui/react-slot": "^1.0.2",
     "axios": "^1.4.0",
     "electron-debug": "^3.2.0",

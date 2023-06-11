@@ -12,35 +12,43 @@ from embeddings.index_files import Genie
 from sqlalchemy.exc import DatabaseError
 import os
 
-# TODO: use best practise for routing
+# importing global settings
+from settings import CORS
+# importing route constants to be used by this API
+from routes.routes import app_routes
 
+# initializing app
 app = FastAPI()
 
 # CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows all origins
-    allow_credentials=True,
-    allow_methods=["*"],  # Allows all methods
-    allow_headers=["*"],  # Allows all headers
+    allow_origins=CORS['allowed_origins'], 
+    allow_credentials=CORS['allowed_credentials'],
+    allow_methods=CORS['allowed_methods'],
+    allow_headers=CORS['allowed_headers'],
 )
 
-@app.get("/config/")
+@app.get(app_routes['config'])
 def get_config():
     db = Database().get_session()
     if db.execute(text("SELECT * FROM config")).first() is None:
         return False
     return True
 
-@app.post("/config/")
+@app.post(app_routes['config'])
 def add_config(config: Config):
     db = Database().get_session()
-    res = db.execute(text("INSERT INTO config (openai_api_key) VALUES (:api_key)"), {"api_key": config.apiKey})
+    res = db.execute(
+        text("INSERT INTO config (openai_api_key) VALUES (:api_key)"), 
+        {
+            "api_key": config.apiKey
+        })
     db.commit()
     return config
 
 
-@app.get("/files/")
+@app.get(app_routes['files'])
 def get_files():
     try:
         db = Database().get_session()
@@ -55,7 +63,7 @@ def get_files():
     except DatabaseError as e:
         return {"error": str(e)}
 
-@app.post("/files/")
+@app.post(app_routes['files'])
 async def upload_files(files: List[UploadFile] = File(...)):
     from database.models.files import File
     for file in files:
@@ -78,7 +86,7 @@ async def upload_files(files: List[UploadFile] = File(...)):
     return {"message": "Files uploaded successfully"}
 
 
-@app.post("/chat/")
+@app.post(app_routes['chat'])
 def chat(question: Question):
     genie = Genie()
     answer = genie.query(query_texts=question.question)
