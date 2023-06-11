@@ -48,12 +48,13 @@ def get_files():
         res = []
         if files is not None:
             for file in files:
-                res.append({"name": file[1], "type": file[2], "size": file[3]})
+                res.append({"id": file[0], "name": file[1], "type": file[2], "size": file[3]})
         else:
             return {"error": "No files found."}
         return res
     except DatabaseError as e:
         return {"error": str(e)}
+
 
 @app.post("/files/")
 async def upload_files(files: List[UploadFile] = File(...)):
@@ -76,6 +77,18 @@ async def upload_files(files: List[UploadFile] = File(...)):
         db.commit()
         print(f"added {file.filename} to db")
     return {"message": "Files uploaded successfully"}
+
+
+@app.delete("/files/")
+def delete_files(files: List[UploadFile] = File(...)):
+    from database.models.files import File
+    for file in files:
+        entry = File(id=file.id)
+        db = Database.get_session()
+        db.delete(entry)
+        db.commit()
+        print(f"deleted {file.filename} from the db")
+    return {"message": "Files deleted successfully"}
 
 
 @app.post("/chat/")
