@@ -18,10 +18,11 @@ from embeddings.text_splitter import TextSplitter
 from embeddings.basesplit import ContextTypes
 import re
 
-# TODO: remove this log if not needed, or log this only when DEBUG=True
-        # example
-        # if DEBUG:
-        #   print("length of texts is: ", len(texts))
+# importing global settings
+from settings import DEBUG
+
+# imported for debugging purposes only
+from tests.terminal_colors import colors
 
 # TODO: This is just a base implementation extend it with metadata,..
 # 25.05.2023: Quickfix for now removed langchain components to make it work asap, needs refactor - old
@@ -119,6 +120,13 @@ class Genie:
         Returns:
             List[str]: A list of fixed whitespace text chunks.
         """
+        
+        if DEBUG:
+            print("{}INSIDE{} embeddings.index_files.Genie.text_split".format(
+                colors.bg.orange,
+                colors.reset
+            ))
+            
         document_str = "".join([document.page_content for document in documents])
         text_splitter = TextSplitter(document_str, ContextTypes.TEXT).chunk_document()
 
@@ -134,7 +142,13 @@ class Genie:
             replaced = replaced.replace('\n', '')
             fixed_whitespaces.append(replaced)
 
-        print(fixed_whitespaces)
+        if DEBUG:
+            print("📣 {}text after getting whitespace removed:{}".format(
+                colors.fg.yellow + colors.bold,
+                colors.reset
+            ))
+            print(fixed_whitespaces)
+    
         return fixed_whitespaces
 
     def upload_embedding(self, texts: List[Document],  collection_name: str = "aixplora", page: int = 0) -> None:
@@ -149,12 +163,26 @@ class Genie:
         Returns:
             None
         """
-        
-        print(len(texts))
+        if DEBUG:
+            print("{}INSIDE{} embeddings.index_files.Genie.upload_embedding".format(
+                colors.bg.orange,
+                colors.reset
+            ))
+            print("📣 {}length of the recieved text is:{}".format(
+                colors.fg.yellow + colors.bold,
+                colors.reset
+            ))
+            print(len(texts))
         
         for i in range(len(texts)):
-            print(i)
-            print("-"*10)
+            
+            if DEBUG:
+                print("📣 {}iterating through Text length: {}".format(
+                    colors.fg.yellow + colors.bold,
+                    colors.reset
+                ), end="")
+                print(i)
+        
             response = openai.Embedding.create(
                 input=texts[i],
                 model="text-embedding-ada-002"
@@ -190,9 +218,27 @@ class Genie:
         Returns:
             None
         """
+        if DEBUG:
+            print("{}INSIDE{} embeddings.index_files.Genie.embeddings".format(
+                colors.bg.orange,
+                colors.reset
+            ))
+            
         texts = [text for text in texts]
         openai.api_key = self.openai_api_key
-        print(len(texts))
+        
+        if DEBUG:
+            print("📣 {}text recieved:{}".format(
+                    colors.fg.yellow + colors.bold,
+                    colors.reset
+            ))
+            print(texts)
+            print("📣 {}with length:{}".format(
+                    colors.fg.yellow + colors.bold,
+                    colors.reset
+            ))
+            print(len(texts))
+            
         self.upload_embedding(texts=texts, page=page)
         return
 
@@ -238,6 +284,13 @@ class Genie:
         Returns:
             _answer (dict[str]): The query results.
         """
+        
+        if DEBUG:
+            print("{}INSIDE{} embeddings.index_files.Genie.query".format(
+                colors.bg.orange,
+                colors.reset
+            ))
+            
         if not query_embedding and not query_texts:
             raise ValueError("Either query_embedding or query_texts must be provided")
 
@@ -249,5 +302,12 @@ class Genie:
             question=query_texts, 
             openai_api_key=self.openai_api_key)
         _answer = {"answer": answer, "meta_data": meta_data}
-        print(meta_data)
+        
+        if DEBUG:
+            print("📣 {}metadata:{}".format(
+                    colors.fg.yellow + colors.bold,
+                    colors.reset
+            ))
+            print(meta_data)
+            
         return _answer

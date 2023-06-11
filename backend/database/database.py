@@ -4,7 +4,7 @@ from database.models.config import Config
 from database.models.base import Base
 
 # importing global settings
-from settings import DATABASE
+from settings import DEBUG, DATABASE
 
 
 class Database:
@@ -43,8 +43,19 @@ class Database:
         return self.sessionmaker()
 
 if __name__ == "__main__":
-    db = Database().get_session()
-    result = db.execute(text("SELECT * FROM notes"))
-    for row in result:
-        print(row)
-    db.close()
+    if DEBUG:
+
+        print("{}INSIDE{} database.database".format(
+            colors.bg.orange,
+            colors.reset
+        ))
+        
+        db = Database().get_session()
+        result = db.execute(text("SELECT * FROM notes"))
+        for row in result:
+            print("📣 {}Row: {}".format(
+                    colors.fg.yellow + colors.bold,
+                    colors.reset
+            ), end="")
+            print(row)
+        db.close()

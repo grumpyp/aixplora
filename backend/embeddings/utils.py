@@ -25,10 +25,26 @@ def openai_ask(
         str: The response from the OpenAI Chat API.
     """
     
-    # TODO: condition these logs to work only when DEBUG=True
-    print(question)
-    print(context)
-    print(pages)
+    if DEBUG:
+        print("{}INSIDE{} embeddings.utils.openai_ask".format(
+            colors.bg.orange,
+            colors.reset
+        ))
+        print("📣 {}recieved question:{}".format(
+                    colors.fg.yellow + colors.bold,
+                    colors.reset
+        ))
+        print(question)
+        print("📣 {}recieved context:{}".format(
+                    colors.fg.yellow + colors.bold,
+                    colors.reset
+        ))
+        print(context)
+        print("📣 {}recieved pages:{}".format(
+                    colors.fg.yellow + colors.bold,
+                    colors.reset
+        ))
+        print(pages)
     
     # TODO: make answer to same language
     completion = openai.ChatCompletion.create(

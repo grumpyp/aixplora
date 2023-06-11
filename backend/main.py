@@ -13,9 +13,11 @@ from sqlalchemy.exc import DatabaseError
 import os
 
 # importing global settings
-from settings import CORS
+from settings import DEBUG, CORS
 # importing route constants to be used by this API
 from routes.routes import app_routes
+# importing for debugging purposes
+from tests.terminal_colors import colors
 
 # initializing app
 app = FastAPI()
@@ -31,6 +33,13 @@ app.add_middleware(
 
 @app.get(app_routes['config'])
 def get_config():
+    
+    if DEBUG:
+        print("{}INSIDE{} main.get_config".format(
+            colors.bg.orange,
+            colors.reset
+        ))
+        
     db = Database().get_session()
     if db.execute(text("SELECT * FROM config")).first() is None:
         return False
@@ -38,6 +47,13 @@ def get_config():
 
 @app.post(app_routes['config'])
 def add_config(config: Config):
+    
+    if DEBUG:
+        print("{}INSIDE{} main.add_config".format(
+            colors.bg.orange,
+            colors.reset
+        ))
+        
     db = Database().get_session()
     res = db.execute(
         text("INSERT INTO config (openai_api_key) VALUES (:api_key)"), 
@@ -50,6 +66,13 @@ def add_config(config: Config):
 
 @app.get(app_routes['files'])
 def get_files():
+    
+    if DEBUG:
+        print("{}INSIDE{} main.get_files".format(
+            colors.bg.orange,
+            colors.reset
+        ))
+            
     try:
         db = Database().get_session()
         files = db.execute(text("SELECT * FROM files")).fetchall()
@@ -65,32 +88,79 @@ def get_files():
 
 @app.post(app_routes['files'])
 async def upload_files(files: List[UploadFile] = File(...)):
+    
+    if DEBUG:
+        print("{}INSIDE{} main.upload_files".format(
+            colors.bg.orange,
+            colors.reset
+        ))
+            
     from database.models.files import File
     for file in files:
         file_extension = os.path.splitext(file.filename)[1]
-        print(file_extension*10)
+        
+        if DEBUG:
+            print("📣 {}file extension recieved:{}".format(
+                    colors.fg.yellow + colors.bold,
+                    colors.reset
+            ))
+            print(file_extension*10)
+            
         if file_extension in FILE_HANDLERS:
             transcription = FILE_HANDLERS[file_extension](file)
-            print(f"{file.filename} file text extracted")
+            if DEBUG:  
+                print("📣 {}file text extracted:{}".format(
+                    colors.fg.yellow + colors.bold,
+                    colors.reset
+                ))
+                print(f"{file.filename}")
+                
             # TODO: implement table which tracks costs of API usage OpenAI
             # TODO: implement async task for indexing
             Genie(file_path=transcription[0], file_meta=transcription[1])
-            print(f"{file.filename} file indexed")
+            
+            if DEBUG:  
+                print("📣 {}following file got indexed:{}".format(
+                    colors.fg.yellow + colors.bold,
+                    colors.reset
+                ))
+                print(f"{file.filename}")
 
 
         entry = File(file_name=file.filename, file_type=file.content_type, file_size=file.size)
         db = Database().get_session()
         db.add(entry)
         db.commit()
-        print(f"added {file.filename} to db")
+        
+        if DEBUG:  
+            print("📣 {}added following to DB:{}".format(
+                colors.fg.yellow + colors.bold,
+                colors.reset
+            ))
+            print(f"{file.filename}")
+            
     return {"message": "Files uploaded successfully"}
 
 
 @app.post(app_routes['chat'])
 def chat(question: Question):
+    
+    if DEBUG:
+        print("{}INSIDE{} main.chat".format(
+            colors.bg.orange,
+            colors.reset
+        ))
+            
     genie = Genie()
     answer = genie.query(query_texts=question.question)
-    print(answer)
+    
+    if DEBUG:
+        print("📣 {}answer recieved from Genie:{}".format(
+            colors.fg.yellow + colors.bold,
+            colors.reset
+        ))
+        print(answer)
+        
     return {"question": question.question, "answer": answer["answer"], "meta_data": answer["meta_data"]}
 
 
