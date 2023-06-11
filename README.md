@@ -1,7 +1,9 @@
 # AIxplora - Your AI powered personal file explorer
 <p align="center">
-  <img src="aixplora_logo.png" width="350" title="AIxplora logo"><br>
-<a href="https://discord.com/invite/M2AuGZvgHq">
+
+  <img src="./docs/images/aixplora_logo.png" width="350" title="AIxplora logo"><br>
+<a href="https://discord.gg/2G778kHG">
+
   <img src="https://img.shields.io/badge/discord-join%20chat-blue.svg" alt="Join our Discord" height="40"></a>
 </p>
 

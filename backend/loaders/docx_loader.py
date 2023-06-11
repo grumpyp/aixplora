@@ -2,6 +2,9 @@ from docx import Document
 import os
 from fastapi import UploadFile
 
+# importing for debugging purposes
+from tests.terminal_colors import colors
+
 
 def load_docx(file: bytes, filename: str, file_meta: UploadFile):
 
@@ -17,6 +20,10 @@ def load_docx(file: bytes, filename: str, file_meta: UploadFile):
                 f.write(paragraph.text + '\n')
             f.close()
     except Exception as e:
-        print(f"Error: {e}")
+        print("{}Error: {}{}".format(
+            colors.fg.red + colors.bold,
+            e,
+            colors.reset
+        ))
 
     return f"{misc_dir}/{filename}.txt", file_meta

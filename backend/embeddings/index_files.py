@@ -18,13 +18,70 @@ from embeddings.text_splitter import TextSplitter
 from embeddings.basesplit import ContextTypes
 import re
 
+# importing global settings
+from settings import DEBUG
+
+# imported for debugging purposes only
+from tests.terminal_colors import colors
 
 # TODO: This is just a base implementation extend it with metadata,..
 # 25.05.2023: Quickfix for now removed langchain components to make it work asap, needs refactor - old
 # 25.05.2023: Quickfix, seems also to be a problem with chromadb, now using qudrant vector db, needs refactor
 class Genie:
+    """
+    A class representing a Genie object.
 
-    def __init__(self, file_path: str = None, file_meta: UploadFile = None):
+    The Genie class provides functionalities related to handling and processing files, embedding text,
+    searching for relevant documents, and querying the Genie for answers.
+
+    Attributes:
+        openai_api_key (str): The OpenAI API key fetched from the 'config' table in the database.
+        qu (QdrantClient): The QdrantClient object for interacting with the Qdrant search engine.
+        file_meta (UploadFile): The metadata of the file being processed.
+        file_path (str or list[str]): The path(s) of the file(s) being processed.
+        loader (TextLoader): The TextLoader object for loading the file(s).
+        documents (TextLoader): The loaded documents from the file(s).
+        texts (List[str]): The split text chunks from the loaded documents.
+        vectordb (None or any): The embeddings of the text chunks.
+
+    Methods:
+        text_split(documents: TextLoader) -> List[str]: 
+            Splits the documents into fixed whitespace text chunks.
+            
+        upload_embedding(texts: List[Document], collection_name: str = "aixplora", page: int = 0) -> None: 
+            Uploads the embeddings of the text chunks to the Qdrant search engine.
+            
+        embeddings(texts: List[str], page: int): 
+            Processes and uploads the embeddings of the text chunks.
+            
+        search(query: str): 
+            Searches for relevant documents based on the query.
+            
+        query(query_embedding: List[List[float]] = None, query_texts: str = None): 
+            Queries the Genie for answers based on the provided query.
+
+    Example Usage:
+    ```
+        genie = Genie(file_path="example.txt")
+        results = genie.search(query="search query")
+        answer = genie.query(query_texts="What is the answer?")
+    ```
+    """
+    
+    def __init__(
+        self, 
+        file_path: str = None, 
+        file_meta: UploadFile = None):
+        """
+        Initializes the Genie object.
+
+        Args:
+            file_path (str): The path of the file to be processed. Defaults to None.
+            file_meta (UploadFile): The metadata of the file being processed. Defaults to None.
+
+        Returns:
+            None
+        """
         try:
             self.openai_api_key = Database().get_session().execute(text("SELECT openai_api_key FROM config")).fetchall()[-1][0]
         except:
@@ -54,7 +111,22 @@ class Genie:
 
     @staticmethod
     def text_split(documents: TextLoader) -> List[str]:
+        """
+        Splits the documents into fixed whitespace text chunks.
 
+        Args:
+            documents (TextLoader): The TextLoader object containing the documents.
+
+        Returns:
+            List[str]: A list of fixed whitespace text chunks.
+        """
+        
+        if DEBUG:
+            print("{}INSIDE{} embeddings.index_files.Genie.text_split".format(
+                colors.bg.orange,
+                colors.reset
+            ))
+            
         document_str = "".join([document.page_content for document in documents])
         text_splitter = TextSplitter(document_str, ContextTypes.TEXT).chunk_document()
 
@@ -70,14 +142,47 @@ class Genie:
             replaced = replaced.replace('\n', '')
             fixed_whitespaces.append(replaced)
 
-        print(fixed_whitespaces)
+        if DEBUG:
+            print("📣 {}text after getting whitespace removed:{}".format(
+                colors.fg.yellow + colors.bold,
+                colors.reset
+            ))
+            print(fixed_whitespaces)
+    
         return fixed_whitespaces
 
     def upload_embedding(self, texts: List[Document],  collection_name: str = "aixplora", page: int = 0) -> None:
-        print(len(texts))
+        """
+        Uploads the embeddings of the text chunks to the Qdrant search engine.
+
+        Args:
+            texts (List[Document]): The list of text documents to be uploaded.
+            collection_name (str, optional): The name of the collection. Defaults to "aixplora".
+            page (int, optional): The page number of the text documents. Defaults to 0.
+
+        Returns:
+            None
+        """
+        if DEBUG:
+            print("{}INSIDE{} embeddings.index_files.Genie.upload_embedding".format(
+                colors.bg.orange,
+                colors.reset
+            ))
+            print("📣 {}length of the recieved text is:{}".format(
+                colors.fg.yellow + colors.bold,
+                colors.reset
+            ))
+            print(len(texts))
+        
         for i in range(len(texts)):
-            print(i)
-            print("-"*10)
+            
+            if DEBUG:
+                print("📣 {}iterating through Text length: {}".format(
+                    colors.fg.yellow + colors.bold,
+                    colors.reset
+                ), end="")
+                print(i)
+        
             response = openai.Embedding.create(
                 input=texts[i],
                 model="text-embedding-ada-002"
@@ -102,14 +207,51 @@ class Genie:
             )
         return
 
-    def embeddings(self, texts: List[str], page: int):
+    def embeddings(self, texts: List[str], page: int) -> None:
+        """
+        Processes and uploads the embeddings of the text chunks.
+
+        Args:
+            texts (List[str]): The list of text chunks.
+            page (int): The page number of the text documents.
+
+        Returns:
+            None
+        """
+        if DEBUG:
+            print("{}INSIDE{} embeddings.index_files.Genie.embeddings".format(
+                colors.bg.orange,
+                colors.reset
+            ))
+            
         texts = [text for text in texts]
         openai.api_key = self.openai_api_key
-        print(len(texts))
+        
+        if DEBUG:
+            print("📣 {}text recieved:{}".format(
+                    colors.fg.yellow + colors.bold,
+                    colors.reset
+            ))
+            print(texts)
+            print("📣 {}with length:{}".format(
+                    colors.fg.yellow + colors.bold,
+                    colors.reset
+            ))
+            print(len(texts))
+            
         self.upload_embedding(texts=texts, page=page)
         return
 
-    def search(self, query: str):
+    def search(self, query: str) -> None:
+        """
+        Searches for relevant documents based on the query.
+
+        Args:
+            query (str): The query string.
+
+        Returns:
+            The search results.
+        """
         openai.api_key = self.openai_api_key
         response = openai.Embedding.create(
             input=query,
@@ -128,15 +270,44 @@ class Genie:
 
     # This is used to ask questions on all documents
     # TODO: evaluate how many embeddings are in db, based on that change n_results dynamcially
-    def query(self, query_embedding: List[List[float]] = None, query_texts: str = None):
+    def query(
+        self, 
+        query_embedding: List[List[float]] = None, 
+        query_texts: str = None) -> dict[str]:
+        """
+        Queries the Genie for answers based on the provided query.
 
+        Args:
+            query_embedding (List[List[float]], optional): The embedding of the query. Defaults to None.
+            query_texts (str, optional): The text of the query. Defaults to None.
+
+        Returns:
+            _answer (dict[str]): The query results.
+        """
+        
+        if DEBUG:
+            print("{}INSIDE{} embeddings.index_files.Genie.query".format(
+                colors.bg.orange,
+                colors.reset
+            ))
+            
         if not query_embedding and not query_texts:
             raise ValueError("Either query_embedding or query_texts must be provided")
 
         results = self.search(query_texts)
         relevant_docs = [doc.payload["chunk"] for doc in results]
         meta_data = [doc.payload["metadata"] for doc in results]
-        answer = openai_ask(context=relevant_docs, question=query_texts, openai_api_key=self.openai_api_key)
+        answer = openai_ask(
+            context=relevant_docs, 
+            question=query_texts, 
+            openai_api_key=self.openai_api_key)
         _answer = {"answer": answer, "meta_data": meta_data}
-        print(meta_data)
+        
+        if DEBUG:
+            print("📣 {}metadata:{}".format(
+                    colors.fg.yellow + colors.bold,
+                    colors.reset
+            ))
+            print(meta_data)
+            
         return _answer
