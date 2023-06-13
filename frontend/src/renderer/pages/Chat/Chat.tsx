@@ -1,50 +1,35 @@
-import { useState, CSSProperties, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './chat.css';
 import axios from 'axios';
 import config from '../../config.js';
 import { Message } from 'renderer/utils';
 import Question from './components/Question';
 import Answer from './components/Answer';
-import { IconSend, IconTrash } from '@tabler/icons-react';
-
+import { IconSend, IconTrash, IconArrowUp } from '@tabler/icons-react';
 import { Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import Block from './components/Block';
 
-const override: CSSProperties = {
-  display: 'block',
-  margin: '0 auto',
-  borderColor: 'red',
-};
-
-const styles = {
-  position: 'absolute' as 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  backgroundColor: 'background.paper',
-  border: '2px solid #000',
-  borderShadow: 24,
-  p: 4,
-};
-
 function Chat() {
   const [queue, setQueue] = useState<Message[]>([]);
-  const bottomRef = useRef();
   const [isLoading, setIsLoading] = useState(false);
   const [lastQuestion, setLastQuestion] = useState('');
   const [error, setError] = useState(false);
   const [input, setInput] = useState('');
+  const discussionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const chatData = localStorage.getItem('queue');
     if (chatData) {
-      setQueue(JSON.parse(chatData)); // Parse the JSON string to retrieve the stored messages
+      setQueue(JSON.parse(chatData));
     } else {
       setQueue([]);
     }
   }, []);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [queue, input]);
 
   const deleteDiscussion = () => {
     setQueue([]);
@@ -52,19 +37,17 @@ function Chat() {
     close();
   };
 
-  const scrollToMyRef = () => {
-    const scroll =
-      bottomRef.current.scrollHeight - bottomRef.current.clientHeight;
-    bottomRef.current.scrollTo(0, scroll);
+  const scrollToBottom = () => {
+    window.scrollTo({
+      top: document.documentElement.scrollHeight,
+      behavior: "smooth"
+    });
   };
 
+
   const sendMessage = async () => {
-    scrollToMyRef();
     setLastQuestion(input);
-    window.scrollTo(0, document.documentElement.scrollHeight);
-
     setInput('');
-
     setIsLoading(true);
     setError(false);
 
@@ -94,11 +77,17 @@ function Chat() {
   }, [queue]);
 
   const [opened, { open, close }] = useDisclosure(false);
+  const up = () => {
+    window.scrollTo(0, 0);
+  };
 
   return (
     <div className="chat_container">
       <div onClick={open} className="delete_discussion">
         <IconTrash color="white" />
+      </div>
+      <div onClick={up} className="arrow_up">
+        <IconArrowUp color="white" />
       </div>
       <Modal.Root opened={opened} onClose={close}>
         <Modal.Overlay />
@@ -114,16 +103,16 @@ function Chat() {
             </p>
             <button
               onClick={deleteDiscussion}
-              style={{ backgroundColor: 'red', color: 'white' }}
+              style={{ backgroundColor: '#228be6', color: 'white' }}
             >
               Delete
             </button>
           </Modal.Body>
         </Modal.Content>
       </Modal.Root>
-      <div ref={bottomRef} className="discussion">
+      <div ref={discussionRef} className="discussion">
         {queue.map((message, index) => (
-          <Block question={message.question} answer={message.answer} />
+          <Block question={message.question} answer={message.answer} key={index} />
         ))}
         {isLoading ? (
           <div className="temp_question">
