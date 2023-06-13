@@ -113,7 +113,8 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.11.2",
     "react-spinners": "^0.13.8",
-    "sigma": "^3.0.0-alpha3"
+    "sigma": "^3.0.0-alpha3",
+    "tabler-icons-react": "^1.56.0"
   },
   "devDependencies": {
     "@electron/notarize": "^1.2.3",

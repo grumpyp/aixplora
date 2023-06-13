@@ -1,6 +1,7 @@
 import React from 'react';
 import Question from './Question';
 import Answer from './Answer';
+import '../chat.css'
 
 function Block(props: { answer: string; question: string }) {
   return (

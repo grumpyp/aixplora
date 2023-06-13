@@ -2,12 +2,24 @@ import { useState, CSSProperties, useEffect, useRef } from 'react';
 import './chat.css';
 import axios from 'axios';
 import config from '../../config.js';
+import { getHotkeyHandler } from '@mantine/hooks';
 import { Message } from 'renderer/utils';
+import { MoodHappy, Send } from 'tabler-icons-react';
+
 import Question from './components/Question';
 import Answer from './components/Answer';
 import { IconSend, IconTrash } from '@tabler/icons-react';
 
-import { Modal } from '@mantine/core';
+import {
+  ActionIcon,
+  Avatar,
+  Button,
+  Group,
+  Modal,
+  Paper,
+  Stack,
+  TextInput,
+} from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import Block from './components/Block';
 
@@ -35,8 +47,18 @@ function Chat() {
   const [isLoading, setIsLoading] = useState(false);
   const [lastQuestion, setLastQuestion] = useState('');
   const [error, setError] = useState(false);
-  const [input, setInput] = useState('');
+  const [value, setValue] = useState('');
 
+  const [input, setInput] = useState('');
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState('');
+
+  const handleMessageSend = () => {
+    if (newMessage.trim() !== '') {
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+      setNewMessage('');
+    }
+  };
   useEffect(() => {
     const chatData = localStorage.getItem('queue');
     if (chatData) {
@@ -96,72 +118,52 @@ function Chat() {
   const [opened, { open, close }] = useDisclosure(false);
 
   return (
-    <div className="chat_container">
-      <div onClick={open} className="delete_discussion">
-        <IconTrash color="white" />
-      </div>
-      <Modal.Root opened={opened} onClose={close}>
-        <Modal.Overlay />
-        <Modal.Content>
-          <Modal.Header>
-            <Modal.Title>Delete the discussion</Modal.Title>
-            <Modal.CloseButton />
-          </Modal.Header>
-          <Modal.Body>
-            <p>
-              Are you sure you want to delete the discussion? this action is
-              irreversible
-            </p>
-            <button
-              onClick={deleteDiscussion}
-              style={{ backgroundColor: 'red', color: 'white' }}
-            >
-              Delete
-            </button>
-          </Modal.Body>
-        </Modal.Content>
-      </Modal.Root>
-      <div ref={bottomRef} className="discussion">
-        {queue.map((message, index) => (
-          <Block question={message.question} answer={message.answer} />
+     
+    <Stack className="messages" p={0}>
+      <div style={{ marginBottom: '1rem' }}>
+        {messages.map((message, index) => (
+          <Paper
+            key={index}
+            padding="xs"
+            shadow="xs"
+            style={{ marginBottom: '0.5rem' }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              {index % 2 !== 0 && (
+                <Avatar
+                  size="sm"
+                  radius="xl"
+                  src="https://placekitten.com/40/40"
+                  alt="User Avatar"
+                />
+              )}
+              <div style={{ marginLeft: index % 2 === 0 ? 'auto' : '0.5rem' }}>
+                {message}
+              </div>
+              {index % 2 === 0 && (
+                <Avatar
+                  size="sm"
+                  radius="xl"
+                  src="https://placekitten.com/40/40"
+                  alt="User Avatar"
+                />
+              )}
+            </div>
+          </Paper>
         ))}
-        {isLoading ? (
-          <div className="temp_question">
-            {' '}
-            <Question content={lastQuestion} /> <Answer isLoading={true} />
-          </div>
-        ) : null}
       </div>
-      <div className="user_input">
-        <input
-          value={input}
-          onChange={(e) => {
-            setInput(e.target.value);
-          }}
-          placeholder="what is the meaning of life"
-          type="text"
-          name="question"
-          id="question"
-          onKeyDown={(event) => {
-            if (input.length != 0 || isLoading) {
-              if (event.key === 'Enter') {
-                sendMessage();
-              }
-            }
-          }}
+      <div className="button_send" style={{ display: 'flex' }}>
+        <TextInput
+          style={{ marginRight: '1rem' }}
+          value={newMessage}
+          onChange={(event) => setNewMessage(event.target.value)}
+          placeholder="Type your message..."
         />
-        <div
-          onClick={() => {
-            if (input.length != 0 || isLoading) {
-              sendMessage();
-            }
-          }}
-          className="question_submit"
-        >
-          <IconSend />
-        </div>
+        <Button onClick={handleMessageSend} variant="outline">
+          Send
+        </Button>
       </div>
-    </div>
+    </Stack>
   );
 }
 
