@@ -40,7 +40,7 @@ function Chat() {
   const scrollToBottom = () => {
     window.scrollTo({
       top: document.documentElement.scrollHeight,
-      behavior: "smooth"
+      behavior: 'smooth',
     });
   };
 
