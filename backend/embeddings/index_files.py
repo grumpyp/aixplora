@@ -109,31 +109,43 @@ class Genie:
         self.upload_embedding(texts=texts, page=page)
         return
 
-    def search(self, query: str):
+    def search(self, query: str, specific_doc: str | None):
         openai.api_key = self.openai_api_key
         response = openai.Embedding.create(
             input=query,
             model="text-embedding-ada-002"
         )
         embeddings = response['data'][0]['embedding']
-
         results = self.qu.search(
-            collection_name="aixplora",
-            query_vector=embeddings,
-            limit=3,
-            with_payload=True
-        )
+                collection_name="aixplora",
+                query_vector=embeddings,
+                limit=3,
+                with_payload=True
+            )
+        if specific_doc is not None:
+            results = self.qu.search(
+                collection_name="aixplora",
+                query_vector=embeddings,
+                query_filter=models.Filter(
+                    must=[
+                        models.FieldCondition(
+                            key="metadata.filename",
+                            match=models.MatchValue(value=f"{specific_doc}"),
+                        )
+                    ]
+                ),
+                limit=3
+            )
 
         return results
 
     # This is used to ask questions on all documents
     # TODO: evaluate how many embeddings are in db, based on that change n_results dynamcially
-    def query(self, query_embedding: List[List[float]] = None, query_texts: str = None):
+    def query(self, query_embedding: List[List[float]] = None, query_texts: str = None, specific_doc: str = None):
 
         if not query_embedding and not query_texts:
             raise ValueError("Either query_embedding or query_texts must be provided")
-
-        results = self.search(query_texts)
+        results = self.search(query_texts, specific_doc)
         relevant_docs = [doc.payload["chunk"] for doc in results]
         meta_data = [doc.payload["metadata"] for doc in results]
         answer = openai_ask(context=relevant_docs, question=query_texts, openai_api_key=self.openai_api_key)

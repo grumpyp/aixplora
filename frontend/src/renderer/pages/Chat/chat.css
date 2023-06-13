@@ -173,6 +173,14 @@ p {
   cursor: pointer;
 }
 
+.metadata {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
 @media (min-width: 400px) {
   .discussion {
     width: 95%;

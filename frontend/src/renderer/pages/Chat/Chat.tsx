@@ -51,18 +51,23 @@ function Chat() {
     setIsLoading(true);
     setError(false);
 
-    try {
-      const response = await axios.post(
+          try {
+            const response = await axios.post(
         `${config.REACT_APP_BACKEND_URL}/chat`,
         {
-          question: input,
+          question: {
+            question: input,
+          },
+          document: {
+            document: null,
+          },
         }
       );
       const data = response.data;
 
       setQueue((prevQueue: Message[]) => [
         ...prevQueue,
-        { question: input, answer: data.answer },
+        { question: input, answer: data.answer, metadata: data.meta_data },
       ]);
     } catch (error) {
       setError(true);
@@ -111,8 +116,8 @@ function Chat() {
         </Modal.Content>
       </Modal.Root>
       <div ref={discussionRef} className="discussion">
-        {queue.map((message, index) => (
-          <Block question={message.question} answer={message.answer} key={index} />
+        {queue.map((message, index, metadata) => (
+          <Block question={message.question} answer={message.answer} metadata={message.metadata} key={index} />
         ))}
         {isLoading ? (
           <div className="temp_question">
