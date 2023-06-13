@@ -37,6 +37,18 @@
   bottom: 8em;
 }
 
+.specific_document {
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  width: 70%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  height: 2.8em;
+  position: static;
+  top: 8em;
+}
+
+
 .question_submit {
   height: 100%;
   padding: 0 1em;

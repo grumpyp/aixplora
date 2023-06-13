@@ -51,6 +51,7 @@ def get_files():
                 res.append({"name": file[1], "type": file[2], "size": file[3]})
         else:
             return {"error": "No files found."}
+        print(res)
         return res
     except DatabaseError as e:
         return {"error": str(e)}
