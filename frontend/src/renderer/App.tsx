@@ -17,7 +17,8 @@ const randomLinks = [
   { link: '/upload', label: 'Files' },
   { link: '/chat', label: 'Chat' },
   { link: '/config', label: 'Config' },
-  { link: '/graph', label: 'Graph' },
+  // Feature is requests but buggy.
+    // { link: '/graph', label: 'Graph' },
 
 ];
 
@@ -68,7 +69,8 @@ export default function Hello() {
             <Route path="/upload" element={<Upload />} />
             <Route path="/chat" element={<Chat />} />
             <Route path="/config" element={<Config />} />
-            <Route path="/graph" element={<Graph />} />
+              // now implemented
+            {/*<Route path="/graph" element={<Graph />} />*/}
 
           </Routes>
           <Footer />
