@@ -87,5 +87,15 @@ def chat(question: Question, document: Document):
     return {"question": question.question, "answer": answer["answer"], "meta_data": answer["meta_data"]}
 
 
+@app.get("/test/")
+def test():
+    from llm.summarize import Summarize
+
+    s = Summarize("Ethereum_Whitepaper_-_Buterin_2014.pdf")
+    print(s.get_summary())
+
+    return {"message": "Hello World"}
+
+
 if __name__ == "__main__":
     uvicorn.run(app, host="localhost", port=8000)
