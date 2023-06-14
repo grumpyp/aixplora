@@ -87,14 +87,13 @@ def chat(question: Question, document: Document):
     return {"question": question.question, "answer": answer["answer"], "meta_data": answer["meta_data"]}
 
 
-@app.get("/test/")
-def test():
+@app.post("/summarize/")
+def test(document: Document):
     from llm.summarize import Summarize
 
-    s = Summarize("Ethereum_Whitepaper_-_Buterin_2014.pdf")
-    print(s.get_summary())
+    s = Summarize(document.document)
 
-    return {"message": "Hello World"}
+    return s.get_summary()
 
 
 if __name__ == "__main__":
