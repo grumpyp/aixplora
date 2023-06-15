@@ -5,7 +5,7 @@ from database.database import Database
 from sqlalchemy import text
 import os
 import tiktoken
-import requests
+from sqlalchemy import text
 import re
 import time
 
@@ -41,8 +41,9 @@ class Summarize:
         make a check against the db and the misc folder
         :return: boolean
         """
-        db_index = True if self.db.execute(text(f"SELECT * FROM files WHERE file_name='{self.document}'")) else False
-        misc_index = any(re.match(rf'^{self.document}', file) for file in os.listdir(self.misc_dir))
+        stmt = text("SELECT * FROM files WHERE file_name=:file_name")
+        db_index = True if self.db.execute(stmt, {"file_name": self.document.document}).fetchone() else False
+        misc_index = any(re.match(rf'^{self.document.document}', file) for file in os.listdir(self.misc_dir))
         return True if db_index and misc_index else False
 
     def get_summary(self):
@@ -51,7 +52,7 @@ class Summarize:
         try:
             if self.is_indexed:
                 for doc in os.listdir(self.misc_dir):
-                    if doc.startswith(self.document):
+                    if doc.startswith(self.document.document):
                         with open(f"misc/{doc}", "r") as f:
                             contents.append(f.read())
             text = "".join(contents)
@@ -92,12 +93,11 @@ class Summarize:
                     max_tokens=4000 - count_token,
                     messages=[
                         {"role": "user",
-                         "content": f"Conclude a big answer about the following summaries: {''.join(summary)}.the answer should be structured in bulleted lists following the headings Core Argument, Evidence, and Conclusions. It should also introduce everything. If you know additional internet references, add them accordingly"
+                         "content": f"Conclude a big answer about the following summaries: {''.join(summary)}.the answer should be structured in bulleted lists following the headings Core Argument, Evidence, and Conclusions. It should also introduce everything. Take all the infos of the provided summaries if it's a reference! If you know additional internet references, add them accordingly"
                             }]
                 )
-                return response.choices[0]["message"]["content"]
+                return {"summary": response.choices[0]["message"]["content"], "summary_list": "<hr>".join(summary)}
             else:
-                print(contents)
                 response = openai.ChatCompletion.create(
                     model="gpt-3.5-turbo",
                     temperature=0.2,
@@ -107,7 +107,8 @@ class Summarize:
                          "content": f"Write a summary of this summary {text}. If you know additional internet references, add them accordingly"}
                     ]
                 )
-                return response.choices[0]["message"]["content"]
+                print({"summary": response.choices[0]["message"]["content"], "summary_list": "No additional references"})
+                return {"summary": response.choices[0]["message"]["content"], "summary_list": "No additional references"}
         except Exception as e:
             print(e)
             raise NotImplementedError("Indexing for choosing a specific file is not implemented yet. The summary should highlight and name + reference the core for example: argument, conclusions and evidence")

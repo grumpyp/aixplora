@@ -91,7 +91,7 @@ def chat(question: Question, document: Document):
 def test(document: Document):
     from llm.summarize import Summarize
 
-    s = Summarize(document.document)
+    s = Summarize(document)
 
     return s.get_summary()
 
