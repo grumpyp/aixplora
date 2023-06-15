@@ -87,5 +87,14 @@ def chat(question: Question, document: Document):
     return {"question": question.question, "answer": answer["answer"], "meta_data": answer["meta_data"]}
 
 
+@app.post("/summarize/")
+def test(document: Document):
+    from llm.summarize import Summarize
+
+    s = Summarize(document)
+
+    return s.get_summary()
+
+
 if __name__ == "__main__":
     uvicorn.run(app, host="localhost", port=8000)
