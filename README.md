@@ -47,6 +47,8 @@ cd frontend
 npm start
 ```
 
+**Having issues installing frontend? See this [debugging guide](https://github.com/electron-react-boilerplate/electron-react-boilerplate/issues/400)**
+
 
 ## Roadmap
 
