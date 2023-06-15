@@ -83,10 +83,6 @@ class Summarize:
                     # TODO: make a way to not exceed the token limit neither call the api to often
                         raise ("The summary is still too long. Please try again.")
                 count_token = num_tokens_from_string("".join(summary), "cl100k_base")
-                print("lets go"*10)
-                print(count_token)
-                print("".join((summary)))
-                print("lets go" * 10)
                 response = openai.ChatCompletion.create(
                     model="gpt-4",
                     temperature=0.2,
