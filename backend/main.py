@@ -90,9 +90,18 @@ def chat(question: Question, document: Document):
 @app.post("/summarize/")
 def test(document: Document):
     from llm.summarize import Summarize
-
+    from database.models.summary import Summary
+    db = Database().get_session()
+    indexed_summaries = db.execute(text("SELECT * FROM summaries WHERE file_name = :file_name"), {"file_name": document.document}).first()
+    if indexed_summaries is not None:
+        print("found summary in db")
+        return {"summary": indexed_summaries[2], "summary_list": indexed_summaries[3]}
     s = Summarize(document)
+    summary = s.get_summary()
+    entry = Summary(file_name=document.document, summary=summary.get('summary'), summary_list=summary.get('summary_list'))
 
+    db.add(entry)
+    db.commit()
     return s.get_summary()
 
 
