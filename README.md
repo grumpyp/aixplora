@@ -26,7 +26,7 @@ There are several ways you can contribute as I just released a PoC of the projec
 - Spread the Word: Share our project within your networks. The more people know about AIxplora, the better it can become!
 
 ## Demo and introduction videos
-[![Summary function showcase](https://img.youtube.com/vi/8x9HhWjjNtY/hqdefault.jpg)]([https://youtu.be/vt5fpE0bzSY](https://youtu.be/8x9HhWjjNtY))
+[![Summary function showcase](https://img.youtube.com/vi/8x9HhWjjNtY/hqdefault.jpg)](https://youtu.be/8x9HhWjjNtY)
 https://youtu.be/2lNNKLM0o7U
 https://youtu.be/eKLmhJobVvc
 
