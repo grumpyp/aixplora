@@ -1,11 +1,11 @@
 import uvicorn
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from typing import List
 from database.database import Database
 from schemas.config import Config
-from schemas.question import Question, Document
+from schemas.question import Question, Document, FileToDelete
 # from schemas.file import File
 from utils import FILE_HANDLERS
 from embeddings.index_files import Genie
@@ -35,8 +35,12 @@ def get_config():
 @app.post("/config/")
 def add_config(config: Config):
     db = Database().get_session()
-    res = db.execute(text("INSERT INTO config (openai_api_key) VALUES (:api_key)"), {"api_key": config.apiKey})
-    db.commit()
+    try:
+        res = db.execute(text("INSERT INTO config (openai_api_key) VALUES (:api_key)"), {"api_key": config.apiKey})
+        db.commit()
+    except HTTPException as e:
+         return e
+        
     return config
 
 
@@ -55,6 +59,7 @@ def get_files():
         return res
     except DatabaseError as e:
         return {"error": str(e)}
+
 
 @app.post("/files/")
 async def upload_files(files: List[UploadFile] = File(...)):
@@ -78,6 +83,30 @@ async def upload_files(files: List[UploadFile] = File(...)):
         print(f"added {file.filename} to db")
     return {"message": "Files uploaded successfully"}
 
+import time
+
+@app.delete("/files/")
+def delete_files(file: FileToDelete):
+    print("dfgdfg")
+    misc_dir = os.path.join(os.getcwd(), "misc")
+    files = os.listdir(misc_dir)
+
+    db = Database().get_session()
+
+    for f in files:
+        if f.startswith(file.file):
+            file_path = os.path.join(misc_dir, f)
+            os.remove(file_path)
+            
+            db.execute(text("DELETE FROM files WHERE file_name = :name"), {"name": file.file})
+            db.commit()
+            
+            # Introduce a delay to allow other processes or connections to access the database
+            time.sleep(0.1)  # Adjust the duration as needed
+    
+    return {"message": "Files deleted successfully"}
+
+
 
 @app.post("/chat/")
 def chat(question: Question, document: Document):
@@ -85,6 +114,9 @@ def chat(question: Question, document: Document):
     answer = genie.query(query_texts=question.question, specific_doc=document.document)
     print(answer)
     return {"question": question.question, "answer": answer["answer"], "meta_data": answer["meta_data"]}
+
+
+
 
 
 @app.post("/summarize/")

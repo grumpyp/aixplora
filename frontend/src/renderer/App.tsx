@@ -7,24 +7,26 @@ import Footer from './components/Footer';
 import GettingStarted from './components/Start';
 import axios from 'axios';
 import Config from './pages/config/Config';
+import { Provider } from 'react-redux';
 import Chat from './pages/Chat/Chat';
 import config from './config.js';
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import { Summary } from './pages/summary/Summary';
+import store from './store';
 
 const randomLinks = [
   { link: '/', label: 'Home' },
   { link: '/upload', label: 'Files' },
   { link: '/chat', label: 'Chat' },
   { link: '/config', label: 'Config' },
-    { link: '/summary', label: 'Summary' },
-
+  { link: '/summary', label: 'Summary' },
 ];
 
 function checkConfig() {
-  console.log("executed CheckConfig");
+  console.log('executed CheckConfig');
 
-  return axios.get(`${config.REACT_APP_BACKEND_URL}/config`)
+  return axios
+    .get(`${config.REACT_APP_BACKEND_URL}/config`)
     .then((response) => {
       const fetchedConfig = response.data;
       console.log(fetchedConfig);
@@ -44,7 +46,6 @@ function checkConfig() {
     });
 }
 
-
 export default function Hello() {
   const [isConfigValid, setConfigValid] = useState(null);
 
@@ -60,20 +61,24 @@ export default function Hello() {
 
   return (
     <div>
-      <MantineProvider>
-        <Router>
-          <HeaderResponsive links={randomLinks} />
-          <Routes>
-            <Route path="/" element={isConfigValid ? <GettingStarted /> : <Config />} />
-            <Route path="/upload" element={<Upload />} />
-            <Route path="/chat" element={<Chat />} />
-            <Route path="/config" element={<Config />} />
-            <Route path="/summary" element={<Summary />} />
-
-          </Routes>
-          <Footer />
-        </Router>
-      </MantineProvider>
+      <Provider store={store}>
+        <MantineProvider>
+          <Router>
+            <HeaderResponsive links={randomLinks} />
+            <Routes>
+              <Route
+                path="/"
+                element={isConfigValid ? <GettingStarted /> : <Config />}
+              />
+              <Route path="/upload" element={<Upload />} />
+              <Route path="/chat" element={<Chat />} />
+              <Route path="/config" element={<Config />} />
+              <Route path="/summary" element={<Summary />} />
+            </Routes>
+            <Footer />
+          </Router>
+        </MantineProvider>
+      </Provider>
     </div>
   );
 }

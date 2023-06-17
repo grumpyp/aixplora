@@ -18,7 +18,6 @@ const useStyles = createStyles((theme) => ({
 
 export function DropzoneButton() {
   const { classes, theme } = useStyles();
-  const openRef = useRef();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
@@ -65,12 +64,10 @@ export function DropzoneButton() {
   };
 
   return (
-    <div className={classes.wrapper}>
+    <div>
       {selectedFiles.length > 0 && (
-        <div className={classes.selectedFileWrapper}>
-          <Text className={classes.selectedFileText}>
-            {selectedFiles.length} file(s) selected
-          </Text>
+        <div>
+          <Text>{selectedFiles.length} file(s) selected</Text>
           <ul>
             {selectedFiles.map((item, index) => (
               <div
@@ -84,6 +81,7 @@ export function DropzoneButton() {
                 <li style={{ fontFamily: 'Poppins' }}>{item.name}</li>
                 <ActionIcon
                   color="red"
+                  data-testid="remove-button"
                   onClick={() => {
                     removeSelectedFile(item.name);
                   }}
@@ -96,12 +94,7 @@ export function DropzoneButton() {
         </div>
       )}
 
-      <Dropzone
-        openRef={openRef}
-        onDrop={handleFileDrop}
-        className={classes.dropzone}
-        radius="md"
-      >
+      <Dropzone data-testid="dropzone" onDrop={handleFileDrop} radius="md">
         <div style={{ pointerEvents: 'none' }}>
           <Group position="center">
             <Dropzone.Accept>
@@ -144,7 +137,6 @@ export function DropzoneButton() {
 
       {selectedFiles.length > 0 && (
         <Button
-          className={classes.control}
           size="md"
           style={{ margin: '1em 0' }}
           radius="xl"
