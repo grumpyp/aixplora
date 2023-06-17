@@ -1,5 +1,5 @@
 import uvicorn
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from typing import List
@@ -9,7 +9,7 @@ from schemas.question import Question, Document, FileToDelete
 # from schemas.file import File
 from utils import FILE_HANDLERS
 from embeddings.index_files import Genie
-from sqlalchemy.exc import DatabaseError
+from sqlalchemy.exc import DatabaseError, OperationalError
 import os
 
 # TODO: use best practise for routing
@@ -38,7 +38,7 @@ def add_config(config: Config):
     try:
         res = db.execute(text("INSERT INTO config (openai_api_key) VALUES (:api_key)"), {"api_key": config.apiKey})
         db.commit()
-    except HTTPException as e:
+    except OperationalError as e:
          return e
         
     return config
@@ -87,7 +87,6 @@ import time
 
 @app.delete("/files/")
 def delete_files(file: FileToDelete):
-    print("dfgdfg")
     misc_dir = os.path.join(os.getcwd(), "misc")
     files = os.listdir(misc_dir)
 

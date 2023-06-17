@@ -47,7 +47,7 @@ function checkConfig() {
 }
 
 export default function Hello() {
-  const [isConfigValid, setConfigValid] = useState(null);
+  const [isConfigValid, setConfigValid] = useState(false);
 
   useEffect(() => {
     checkConfig().then((isValid) => {
