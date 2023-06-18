@@ -5,7 +5,7 @@ from sqlalchemy import text
 from typing import List
 from database.database import Database
 from schemas.config import Config
-from schemas.question import Question, Document, FileToDelete
+from schemas.question import Question, Document
 # from schemas.file import File
 from utils import FILE_HANDLERS
 from embeddings.index_files import Genie
@@ -86,18 +86,18 @@ async def upload_files(files: List[UploadFile] = File(...)):
 import time
 
 @app.delete("/files/")
-def delete_files(file: FileToDelete):
+def delete_files(file: Document):
     misc_dir = os.path.join(os.getcwd(), "misc")
     files = os.listdir(misc_dir)
 
     db = Database().get_session()
 
     for f in files:
-        if f.startswith(file.file):
+        if f.startswith(file.document):
             file_path = os.path.join(misc_dir, f)
             os.remove(file_path)
             
-            db.execute(text("DELETE FROM files WHERE file_name = :name"), {"name": file.file})
+            db.execute(text("DELETE FROM files WHERE file_name = :name"), {"name": file.document})
             db.commit()
             
             # Introduce a delay to allow other processes or connections to access the database
