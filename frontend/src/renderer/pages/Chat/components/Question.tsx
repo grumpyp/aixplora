@@ -1,6 +1,5 @@
 import React from 'react';
 import '../chat.css';
-import logo from '../../../components/assets/AIxplora_logo_round.jpg';
 
 function Question(props: { content: string }) {
   return (
