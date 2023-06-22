@@ -11,7 +11,7 @@ import {
   rem,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import logoimage from './assets/AIxplora_logo_round.jpg';
+import logoimage from './assets/AIxplora_logo_round.png';
 
 const HEADER_HEIGHT = rem(60);
 

@@ -47,6 +47,7 @@ function checkConfig() {
 
 export default function Hello() {
   const [isConfigValid, setConfigValid] = useState(null);
+  const [colorScheme, setColorScheme] = useState<any>('light');
 
   useEffect(() => {
     checkConfig().then((isValid) => {
@@ -58,9 +59,13 @@ export default function Hello() {
     return <div>Loading...</div>;
   }
 
+  const toggleTheme = () => {
+    setColorScheme(colorScheme === 'dark' ? 'light' : 'dark');
+  };
+
   return (
     <div>
-      <MantineProvider>
+      <MantineProvider theme={{colorScheme}} withGlobalStyles withNormalizeCSS>
         <Router>
           <HeaderResponsive links={randomLinks} />
           <Routes>
@@ -71,7 +76,7 @@ export default function Hello() {
             <Route path="/summary" element={<Summary />} />
 
           </Routes>
-          <Footer />
+          <Footer toggleTheme={toggleTheme} colorScheme={colorScheme}/>
         </Router>
       </MantineProvider>
     </div>

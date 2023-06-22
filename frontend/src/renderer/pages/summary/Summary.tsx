@@ -1,4 +1,3 @@
-// Summary.tsx
 import { useState, useEffect } from 'react';
 import { Select, Button, Box } from '@mantine/core';
 import axios from 'axios';
