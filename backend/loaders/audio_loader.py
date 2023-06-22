@@ -14,7 +14,7 @@ class Whisperexporter:
 
         # TODO: move this to utils or something it's used in multiple places
         try:
-            self.openai_api_key = Database().get_session().execute(text("SELECT openai_api_key FROM config")).fetchall()[-1][0]
+            self.openai_api_key = Database().get_session().execute(text("SELECT openai_api_key FROM config")).fetchall()[-1]
         except:
             self.openai_api_key = "notdefined"
 
