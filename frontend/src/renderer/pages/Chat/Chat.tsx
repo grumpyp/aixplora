@@ -1,7 +1,6 @@
 import {useState, useEffect, useRef} from 'react';
 import './chat.css';
-import axios from 'axios';
-import config from '../../config.js';
+import {apiCall} from '../../utils/api';
 import {Message} from 'renderer/utils';
 import Question from './components/Question';
 import Answer from './components/Answer';
@@ -62,17 +61,25 @@ function Chat() {
         setError(false);
 
         try {
-            const response = await axios.post(
-                `${config.REACT_APP_BACKEND_URL}/chat`,
-                {
-                    question: {
-                        question: input,
-                    },
-                    document: {
-                        document: selectedFile,
-                    },
-                }
-            );
+            // const response = await axios.post(
+            //     `${config.REACT_APP_BACKEND_URL}/chat`,
+            //     {
+            //         question: {
+            //             question: input,
+            //         },
+            //         document: {
+            //             document: selectedFile,
+            //         },
+            //     }
+            // );
+            const response = await apiCall('/chat', 'POST', {
+                question: {
+                    question: input,
+                },
+                document: {
+                    document: selectedFile,
+                },
+            });
             const data = response.data;
 
             setQueue((prevQueue: Message[]) => [
@@ -94,22 +101,35 @@ function Chat() {
     const [files, setFiles] = useState<string[]>([]);
 
     useEffect(() => {
-        axios
-            .get<FileData[]>(
-                `${config.REACT_APP_BACKEND_URL}/files`
-            )
-            .then((response) => {
-                const fetchedFiles = response.data;
-                console.log("Fetched files:", fetchedFiles);
-                if (fetchedFiles.length > 0) {
-                    const fileNames = fetchedFiles.map(file => file.name);
-                    console.log("File names:", fileNames);
-                    setFiles(fileNames);
-                }
-            })
-            .catch((error) => {
-                console.log('Error fetching config:', error);
-            });
+    //     axios
+    //         .get<FileData[]>(
+    //             `${config.REACT_APP_BACKEND_URL}/files`
+    //         )
+    //         .then((response) => {
+    //             const fetchedFiles = response.data;
+    //             console.log("Fetched files:", fetchedFiles);
+    //             if (fetchedFiles.length > 0) {
+    //                 const fileNames = fetchedFiles.map(file => file.name);
+    //                 console.log("File names:", fileNames);
+    //                 setFiles(fileNames);
+    //             }
+    //         })
+    //         .catch((error) => {
+    //             console.log('Error fetching config:', error);
+    //         });
+    // }, []);
+        apiCall('/files', 'GET', {}).then((response) => {
+            const fetchedFiles = response.data;
+            console.log("Fetched files:", fetchedFiles);
+            if (fetchedFiles.length > 0) {
+                const fileNames = fetchedFiles.map(file => file.name);
+                console.log("File names:", fileNames);
+                setFiles(fileNames);
+            }
+        })
+        .catch((error) => {
+            console.log('Error fetching config:', error);
+        });
     }, []);
 
 

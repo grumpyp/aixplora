@@ -9,8 +9,7 @@ import {
 } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { IconCloudUpload, IconX, IconDownload } from '@tabler/icons-react';
-import axios from 'axios';
-import config from '../../../config';
+import {apiCall} from "../../../utils/api";
 
 const useStyles = createStyles((theme) => ({
   // Styles definition here
@@ -40,20 +39,34 @@ export function DropzoneButton() {
       });
       setIsLoading(true);
 
-      axios
-        .post(`${config.REACT_APP_BACKEND_URL}/files/`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
+      // axios
+      //   .post(`${config.REACT_APP_BACKEND_URL}/files/`, formData, {
+      //     headers: {
+      //       'Content-Type': 'multipart/form-data',
+      //     },
+      //   })
+      //   .then((response) => {
+      //     // Handle API response data
+      //     console.log(response.data);
+      //     window.location.reload();
+      //   })
+      //   .catch((error) => {
+      //     // Handle API request error
+      //     console.error(error);
+      //   });
+      apiCall('/files', 'POST', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
         })
         .then((response) => {
-          // Handle API response data
-          console.log(response.data);
-          window.location.reload();
+            // Handle API response data
+            console.log(response.data);
+            window.location.reload();
         })
         .catch((error) => {
-          // Handle API request error
-          console.error(error);
+            // Handle API request error
+            console.error(error);
         });
       setIsLoading(false);
     }
