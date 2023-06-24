@@ -60,8 +60,10 @@ docker compose up --build
 ```
 ### 3. When running the above command for the first time, make sure `frontend/node_modules` folder does not exist. The initial build might take some time since it will install the the required dependencies.
 
-### 4. Once the build and the package installation is finished, it should show an error in the console `The SUID sandbox helper binary was found...` (We'll work on that to fix it).
-### 5. Navigate to the UI on `http://localhost:1212/`. It will also show an error `Cannot read properties of undefined (reading 'ipcRenderer')`. Close the error clicking the close button at the bottom of the screen, and you're good to go!
+### 4. Once the build and the package installation is finished, it should show an error in the console `The SUID sandbox helper binary was found...` (We have to work on that issues).
+
+### 5. Navigate to the UI on `http://localhost:1212/`. Close the error clicking the close button at the bottom of the screen, and you're good to go!
+
 ### 6. Next time when starting the app you can simply use the following command
 ```
 docker compose up

@@ -3,7 +3,7 @@ FROM node:18
 WORKDIR /usr/src/app
 
 # Install necessary build dependencies
-RUN apt-get update && apt-get install -y build-essential python
+RUN apt-get update && apt-get install -y build-essential
 
 # install electron dependencies
 RUN apt-get update && apt-get install \
