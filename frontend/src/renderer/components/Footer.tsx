@@ -4,14 +4,19 @@ import {
   IconBrandGithub,
   IconBrandYoutube,
 } from '@tabler/icons-react';
+import DarkModeButton from './DarkModeButton';
 
+type FooterProps = {
+  toggleTheme: () => void;
+  colorScheme: string;
+};
 
 const useStyles = createStyles((theme) => ({
   footer: {
     position: 'fixed',
     left: 0,
     right: 0,
-    backgroundColor: theme.white,
+    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[0],
 
     bottom: 0,
     borderTop: `${rem(1)} solid ${
@@ -38,7 +43,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export function Footer() {
+export function Footer({ toggleTheme, colorScheme }: FooterProps) {
   const { classes } = useStyles();
 
   return (
@@ -46,19 +51,20 @@ export function Footer() {
       <Container className={classes.inner}>
         <b style={{fontFamily:"sans-serif", fontWeight: "500"}}>Version 0.0.1</b>
         <Group spacing={0} className={classes.links} position="right" noWrap>
+          <DarkModeButton toggleTheme={toggleTheme} colorScheme={colorScheme}/>
           <a href="https://discord.gg/YTEKxEF2" target="_blank" rel="noopener noreferrer">
             <ActionIcon size="lg">
-              <IconBrandDiscord color='black' size="1.5rem" stroke={1.5} />
+              <IconBrandDiscord color={colorScheme === "light" ? "black" : "white"} size="1.5rem" stroke={1.5} />
             </ActionIcon>
           </a>
           <a href="https://www.youtube.com/@patrick-gerard/videos" target="_blank" rel="noopener noreferrer">
             <ActionIcon size="lg">
-              <IconBrandYoutube color='black' size="1.5rem" stroke={1.5} />
+              <IconBrandYoutube color={colorScheme === "light" ? "black" : "white"} size="1.5rem" stroke={1.5} />
             </ActionIcon>
           </a>
           <a href="https://github.com/grumpyp/aixplora" target="_blank" rel="noopener noreferrer">
             <ActionIcon size="lg">
-              <IconBrandGithub color='black' size="1.5rem" stroke={1.5} />
+              <IconBrandGithub color={colorScheme === "light" ? "black" : "white"} size="1.5rem" stroke={1.5} />
             </ActionIcon>
           </a>
         </Group>

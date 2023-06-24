@@ -2,7 +2,7 @@ import { CSSProperties, useEffect, useState } from 'react';
 import '../chat.css';
 import PulseLoader from 'react-spinners/PulseLoader';
 import { IconCopy, IconClipboardCheck } from '@tabler/icons-react';
-import logo from '../../../components/assets/AIxplora_logo_round.jpg';
+import logo from '../../../components/assets/AIxplora_logo_round.png';
 import { Button, IconButton, Snackbar } from '@mui/material';
 import React from 'react';
 

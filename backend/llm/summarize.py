@@ -31,6 +31,7 @@ class Summarize:
         try:
             self.openai_api_key = \
             Database().get_session().execute(text("SELECT openai_api_key FROM config")).fetchall()[-1][0]
+            self.openai_model = Database().get_session().execute(text("SELECT model FROM config")).fetchall()[-1][0]
         except Exception as e:
             print(f"Error: {e}")
             self.openai_api_key = "notdefined"
@@ -43,7 +44,7 @@ class Summarize:
         """
         stmt = text("SELECT * FROM files WHERE file_name=:file_name")
         db_index = True if self.db.execute(stmt, {"file_name": self.document.document}).fetchone() else False
-        misc_index = any(re.match(rf'^{self.document.document}', file) for file in os.listdir(self.misc_dir))
+        misc_index = any(re.match(rf'^{self.document.document}.*', file) for file in os.listdir(self.misc_dir))
         return True if db_index and misc_index else False
 
     def get_summary(self):
@@ -67,8 +68,8 @@ class Summarize:
                     text_split = text[words_to_feed * i:words_to_feed * (i + 1)]
                     time.sleep(3)
                     response = openai.ChatCompletion.create(
-                        model="gpt-4",
-                        temperature=0,
+                        model=f"{self.openai_model}",
+                        temperature=0.2,
                         max_tokens=3000,
                         messages=[
                             {"role": "user",
@@ -84,7 +85,7 @@ class Summarize:
                         raise ("The summary is still too long. Please try again.")
                 count_token = num_tokens_from_string("".join(summary), "cl100k_base")
                 response = openai.ChatCompletion.create(
-                    model="gpt-4",
+                    model=f"{self.openai_model}",
                     temperature=0.2,
                     max_tokens=4000 - count_token,
                     messages=[
@@ -95,7 +96,7 @@ class Summarize:
                 return {"summary": response.choices[0]["message"]["content"], "summary_list": "<hr>".join(summary)}
             else:
                 response = openai.ChatCompletion.create(
-                    model="gpt-3.5-turbo",
+                    model=f"{self.openai_model}",
                     temperature=0.2,
                     max_tokens=1000,
                     messages=[
