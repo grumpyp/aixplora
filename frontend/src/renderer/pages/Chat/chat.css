@@ -37,10 +37,22 @@
   bottom: 8em;
 }
 
+.specific_document {
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  width: 70%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  height: 2.8em;
+  position: static;
+  top: 8em;
+}
+
+
 .question_submit {
   height: 100%;
   padding: 0 1em;
-  background: rgba(189, 125, 69, 1);
+  background: #228be6;
   color: white;
   display: flex;
   justify-content: center;
@@ -51,14 +63,13 @@
 }
 
 .question_submit:hover {
-  transform: scale(1.01);
-
-  background-color: rgb(158, 0, 158);
+  transform: scale(1.1);
 }
 
 .paragraph_content {
   /* From https://css.glass */
-  background: rgba(189, 125, 69, 0.21);
+  background: rgba(34, 139, 230, 0.3);
+
   border-radius: 10px;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(5px);
@@ -141,7 +152,7 @@ p {
 }
 
 .delete_discussion {
-  background-color: red;
+  background-color: #228be6;
   position: fixed;
   top: 5em;
   left: 0;
@@ -155,6 +166,31 @@ p {
   border-top-right-radius: 20px;
   border-bottom-right-radius: 20px;
   cursor: pointer;
+}
+
+.arrow_up {
+  background-color: #228be6;
+  position: fixed;
+  top: 10em;
+  left: 0;
+  width: 50px;
+  text-align: end;
+  padding: 0.5em 0.5em;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  cursor: pointer;
+}
+
+.metadata {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
 }
 
 @media (min-width: 400px) {

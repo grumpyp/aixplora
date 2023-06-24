@@ -6,18 +6,18 @@ import { HeaderResponsive } from './components/Menu';
 import Footer from './components/Footer';
 import GettingStarted from './components/Start';
 import axios from 'axios';
-import Config from './pages/config/Config'
+import Config from './pages/config/Config';
 import Chat from './pages/Chat/Chat';
 import config from './config.js';
 import { useState, useEffect } from "react";
-import Graph from './pages/graph/Graph';
+import { Summary } from './pages/summary/Summary';
 
 const randomLinks = [
   { link: '/', label: 'Home' },
   { link: '/upload', label: 'Files' },
   { link: '/chat', label: 'Chat' },
   { link: '/config', label: 'Config' },
-  { link: '/graph', label: 'Graph' },
+    { link: '/summary', label: 'Summary' },
 
 ];
 
@@ -47,6 +47,7 @@ function checkConfig() {
 
 export default function Hello() {
   const [isConfigValid, setConfigValid] = useState(null);
+  const [colorScheme, setColorScheme] = useState<any>('light');
 
   useEffect(() => {
     checkConfig().then((isValid) => {
@@ -58,9 +59,13 @@ export default function Hello() {
     return <div>Loading...</div>;
   }
 
+  const toggleTheme = () => {
+    setColorScheme(colorScheme === 'dark' ? 'light' : 'dark');
+  };
+
   return (
     <div>
-      <MantineProvider>
+      <MantineProvider theme={{colorScheme}} withGlobalStyles withNormalizeCSS>
         <Router>
           <HeaderResponsive links={randomLinks} />
           <Routes>
@@ -68,10 +73,10 @@ export default function Hello() {
             <Route path="/upload" element={<Upload />} />
             <Route path="/chat" element={<Chat />} />
             <Route path="/config" element={<Config />} />
-            <Route path="/graph" element={<Graph />} />
+            <Route path="/summary" element={<Summary />} />
 
           </Routes>
-          <Footer />
+          <Footer toggleTheme={toggleTheme} colorScheme={colorScheme}/>
         </Router>
       </MantineProvider>
     </div>

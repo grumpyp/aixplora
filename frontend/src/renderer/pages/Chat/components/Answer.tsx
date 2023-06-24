@@ -2,7 +2,7 @@ import { CSSProperties, useEffect, useState } from 'react';
 import '../chat.css';
 import PulseLoader from 'react-spinners/PulseLoader';
 import { IconCopy, IconClipboardCheck } from '@tabler/icons-react';
-import logo from '../../../components/assets/AIxplora_logo_round.jpg';
+import logo from '../../../components/assets/AIxplora_logo_round.png';
 import { Button, IconButton, Snackbar } from '@mui/material';
 import React from 'react';
 
@@ -12,8 +12,8 @@ const override: CSSProperties = {
   borderColor: 'red',
 };
 
-function Answer(props: { content: string; isLoading?: boolean }) {
-   const [copied, setCopied] = useState(false);
+function Answer(props: { content: string; isLoading?: boolean, metadata: any[] }) {
+  const [copied, setCopied] = useState(false);
   const [content, setContent] = useState('');
 
   let timeoutId: any;
@@ -29,9 +29,6 @@ function Answer(props: { content: string; isLoading?: boolean }) {
       setCopied(false); // Set copied to false after 5 seconds
     }, 5000);
   };
-  
-
- 
 
   return (
     <div className="answer_ container">
@@ -59,7 +56,20 @@ function Answer(props: { content: string; isLoading?: boolean }) {
             />
           </p>
         ) : (
-          <p className="paragraph_content">{props.content}</p>
+          <div className="paragraph_content">
+            <p>{props.content}</p>
+            <b>References</b>
+            {props.metadata.map((item: any, index: number) => {
+              if (item.page) {
+                return (
+                  <div key={index}>
+                      {item.page}</div>
+                );
+              } else {
+                return null;
+              }
+            })}
+          </div>
         )}
       </div>
     </div>
@@ -67,7 +77,3 @@ function Answer(props: { content: string; isLoading?: boolean }) {
 }
 
 export default Answer;
-
-// what is quantum chaos
-
- 

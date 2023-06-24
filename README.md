@@ -26,6 +26,7 @@ There are several ways you can contribute as I just released a PoC of the projec
 - Spread the Word: Share our project within your networks. The more people know about AIxplora, the better it can become!
 
 ## Demo and introduction videos
+[![Summary function showcase](https://img.youtube.com/vi/8x9HhWjjNtY/hqdefault.jpg)](https://youtu.be/8x9HhWjjNtY)
 https://youtu.be/2lNNKLM0o7U
 https://youtu.be/eKLmhJobVvc
 
@@ -47,6 +48,8 @@ python backend/main.py
 cd frontend
 npm start
 ```
+
+**Having issues installing frontend? See this [debugging guide](https://github.com/electron-react-boilerplate/electron-react-boilerplate/issues/400)**
 
 ## How to run using Docker Compose
 

@@ -1,168 +1,201 @@
-import { useState, CSSProperties, useEffect, useRef } from 'react';
+import {useState, useEffect, useRef} from 'react';
 import './chat.css';
 import axios from 'axios';
 import config from '../../config.js';
-import { Message } from 'renderer/utils';
+import {Message} from 'renderer/utils';
 import Question from './components/Question';
 import Answer from './components/Answer';
-import { IconSend, IconTrash } from '@tabler/icons-react';
-
-import { Modal } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import {IconSend, IconTrash, IconArrowUp} from '@tabler/icons-react';
+import {Modal, Select} from '@mantine/core';
+import {useDisclosure} from '@mantine/hooks';
 import Block from './components/Block';
 
-const override: CSSProperties = {
-  display: 'block',
-  margin: '0 auto',
-  borderColor: 'red',
-};
-
-const styles = {
-  position: 'absolute' as 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  backgroundColor: 'background.paper',
-  border: '2px solid #000',
-  borderShadow: 24,
-  p: 4,
+type FileData = {
+    name: string;
+    type: string;
+    size: number;
 };
 
 function Chat() {
-  const [queue, setQueue] = useState<Message[]>([]);
-  const bottomRef = useRef();
-  const [isLoading, setIsLoading] = useState(false);
-  const [lastQuestion, setLastQuestion] = useState('');
-  const [error, setError] = useState(false);
-  const [input, setInput] = useState('');
+    const [queue, setQueue] = useState<Message[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [lastQuestion, setLastQuestion] = useState('');
+    const [error, setError] = useState(false);
+    const [input, setInput] = useState('');
+    const discussionRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const chatData = localStorage.getItem('queue');
-    if (chatData) {
-      setQueue(JSON.parse(chatData)); // Parse the JSON string to retrieve the stored messages
-    } else {
-      setQueue([]);
-    }
-  }, []);
 
-  const deleteDiscussion = () => {
-    setQueue([]);
-    localStorage.removeItem('queue');
-    close();
-  };
+    // used for the specific_document chat
+    const [selectedFile, setSelectedFile] = useState<string | null>(null);
 
-  const scrollToMyRef = () => {
-    const scroll =
-      bottomRef.current.scrollHeight - bottomRef.current.clientHeight;
-    bottomRef.current.scrollTo(0, scroll);
-  };
-
-  const sendMessage = async () => {
-    scrollToMyRef();
-    setLastQuestion(input);
-    window.scrollTo(0, document.documentElement.scrollHeight);
-
-    setInput('');
-
-    setIsLoading(true);
-    setError(false);
-
-    try {
-      const response = await axios.post(
-        `${config.REACT_APP_BACKEND_URL}/chat`,
-        {
-          question: input,
+    useEffect(() => {
+        const chatData = localStorage.getItem('queue');
+        if (chatData) {
+            setQueue(JSON.parse(chatData));
+        } else {
+            setQueue([]);
         }
-      );
-      const data = response.data;
+    }, []);
 
-      setQueue((prevQueue: Message[]) => [
-        ...prevQueue,
-        { question: input, answer: data.answer },
-      ]);
-    } catch (error) {
-      setError(true);
-    }
-    setIsLoading(false);
-  };
+    useEffect(() => {
+        scrollToBottom();
+    }, [queue, input]);
 
-  useEffect(() => {
-    if (queue) {
-      localStorage.setItem('queue', JSON.stringify(queue));
-    }
-  }, [queue]);
+    const deleteDiscussion = () => {
+        setQueue([]);
+        localStorage.removeItem('queue');
+        close();
+    };
 
-  const [opened, { open, close }] = useDisclosure(false);
+    const scrollToBottom = () => {
+        window.scrollTo({
+            top: document.documentElement.scrollHeight,
+            behavior: 'smooth',
+        });
+    };
 
-  return (
-    <div className="chat_container">
-      <div onClick={open} className="delete_discussion">
-        <IconTrash color="white" />
-      </div>
-      <Modal.Root opened={opened} onClose={close}>
-        <Modal.Overlay />
-        <Modal.Content>
-          <Modal.Header>
-            <Modal.Title>Delete the discussion</Modal.Title>
-            <Modal.CloseButton />
-          </Modal.Header>
-          <Modal.Body>
-            <p>
-              Are you sure you want to delete the discussion? this action is
-              irreversible
-            </p>
-            <button
-              onClick={deleteDiscussion}
-              style={{ backgroundColor: 'red', color: 'white' }}
-            >
-              Delete
-            </button>
-          </Modal.Body>
-        </Modal.Content>
-      </Modal.Root>
-      <div ref={bottomRef} className="discussion">
-        {queue.map((message, index) => (
-          <Block question={message.question} answer={message.answer} />
-        ))}
-        {isLoading ? (
-          <div className="temp_question">
-            {' '}
-            <Question content={lastQuestion} /> <Answer isLoading={true} />
-          </div>
-        ) : null}
-      </div>
-      <div className="user_input">
-        <input
-          value={input}
-          onChange={(e) => {
-            setInput(e.target.value);
-          }}
-          placeholder="what is the meaning of life"
-          type="text"
-          name="question"
-          id="question"
-          onKeyDown={(event) => {
-            if (input.length != 0 || isLoading) {
-              if (event.key === 'Enter') {
-                sendMessage();
-              }
-            }
-          }}
-        />
-        <div
-          onClick={() => {
-            if (input.length != 0 || isLoading) {
-              sendMessage();
-            }
-          }}
-          className="question_submit"
-        >
-          <IconSend />
+
+    const sendMessage = async () => {
+        setLastQuestion(input);
+        setInput('');
+        setIsLoading(true);
+        setError(false);
+
+        try {
+            const response = await axios.post(
+                `${config.REACT_APP_BACKEND_URL}/chat`,
+                {
+                    question: {
+                        question: input,
+                    },
+                    document: {
+                        document: selectedFile,
+                    },
+                }
+            );
+            const data = response.data;
+
+            setQueue((prevQueue: Message[]) => [
+                ...prevQueue,
+                {question: input, answer: data.answer, metadata: data.meta_data},
+            ]);
+        } catch (error) {
+            setError(true);
+        }
+        setIsLoading(false);
+    };
+
+    useEffect(() => {
+        if (queue) {
+            localStorage.setItem('queue', JSON.stringify(queue));
+        }
+    }, [queue]);
+
+    const [files, setFiles] = useState<string[]>([]);
+
+    useEffect(() => {
+        axios
+            .get<FileData[]>(
+                `${config.REACT_APP_BACKEND_URL}/files`
+            )
+            .then((response) => {
+                const fetchedFiles = response.data;
+                console.log("Fetched files:", fetchedFiles);
+                if (fetchedFiles.length > 0) {
+                    const fileNames = fetchedFiles.map(file => file.name);
+                    console.log("File names:", fileNames);
+                    setFiles(fileNames);
+                }
+            })
+            .catch((error) => {
+                console.log('Error fetching config:', error);
+            });
+    }, []);
+
+
+    const [opened, {open, close}] = useDisclosure(false);
+    const up = () => {
+        window.scrollTo(0, 0);
+    };
+
+    return (
+        <div className="chat_container">
+            <div onClick={open} className="delete_discussion">
+                <IconTrash color="white"/>
+            </div>
+            <div onClick={up} className="arrow_up">
+                <IconArrowUp color="white"/>
+            </div>
+            <Modal.Root opened={opened} onClose={close}>
+                <Modal.Overlay/>
+                <Modal.Content>
+                    <Modal.Header>
+                        <Modal.Title>Delete the discussion</Modal.Title>
+                        <Modal.CloseButton/>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <p>
+                            Are you sure you want to delete the discussion? this action is
+                            irreversible
+                        </p>
+                        <button
+                            onClick={deleteDiscussion}
+                            style={{backgroundColor: '#228be6', color: 'white'}}
+                        >
+                            Delete
+                        </button>
+                    </Modal.Body>
+                </Modal.Content>
+            </Modal.Root>
+            <div className="specific_document">
+                <Select
+                    placeholder="Choose a file to Chat with or AIxplora will give you the most relevant answer"
+                    data={files.map((file, index) => ({value: file, label: file, key: index}))}
+                    style={{width: 800}}
+                    onChange={(value) => setSelectedFile(value)}
+
+                />
+            </div>
+            <div ref={discussionRef} className="discussion">
+                {queue.map((message, index) => (
+                    <Block question={message.question} answer={message.answer} metadata={message.metadata}
+                           key={index}/>
+                ))}
+                {isLoading ? (
+                    <div className="temp_question">
+                        <Question content={lastQuestion}/> <Answer isLoading={true}/>
+                    </div>
+                ) : null}
+            </div>
+            <div className="user_input">
+                <input
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="what is the meaning of life"
+                    type="text"
+                    name="question"
+                    id="question"
+                    onKeyDown={(event) => {
+                        if (input.length != 0 || isLoading) {
+                            if (event.key === 'Enter') {
+                                sendMessage();
+                            }
+                        }
+                    }}
+                />
+                <div
+                    onClick={() => {
+                        if (input.length != 0 || isLoading) {
+                            sendMessage();
+                        }
+                    }}
+                    className="question_submit"
+                >
+                    <IconSend/>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  );
+    );
 }
 
 export default Chat;
