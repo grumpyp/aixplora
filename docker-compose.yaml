@@ -1,4 +1,4 @@
-version: "3.8"
+version: "3"
 
 services:
   backend:
@@ -12,7 +12,7 @@ services:
       - ./misc/:/usr/src/app/misc
       - ./qdrant_data/:/usr/src/app/qdrant_data
     ports:
-      - 8000:8000
+      - "8000:8000"
 
   frontend:
     build:
@@ -25,10 +25,5 @@ services:
       - "1212:1212"
     environment:
       NODE_ENV: development
-# Sandbox is not running in docker
-# aix-fe  | [120:0604/144023.481312:ERROR:ozone_platform_x11.cc(239)] Missing X server or $DISPLAY
-#    cap_add:
-#      - SYS_ADMIN
-
     depends_on:
       - backend

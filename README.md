@@ -53,28 +53,26 @@ npm start
 
 ## How to run using Docker Compose
 
-### 1. Clone the repo and Install dependencies
-```
-git clone git@github.com:grumpyp/aixplora.git
-```
-### 2. Build Docker image and run containers
-```
-docker compose up --build
-```
-### 3. When running the above command for the first time, make sure `frontend/node_modules` folder does not exist. The initial build might take some time since it will install the the required dependencies.
+1. Clone the repo and Install dependencies
+    ```
+    git clone git@github.com:grumpyp/aixplora.git
+    ```
+2. Build Docker image and run containers
+    ```
+    docker compose up --build
+    ```
+3. When running the above command for the first time, make sure `frontend/node_modules` folder does not exist. The initial build might take some time since it will install the required dependencies.
 
-### 4. Once the build and the package installation is finished, it should show an error in the console `The SUID sandbox helper binary was found...` (We have to work on that issues).
+4. Once the build and the package installation is finished, it should show an error in the console `app exited with code null, waiting for change to restart it` (We have to work on that issues).
 
-### 5. Navigate to the UI on `http://localhost:1212/`. Close the error clicking the close button at the bottom of the screen, and you're good to go!
+5. Navigate to the UI on `http://localhost:1212/`.
 
-### 6. Next time when starting the app you can simply use the following command
-```
-docker compose up
-```
-
-- **Note that** 
-  - After adding new packages in Frontend in `package.json` file, you'll need to remove `node_modules` folder and then run `docker compose up`
-  - After adding new packages in `requirements.txt` you'll have to run `docker compose up --build`
+6. Next time when starting the app you can simply use the following command
+    ```
+    docker compose up
+    ```
+    **Note that** 
+      - After adding new packages in `requirements.txt` you'll have to run `docker compose up --build`
 
 
 ## Roadmap
