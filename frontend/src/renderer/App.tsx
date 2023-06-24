@@ -12,7 +12,7 @@ import config from './config.js';
 import {useState, useEffect} from "react";
 import {Summary} from './pages/summary/Summary';
 import store from './store/store';
-import {Provider} from 'react-redux'
+import {Provider} from 'react-redux';
 
 const randomLinks = [
     {link: '/', label: 'Home'},
