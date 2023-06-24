@@ -1,13 +1,14 @@
 import { useForm } from '@mantine/form';
-import { TextInput, Button, Box, Drawer, Avatar, Text, Group } from '@mantine/core';
+import { TextInput, Button, Box, Drawer, Avatar, Text, Group, Select } from '@mantine/core';
 import axios from 'axios';
 import {config} from '../../config.js';
 import { IconDatabase } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import ExternalDb from './Externaldb';
-import logo from '../../components/assets/AIxplora_logo_round.jpg';
+import logo from '../../components/assets/AIxplora_logo_round.png';
 import { useSelector, useDispatch } from 'react-redux';
 import { connect, disconnect } from '../../store/slices/externalDbSlice';
+import {apiCall} from "../../utils/api";
 
 
 function saveConfig(OPENAI_API_KEY: string, model: string) {
@@ -15,25 +16,47 @@ function saveConfig(OPENAI_API_KEY: string, model: string) {
         apiKey: OPENAI_API_KEY,
         model: model
     };
-    return axios.post(`${config.REACT_APP_BACKEND_URL}/config`, payload)
-        .then((response) => {
-            const fetchedConfig = response.data;
+//     return axios.post(`${config.REACT_APP_BACKEND_URL}/config`, payload)
+//         .then((response) => {
+//             const fetchedConfig = response.data;
+//
+//             if (Object.keys(fetchedConfig).length === 0) {
+//                 return false;
+//             }
+//
+//             // The fetched config is not an empty object, save it and return true
+//             localStorage.setItem('config', JSON.stringify(fetchedConfig));
+//             console.log(fetchedConfig);
+//             window.location.reload();
+//
+//             return true;
+//         })
+//         .catch((error) => {
+//             console.log('Error fetching config:', error);
+//             return false;
+//         });
+// }
+    return apiCall('/config', 'POST', payload).then((response) => {
+        const fetchedConfig = response.data;
+        console.log(fetchedConfig);
 
-            if (Object.keys(fetchedConfig).length === 0) {
-                return false;
-            }
-
-            // The fetched config is not an empty object, save it and return true
-            localStorage.setItem('config', JSON.stringify(fetchedConfig));
-            console.log(fetchedConfig);
-            window.location.reload();
-
-            return true;
-        })
-        .catch((error) => {
-            console.log('Error fetching config:', error);
+        if (Object.keys(fetchedConfig).length === 0) {
             return false;
-        });
+        }
+
+        // The fetched config is not an empty object, save it and return true
+        localStorage.setItem('config', JSON.stringify(fetchedConfig));
+        console.log(fetchedConfig);
+        window.location.reload();
+
+        return true;
+    }
+    )
+    .catch((error) => {
+        console.log('Error fetching config:', error);
+        return false;
+    }
+    );
 }
 
 function Config() {
