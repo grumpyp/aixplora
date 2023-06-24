@@ -1,13 +1,14 @@
 import { useForm } from '@mantine/form';
 import { TextInput, Button, Box, Drawer, Avatar, Text, Group } from '@mantine/core';
 import axios from 'axios';
-import config from '../../config.js';
+import {config} from '../../config.js';
 import { IconDatabase } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import ExternalDb from './Externaldb';
 import logo from '../../components/assets/AIxplora_logo_round.jpg';
 import { useSelector, useDispatch } from 'react-redux';
 import { connect, disconnect } from '../../store/slices/externalDbSlice';
+
 
 function saveConfig(OPENAI_API_KEY) {
   const payload = {

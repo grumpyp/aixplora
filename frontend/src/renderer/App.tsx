@@ -8,7 +8,7 @@ import GettingStarted from './components/Start';
 import axios from 'axios';
 import Config from './pages/config/Config';
 import Chat from './pages/Chat/Chat';
-import config from './config.js';
+import {apiCall} from "./utils/api";
 import {useState, useEffect} from "react";
 import {Summary} from './pages/summary/Summary';
 import store from './store/store';
@@ -26,24 +26,45 @@ const randomLinks = [
 function checkConfig() {
     console.log("executed CheckConfig");
 
-    return axios.get(`${config.REACT_APP_BACKEND_URL}/config`)
-        .then((response) => {
-            const fetchedConfig = response.data;
-            console.log(fetchedConfig);
-            if (fetchedConfig === false) {
-                // The fetched config is an empty object, return false
-                return false;
-            }
-            // The fetched config is not an empty object, save it and return true
-            localStorage.setItem('config', JSON.stringify(fetchedConfig));
-            console.log(fetchedConfig);
-            return true;
-        })
-        .catch((error) => {
-            console.log('Error fetching config:', error);
-            // Return false if there's an error
+//     return axios.get(`${config.REACT_APP_BACKEND_URL}/config`)
+//         .then((response) => {
+//             const fetchedConfig = response.data;
+//             console.log(fetchedConfig);
+//             if (fetchedConfig === false) {
+//                 // The fetched config is an empty object, return false
+//                 return false;
+//             }
+//             // The fetched config is not an empty object, save it and return true
+//             localStorage.setItem('config', JSON.stringify(fetchedConfig));
+//             console.log(fetchedConfig);
+//             return true;
+//         })
+//         .catch((error) => {
+//             console.log('Error fetching config:', error);
+//             // Return false if there's an error
+//             return false;
+//         });
+// }
+    return apiCall('/config', 'GET').then((response) => {
+        const fetchedConfig = response.data;
+        console.log(fetchedConfig);
+        console.log(fetchedConfig);
+        if (fetchedConfig === false) {
+            // The fetched config is an empty object, return false
             return false;
-        });
+        }
+        // The fetched config is not an empty object, save it and return true
+        localStorage.setItem('config', JSON.stringify(fetchedConfig));
+        console.log(fetchedConfig);
+        return true;
+    }
+    )
+    .catch((error) => {
+        console.log('Error fetching config:', error);
+        // Return false if there's an error
+        return false;
+    }
+    );
 }
 
 
