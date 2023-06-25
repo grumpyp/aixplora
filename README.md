@@ -33,21 +33,21 @@ https://youtu.be/eKLmhJobVvc
 
 ## How to run locally
 
-### 1. Clone the repo and Install dependencies
-```
-git clone git@github.com:grumpyp/aixplora.git
-```
-### 2. Install dependencies
-```
-pip install -r backend/requirements.txt
-npm install frontend
-```
-### 3. Run the backend and the frontend
-```
-python backend/main.py
-cd frontend
-npm start
-```
+1. Clone the repo and Install dependencies
+      ```
+      git clone git@github.com:grumpyp/aixplora.git
+      ```
+2. Install dependencies
+      ```
+      pip install -r backend/requirements.txt
+      npm install frontend
+      ```
+3. Run the backend and the frontend
+      ```
+      python backend/main.py
+      cd frontend
+      npm start
+      ```
 
 **Having issues installing frontend? See this [debugging guide](https://github.com/electron-react-boilerplate/electron-react-boilerplate/issues/400)**
 
@@ -59,9 +59,9 @@ npm start
     ```
 2. Build Docker image and run containers
     ```
-    docker compose up --build
+    install=true docker compose up --build
     ```
-3. When running the above command for the first time, make sure `frontend/node_modules` folder does not exist. The initial build might take some time since it will install the required dependencies.
+3. When running the above command for the first time, make sure `frontend/node_modules` folder does not exist. The initial build might take some time since it will install all the required dependencies.
 
 4. Once the build and the package installation is finished, it should show an error in the console `app exited with code null, waiting for change to restart it` (We have to work on that issues).
 
@@ -73,6 +73,9 @@ npm start
     ```
     **Note that** 
       - After adding new packages in `requirements.txt` you'll have to run `docker compose up --build`
+      - After adding new packages in `package.json` you'll have to run `install=true docker compose up` to install the new packages.
+      - If you want to just run frontend run `docker compose up frontend`
+      - If you want to just run backend run `docker compose up backend`
 
 
 ## Roadmap

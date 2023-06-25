@@ -25,5 +25,6 @@ services:
       - "1212:1212"
     environment:
       NODE_ENV: development
+      install: $install
     depends_on:
       - backend
