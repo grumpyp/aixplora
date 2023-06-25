@@ -103,6 +103,7 @@
     "@mantine/form": "^6.0.11",
     "@mantine/hooks": "^6.0.11",
     "@radix-ui/react-slot": "^1.0.2",
+    "@reduxjs/toolkit": "^1.9.5",
     "axios": "^1.4.0",
     "electron-debug": "^3.2.0",
     "electron-log": "^4.4.8",
@@ -111,6 +112,7 @@
     "jspdf": "^2.5.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-redux": "^8.1.1",
     "react-router-dom": "^6.11.2",
     "react-spinners": "^0.13.8",
     "sigma": "^3.0.0-alpha3"
