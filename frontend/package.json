@@ -102,7 +102,6 @@
     "@mantine/ds": "^6.0.11",
     "@mantine/form": "^6.0.11",
     "@mantine/hooks": "^6.0.11",
-    "@mui/material": "^5.13.2",
     "@radix-ui/react-slot": "^1.0.2",
     "@reduxjs/toolkit": "^1.9.5",
     "axios": "^1.4.0",
@@ -119,6 +118,7 @@
     "sigma": "^3.0.0-alpha3"
   },
   "devDependencies": {
+    "@mui/material": "^5.13.2",
     "@electron/notarize": "^1.2.3",
     "@electron/rebuild": "^3.2.10",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
