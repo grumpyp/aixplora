@@ -75,7 +75,7 @@ function Config() {
 
   const handleSuccess = (values) => {
     console.log(values);
-    saveConfig(values.OPENAI_API_KEY);
+    saveConfig(values.OPENAI_API_KEY, values.model);
   };
 
     const handleFail = (errors) => {
