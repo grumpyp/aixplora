@@ -8,6 +8,7 @@ import {IconSend, IconTrash, IconArrowUp} from '@tabler/icons-react';
 import {Modal, Select} from '@mantine/core';
 import {useDisclosure} from '@mantine/hooks';
 import Block from './components/Block';
+import { ErrorNotification } from '../../components/ErrorNotification'
 
 type FileData = {
     name: string;
@@ -88,6 +89,7 @@ function Chat() {
             ]);
         } catch (error) {
             setError(true);
+            ErrorNotification('Error:', error as string);
         }
         setIsLoading(false);
     };
@@ -129,6 +131,7 @@ function Chat() {
         })
         .catch((error) => {
             console.log('Error fetching config:', error);
+            ErrorNotification('Error fetching config:', error);
         });
     }, []);
 

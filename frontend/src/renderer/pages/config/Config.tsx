@@ -9,6 +9,7 @@ import logo from '../../components/assets/AIxplora_logo_round.png';
 import { useSelector, useDispatch } from 'react-redux';
 import { connect, disconnect } from '../../store/slices/externalDbSlice';
 import {apiCall} from "../../utils/api";
+import { ErrorNotification } from '../../components/ErrorNotification'
 
 
 function saveConfig(OPENAI_API_KEY: string, model: string) {
@@ -54,6 +55,7 @@ function saveConfig(OPENAI_API_KEY: string, model: string) {
     )
     .catch((error) => {
         console.log('Error fetching config:', error);
+        ErrorNotification('Error fetching config:', error);
         return false;
     }
     );
