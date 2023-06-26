@@ -4,6 +4,7 @@ import './graph.css';
 import axios from 'axios';
 import config from 'renderer/config';
 import {implementGraph} from './index'
+import { ErrorNotification } from '../../components/ErrorNotification'
 
 function Graph() {
   const [isLoading, setIsLoading] = useState(false);
@@ -54,6 +55,7 @@ function Graph() {
       
     } catch (error) {
       setError(true);
+      ErrorNotification('Error:', error as string);
     }
     setIsLoading(false);
     implementGraph()

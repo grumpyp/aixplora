@@ -10,6 +10,7 @@ import {
 import { Dropzone } from '@mantine/dropzone';
 import { IconCloudUpload, IconX, IconDownload } from '@tabler/icons-react';
 import {apiCall} from "../../../utils/api";
+import { ErrorNotification } from 'renderer/components/ErrorNotification';
 
 const useStyles = createStyles((theme) => ({
   // Styles definition here
@@ -67,6 +68,7 @@ export function DropzoneButton() {
         .catch((error) => {
             // Handle API request error
             console.error(error);
+            ErrorNotification('Error:', error);
         });
       setIsLoading(false);
     }

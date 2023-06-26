@@ -3,6 +3,7 @@ import {DropzoneButton} from "./components/Dropzone";
 import UploadedTable from "./components/Uploaded";
 import {apiCall} from "../../utils/api";
 import {useSelector} from "react-redux";
+import { ErrorNotification } from '../../components/ErrorNotification'
 
 type FileData = {
     name: string;
@@ -38,6 +39,7 @@ export function Upload() {
         })
         .catch((error) => {
             console.log('Error fetching config:', error);
+            ErrorNotification('Error fetching config:', error);
             setFiles([])
         });
     }, []);

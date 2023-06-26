@@ -4,6 +4,7 @@ import axios from 'axios';
 import {config} from '../../config.js';
 import {apiCall} from "../../utils/api";
 import Answer from './components/Answer';
+import { ErrorNotification } from '../../components/ErrorNotification'
 
 type SummaryResponse = {
   summary: string;
@@ -37,6 +38,7 @@ export function Summary() {
       setRequestFired(true);
     } catch (error) {
       console.log(error);
+      ErrorNotification('Error summarizing document:', error as string);
     }
     setIsLoading(false);
   };
@@ -60,6 +62,7 @@ export function Summary() {
   }
     ).catch((error) => {
         console.log('Error fetching config:', error);
+        ErrorNotification('Error fetching config:', error);
         });
     }, []);
 
