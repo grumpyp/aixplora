@@ -13,8 +13,6 @@ import {useState, useEffect} from "react";
 import {Summary} from './pages/summary/Summary';
 import store from './store/store';
 import {Provider} from 'react-redux';
-import { Notifications } from '@mantine/notifications';
-import { ErrorNotification } from './components/ErrorNotification'
 
 const randomLinks = [
     {link: '/', label: 'Home'},
@@ -63,7 +61,6 @@ function checkConfig() {
     )
     .catch((error) => {
         console.log('Error fetching config:', error);
-        ErrorNotification('Error fetching config:', error);
         // Return false if there's an error
         return false;
     }
@@ -93,7 +90,6 @@ export default function Hello() {
         <div>
             <Provider store={store}>
                 <MantineProvider theme={{colorScheme}} withGlobalStyles withNormalizeCSS>
-                    <Notifications/>
                     <Router>
                         <HeaderResponsive links={randomLinks}/>
                         <Routes>
