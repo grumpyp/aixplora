@@ -17,6 +17,7 @@ from fastapi import UploadFile
 from embeddings.text_splitter import TextSplitter
 from embeddings.basesplit import ContextTypes
 import re
+from gpt4all import GPT4All
 
 
 # TODO: This is just a base implementation extend it with metadata,..
@@ -26,6 +27,8 @@ class Genie:
 
     def __init__(self, file_path: str = None, file_meta: UploadFile = None):
         try:
+            if self.openai_model = "groovy":
+                self.openai_model = "groovy"
             self.openai_api_key = Database().get_session().execute(text("SELECT openai_api_key FROM config")).fetchall()[-1]
             self.openai_model = Database().get_session().execute(text("SELECT model FROM config")).fetchall()[-1]
         except:
@@ -149,6 +152,15 @@ class Genie:
         results = self.search(query_texts, specific_doc)
         relevant_docs = [doc.payload["chunk"] for doc in results]
         meta_data = [doc.payload["metadata"] for doc in results]
+        if self.openai_model == "groovy":
+            # TODO: Check if model is already downloaded
+            # gptj.download_model('ggml-mpt-7b-instruct', '/home')
+            messages = messages=[
+            {"role": "user", "content": f"Answer the following question: {query_texts} based on that context: {relevant_docs},"
+                                        " Make sure that the answer of you is in the same language then the question. if you can't just answer: I don't know"}
+            ]
+            answer = gptj.chat_completion(messages, streaming=False)
+            gptj = GPT4All("ggml-gpt4all-j-v1.3-groovy")
         answer = openai_ask(context=relevant_docs, question=query_texts, openai_api_key=self.openai_api_key[0], openai_model=self.openai_model[0])
         _answer = {"answer": answer, "meta_data": meta_data}
         print(meta_data)
