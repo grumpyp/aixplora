@@ -27,9 +27,8 @@ class Genie:
 
     def __init__(self, file_path: str = None, file_meta: UploadFile = None):
         try:
-            if self.openai_model = "groovy":
-                self.openai_model = "groovy"
-            self.openai_api_key = Database().get_session().execute(text("SELECT openai_api_key FROM config")).fetchall()[-1]
+            self.openai_api_key = \
+            Database().get_session().execute(text("SELECT openai_api_key FROM config")).fetchall()[-1]
             self.openai_model = Database().get_session().execute(text("SELECT model FROM config")).fetchall()[-1]
         except:
             self.openai_api_key = "notdefined"
@@ -37,7 +36,8 @@ class Genie:
         try:
             if self.qu.get_collection(collection_name="aixplora").vectors_count == 0:
                 self.qu.recreate_collection(
-                    collection_name="aixplora", vectors_config=models.VectorParams(size=1536, distance=models.Distance.COSINE),
+                    collection_name="aixplora",
+                    vectors_config=models.VectorParams(size=1536, distance=models.Distance.COSINE),
                 )
         except:
             self.qu.recreate_collection(
@@ -77,11 +77,11 @@ class Genie:
         print(fixed_whitespaces)
         return fixed_whitespaces
 
-    def upload_embedding(self, texts: List[Document],  collection_name: str = "aixplora", page: int = 0) -> None:
+    def upload_embedding(self, texts: List[Document], collection_name: str = "aixplora", page: int = 0) -> None:
         print(len(texts))
         for i in range(len(texts)):
             print(i)
-            print("-"*10)
+            print("-" * 10)
             response = openai.Embedding.create(
                 input=texts[i],
                 model="text-embedding-ada-002"
@@ -115,17 +115,18 @@ class Genie:
 
     def search(self, query: str, specific_doc: str | None):
         openai.api_key = self.openai_api_key[0]
+        print(self.openai_api_key)
         response = openai.Embedding.create(
             input=query,
             model="text-embedding-ada-002"
         )
         embeddings = response['data'][0]['embedding']
         results = self.qu.search(
-                collection_name="aixplora",
-                query_vector=embeddings,
-                limit=3,
-                with_payload=True
-            )
+            collection_name="aixplora",
+            query_vector=embeddings,
+            limit=3,
+            with_payload=True
+        )
         if specific_doc is not None:
             results = self.qu.search(
                 collection_name="aixplora",
@@ -152,16 +153,19 @@ class Genie:
         results = self.search(query_texts, specific_doc)
         relevant_docs = [doc.payload["chunk"] for doc in results]
         meta_data = [doc.payload["metadata"] for doc in results]
-        if self.openai_model == "groovy":
-            # TODO: Check if model is already downloaded
-            # gptj.download_model('ggml-mpt-7b-instruct', '/home')
-            messages = messages=[
-            {"role": "user", "content": f"Answer the following question: {query_texts} based on that context: {relevant_docs},"
-                                        " Make sure that the answer of you is in the same language then the question. if you can't just answer: I don't know"}
+        print(self.openai_model)
+        if not self.openai_model[0].startswith("gpt"):
+            print(f"Using local model: {self.openai_model[0]}")
+            gptj = GPT4All(model_name=self.openai_model[0])
+            messages = [
+                {"role": "user",
+                 "content": f"Answer the following question: {query_texts} based on that context: {relevant_docs},"
+                            " Make sure that the answer of you is in the same language then the question. if you can't just answer: I don't know"}
             ]
             answer = gptj.chat_completion(messages, streaming=False)
-            gptj = GPT4All("ggml-gpt4all-j-v1.3-groovy")
-        answer = openai_ask(context=relevant_docs, question=query_texts, openai_api_key=self.openai_api_key[0], openai_model=self.openai_model[0])
+        else:
+            answer = openai_ask(context=relevant_docs, question=query_texts, openai_api_key=self.openai_api_key[0],
+                                openai_model=self.openai_model[0])
         _answer = {"answer": answer, "meta_data": meta_data}
         print(meta_data)
         return _answer

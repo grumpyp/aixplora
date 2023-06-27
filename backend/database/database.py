@@ -9,6 +9,7 @@ class Database:
 
     def __init__(self):
         self.engine = create_engine(SQLITE_DATABASE_URL, echo=True, connect_args={"check_same_thread": False})
+        print("Database created.")
         Base.metadata.create_all(self.engine)
         self.sessionmaker = sessionmaker(autocommit=False, autoflush=False, bind=self.engine)
 
