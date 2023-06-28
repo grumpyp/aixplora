@@ -18,6 +18,7 @@ from embeddings.text_splitter import TextSplitter
 from embeddings.basesplit import ContextTypes
 import re
 from gpt4all import GPT4All
+import os
 
 
 # TODO: This is just a base implementation extend it with metadata,..
@@ -156,16 +157,19 @@ class Genie:
         print(self.openai_model)
         if not self.openai_model[0].startswith("gpt"):
             print(f"Using local model: {self.openai_model[0]}")
-            gptj = GPT4All(model_name=self.openai_model[0])
+            # TODO: refactor this path to be global
+            models_dir = os.path.join(os.getcwd(), "llmsmodels")
+            gptj = GPT4All(model_name=self.openai_model[0], model_path=models_dir)
             messages = [
                 {"role": "user",
                  "content": f"Answer the following question: {query_texts} based on that context: {relevant_docs},"
                             " Make sure that the answer of you is in the same language then the question. if you can't just answer: I don't know"}
             ]
-            answer = gptj.chat_completion(messages, streaming=False)
+            answer = gptj.chat_completion(messages, streaming=False)["choices"][0]["message"]["content"]
         else:
-            answer = openai_ask(context=relevant_docs, question=query_texts, openai_api_key=self.openai_api_key[0],
-                                openai_model=self.openai_model[0])
+            if self.openai_api_key[0].startswith("gpt"):
+                answer = openai_ask(context=relevant_docs, question=query_texts, openai_api_key=self.openai_api_key[0],
+                                    openai_model=self.openai_model[0])
         _answer = {"answer": answer, "meta_data": meta_data}
         print(meta_data)
         return _answer

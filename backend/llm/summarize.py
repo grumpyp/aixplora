@@ -28,6 +28,7 @@ class Summarize:
         self.document = document
         self.model = model
         self.db = Database().get_session()
+        self.models_dir = os.path.join(os.getcwd(), "llmsmodels")
         self.misc_dir = os.path.join(os.getcwd(), "misc")
         try:
             self.openai_api_key = \
@@ -83,7 +84,8 @@ class Summarize:
                         tokens_count = num_tokens_from_string("".join(summary), "cl100k_base")
                     else:
                         # TODO: Check if this works with cl100k_base and open-source llms
-                        gptj = GPT4All(model_name=self.openai_model[0])
+
+                        gptj = GPT4All(model_name=self.openai_model[0], model_path=self.models_dir)
                         messages = [
                             {"role": "user",
                              "content": f"Write a summary: The summary should highlight the core for example: argument, conclusions and evidence. the summary should be structured in bulleted lists following the headings Core Argument, Evidence, and Conclusions use this {text_split} as reference"
@@ -107,7 +109,7 @@ class Summarize:
                     )
                     return {"summary": response.choices[0]["message"]["content"], "summary_list": "<hr>".join(summary)}
                 else:
-                    gptj = GPT4All(model_name=self.openai_model[0])
+                    gptj = GPT4All(model_name=self.openai_model[0], model_path=self.models_dir)
                     messages = [
                         {"role": "user",
                          "content": f"Conclude a big answer about the following summaries: {''.join(summary)}.the answer should be structured in bulleted lists following the headings Core Argument, Evidence, and Conclusions. It should also introduce everything. Take all the infos of the provided summaries if it's a reference! If you know additional internet references, add them accordingly"
@@ -128,7 +130,7 @@ class Summarize:
                     print({"summary": response.choices[0]["message"]["content"], "summary_list": "No additional references"})
                     return {"summary": response.choices[0]["message"]["content"], "summary_list": "No additional references"}
                 else:
-                    gptj = GPT4All(model_name=self.openai_model[0])
+                    gptj = GPT4All(model_name=self.openai_model[0], model_path=self.models_dir)
                     messages = [
                         {"role": "user",
                          "content": f"Write a summary of this summary {text}. If you know additional internet references, add them accordingly"}
