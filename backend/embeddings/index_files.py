@@ -167,7 +167,8 @@ class Genie:
             ]
             answer = gptj.chat_completion(messages, streaming=False)["choices"][0]["message"]["content"]
         else:
-            if self.openai_api_key[0].startswith("gpt"):
+            if self.openai_model[0].startswith("gpt"):
+                print(f"Using openai model: {self.openai_model[0]}")
                 answer = openai_ask(context=relevant_docs, question=query_texts, openai_api_key=self.openai_api_key[0],
                                     openai_model=self.openai_model[0])
         _answer = {"answer": answer, "meta_data": meta_data}

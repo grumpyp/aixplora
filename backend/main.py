@@ -37,6 +37,7 @@ def get_config():
 @app.post("/config/")
 def add_config(config: Config):
     db = Database().get_session()
+    print(config.apiKey, config.model)
     res = db.execute(text("INSERT INTO config (openai_api_key, model) VALUES (:api_key, :model)"),
                      {"api_key": config.apiKey, "model": config.model})
     db.commit()
@@ -101,7 +102,7 @@ def test(document: Document):
         print("found summary in db")
         return {"summary": indexed_summaries[2], "summary_list": indexed_summaries[3]}
     # get model
-    llm_model = db.execute(text("SELECT * FROM config")).first()[2]
+    llm_model = db.execute(text("SELECT * FROM config ORDER BY id DESC LIMIT 1")).first()[2]
     s = Summarize(document=document, model=llm_model)
     summary = s.get_summary()
     entry = Summary(file_name=document.document, summary=summary.get('summary'),

@@ -60,7 +60,6 @@ class Summarize:
                             contents.append(f.read())
             text = "".join(contents)
             tokens_count = num_tokens_from_string(text, "cl100k_base")
-            # chatgpt3-5
             if tokens_count > 3000:
                 # split the text into several parts to not exceed the token limit
                 # TODO: don't lose relevance of text.
@@ -68,7 +67,7 @@ class Summarize:
                 words_to_feed = tokens_count // iterations
                 for i in range(0, iterations):
                     text_split = text[words_to_feed * i:words_to_feed * (i + 1)]
-                    time.sleep(3)
+                    time.sleep(0.25)
                     if self.model.startswith("gpt"):
                         response = openai.ChatCompletion.create(
                             model=f"{self.openai_model}",
@@ -81,11 +80,10 @@ class Summarize:
                         )
                         print(response.choices[0]["message"]["content"])
                         summary.append(response.choices[0]["message"]["content"])
-                        tokens_count = num_tokens_from_string("".join(summary), "cl100k_base")
                     else:
                         # TODO: Check if this works with cl100k_base and open-source llms
 
-                        gptj = GPT4All(model_name=self.openai_model[0], model_path=self.models_dir)
+                        gptj = GPT4All(model_name=self.openai_model, model_path=self.models_dir)
                         messages = [
                             {"role": "user",
                              "content": f"Write a summary: The summary should highlight the core for example: argument, conclusions and evidence. the summary should be structured in bulleted lists following the headings Core Argument, Evidence, and Conclusions use this {text_split} as reference"
@@ -109,7 +107,7 @@ class Summarize:
                     )
                     return {"summary": response.choices[0]["message"]["content"], "summary_list": "<hr>".join(summary)}
                 else:
-                    gptj = GPT4All(model_name=self.openai_model[0], model_path=self.models_dir)
+                    gptj = GPT4All(model_name=self.openai_model, model_path=self.models_dir)
                     messages = [
                         {"role": "user",
                          "content": f"Conclude a big answer about the following summaries: {''.join(summary)}.the answer should be structured in bulleted lists following the headings Core Argument, Evidence, and Conclusions. It should also introduce everything. Take all the infos of the provided summaries if it's a reference! If you know additional internet references, add them accordingly"
@@ -130,7 +128,7 @@ class Summarize:
                     print({"summary": response.choices[0]["message"]["content"], "summary_list": "No additional references"})
                     return {"summary": response.choices[0]["message"]["content"], "summary_list": "No additional references"}
                 else:
-                    gptj = GPT4All(model_name=self.openai_model[0], model_path=self.models_dir)
+                    gptj = GPT4All(model_name=self.openai_model, model_path=self.models_dir)
                     messages = [
                         {"role": "user",
                          "content": f"Write a summary of this summary {text}. If you know additional internet references, add them accordingly"}
