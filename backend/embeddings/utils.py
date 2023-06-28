@@ -1,6 +1,7 @@
 from typing import List
-
+from gpt4all import GPT4All
 import openai
+import os
 
 
 
@@ -10,14 +11,26 @@ def openai_ask(context: str = None, pages: List[int] = None, question: str = Non
     print(context)
     print(pages)
     # TODO: make answer to same language
-    completion = openai.ChatCompletion.create(
-        model=f"{openai_model}",
-        messages=[
-            {"role": "user", "content": f"Answer the following question: {question} based on that context: {context},"
-                                        " Make sure that the answer of you is in the same language then the question. if you can't just answer: I don't know"}
-        ]
-    )
+    if openai_model.startswith("gpt"):
+        completion = openai.ChatCompletion.create(
+            model=f"{openai_model}",
+            messages=[
+                {"role": "user", "content": f"Answer the following question: {question} based on that context: {context},"
+                                            " Make sure that the answer of you is in the same language then the question. if you can't just answer: I don't know"}
+            ]
+        )
 
-    # TODO: save usage into db
-    return completion["choices"][0]["message"]["content"]
+        # TODO: save usage into db
+        return completion["choices"][0]["message"]["content"]
+    else:
+        print(f"Using local model: {openai_model}")
+        models_dir = os.path.join(os.getcwd(), "llmsmodels")
+        gptj = GPT4All(model_name=openai_model, model_path=models_dir)
+        messages = [
+            {"role": "user",
+                "content": f"Answer the following question: {question} based on that context: {context},"
+                            " Make sure that the answer of you is in the same language then the question. if you can't just answer: I don't know"}
+        ]
+        return gptj.chat_completion(messages=messages, streaming=False)
+
 
