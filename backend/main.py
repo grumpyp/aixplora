@@ -100,7 +100,9 @@ def test(document: Document):
     if indexed_summaries is not None:
         print("found summary in db")
         return {"summary": indexed_summaries[2], "summary_list": indexed_summaries[3]}
-    s = Summarize(document)
+    # get model
+    llm_model = db.execute(text("SELECT * FROM config")).first()[2]
+    s = Summarize(document=document, model=llm_model)
     summary = s.get_summary()
     entry = Summary(file_name=document.document, summary=summary.get('summary'),
                     summary_list=summary.get('summary_list'))

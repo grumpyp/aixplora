@@ -1,6 +1,5 @@
 import {useForm} from '@mantine/form';
-import {TextInput, Button, Box, Drawer, Avatar, Text, Group, Select} from '@mantine/core';
-import axios from 'axios';
+import {TextInput, Button, Box, Drawer, Avatar, Text, Group, Select, Tooltip} from '@mantine/core';
 import {config} from '../../config.js';
 import {IconDatabase} from '@tabler/icons-react';
 import {useDisclosure} from '@mantine/hooks';
@@ -9,6 +8,7 @@ import logo from '../../components/assets/AIxplora_logo_round.png';
 import {useSelector, useDispatch} from 'react-redux';
 import {connect, disconnect} from '../../store/slices/externalDbSlice';
 import {apiCall} from "../../utils/api";
+import {useState} from "react";
 
 
 function saveConfig(OPENAI_API_KEY: string, model: string) {
@@ -63,6 +63,8 @@ function Config() {
     const isConnected = useSelector((state) => state.connectedExternalDb.value);
     const dispatch = useDispatch();
     const [opened, {open, close}] = useDisclosure(false);
+    const [focused, setFocused] = useState(false);
+
 
     const form = useForm({
         initialValues: {
@@ -73,7 +75,9 @@ function Config() {
         validate: {
             OPENAI_API_KEY: (value, values) => {
                 const modelValue = values.model;
-                if (modelValue.startsWith("gpt")) {
+                // Huggingface embeddings will activate huggingface embeddings to be completly independent of
+                // OpenAI. It's not implemented as of now 28.05.2023
+                if (!modelValue.startsWith("huggingfaceembeddings")) {
                     return value.startsWith("sk-") ? null : "Invalid API Key";
                 }
                 return null;
@@ -112,8 +116,14 @@ function Config() {
             </Group>
             <form onSubmit={form.onSubmit(handleSuccess, handleFail)}>
                 <TextInput mt="sm" label="OPENAI API Key"
-
-                           placeholder="OPENAI API Key" {...form.getInputProps('OPENAI_API_KEY')} />
+                           placeholder="OPENAI API Key" {...form.getInputProps('OPENAI_API_KEY')}
+                           onFocus={() => setFocused(true)}
+                           onBlur={() => setFocused(false)}
+                           inputContainer={(children) => (
+                               <Tooltip label="An OpenAI key is mandatory for the embeddings even if using a open-source LLM " position="top-start" opened={focused}>
+                                   {children}
+                               </Tooltip>
+                           )}/>
                 <Select
                     label="OPENAI Model"
                     placeholder="gpt3.5-turbo"
