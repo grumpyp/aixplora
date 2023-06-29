@@ -1,8 +1,8 @@
 import uvicorn
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, Header, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
-from typing import List
+from typing import List, Optional
 from database.database import Database
 from schemas.config import Config
 from schemas.question import Question, Document
@@ -25,9 +25,13 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
+def get_db_session(x_api_key: Optional[str] = Header(None)):
+    db = Database(api_key=x_api_key)
+    return db.get_session()
+
 
 @app.get("/config/")
-def get_config():
+def get_config(db_session=Depends(get_db_session)):
     db = Database().get_session()
     if db.execute(text("SELECT * FROM config")).first() is None:
         return False
@@ -35,7 +39,7 @@ def get_config():
 
 
 @app.post("/config/")
-def add_config(config: Config):
+def add_config(config: Config, db_session=Depends(get_db_session)):
     db = Database().get_session()
     res = db.execute(text("INSERT INTO config (openai_api_key, model) VALUES (:api_key, :model)"),
                      {"api_key": config.apiKey, "model": config.model})
@@ -44,7 +48,7 @@ def add_config(config: Config):
 
 
 @app.get("/files/")
-def get_files():
+def get_files(db_session = Depends(get_db_session)):
     try:
         db = Database().get_session()
         files = db.execute(text("SELECT * FROM files")).fetchall()
@@ -61,7 +65,7 @@ def get_files():
 
 
 @app.post("/files/")
-async def upload_files(files: List[UploadFile] = File(...)):
+async def upload_files(db_session = Depends(get_db_session), files: List[UploadFile] = File(...)):
     from database.models.files import File
     for file in files:
         file_extension = os.path.splitext(file.filename)[1]
@@ -83,7 +87,7 @@ async def upload_files(files: List[UploadFile] = File(...)):
 
 
 @app.post("/chat/")
-def chat(question: Question, document: Document):
+def chat(question: Question, document: Document, db_session=Depends(get_db_session)):
     genie = Genie()
     answer = genie.query(query_texts=question.question, specific_doc=document.document)
     print(answer)
@@ -91,7 +95,7 @@ def chat(question: Question, document: Document):
 
 
 @app.post("/summarize/")
-def test(document: Document):
+def test(document: Document, db_session=Depends(get_db_session)):
     from llm.summarize import Summarize
     from database.models.summary import Summary
     db = Database().get_session()
