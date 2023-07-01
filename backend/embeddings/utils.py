@@ -2,6 +2,7 @@ from typing import List
 from gpt4all import GPT4All
 import openai
 import os
+from llm.summarize import num_tokens_from_string
 
 
 
@@ -25,6 +26,16 @@ def openai_ask(context: str = None, pages: List[int] = None, question: str = Non
     else:
         print(f"Using local model: {openai_model}")
         models_dir = os.path.join(os.getcwd(), "llmsmodels")
+        tokens_count = num_tokens_from_string(context, "cl100k_base")
+        # TODO: nicer workaround if context too long
+        if tokens_count > 1700:
+            while True:
+                len_context = len(context) / 20
+
+                context = context[:len(context) - len_context]
+                tokens_count = num_tokens_from_string(context, "cl100k_base")
+                if tokens_count < 1700:
+                    break
         gptj = GPT4All(model_name=openai_model, model_path=models_dir)
         messages = [
             {"role": "user",

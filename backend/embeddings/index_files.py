@@ -19,6 +19,7 @@ from embeddings.basesplit import ContextTypes
 import re
 from gpt4all import GPT4All
 import os
+from llm.summarize import num_tokens_from_string
 
 
 # TODO: This is just a base implementation extend it with metadata,..
@@ -160,6 +161,16 @@ class Genie:
             # TODO: refactor this path to be global
             models_dir = os.path.join(os.getcwd(), "llmsmodels")
             gptj = GPT4All(model_name=self.openai_model[0], model_path=models_dir)
+            tokens_count = num_tokens_from_string(relevant_docs, "cl100k_base")
+            # TODO: nicer workaround if context too long
+            if tokens_count > 1700:
+                while True:
+                    len_context = len(context) / 20
+
+                    context = context[:len(context) - len_context]
+                    tokens_count = num_tokens_from_string(relevant_docs, "cl100k_base")
+                    if tokens_count < 1700:
+                        break
             messages = [
                 {"role": "user",
                  "content": f"Answer the following question: {query_texts} based on that context: {relevant_docs},"
