@@ -19,6 +19,7 @@ from embeddings.basesplit import ContextTypes
 import re
 from gpt4all import GPT4All
 import os
+from sentence_transformers import SentenceTransformer
 
 
 # TODO: This is just a base implementation extend it with metadata,..
@@ -29,16 +30,28 @@ class Genie:
     def __init__(self, file_path: str = None, file_meta: UploadFile = None):
         try:
             self.openai_api_key = \
-            Database().get_session().execute(text("SELECT openai_api_key FROM config")).fetchall()[-1]
+                Database().get_session().execute(text("SELECT openai_api_key FROM config")).fetchall()[-1]
             self.openai_model = Database().get_session().execute(text("SELECT model FROM config")).fetchall()[-1]
         except:
             self.openai_api_key = "notdefined"
+        try:
+            self.embeddings_model = \
+                Database().get_session().execute(text("SELECT embeddings_model FROM config")).fetchall()[-1]
+        # By default use OpenAI Model if exception is triggered
+        except Exception as e:
+            print(f"Using default OpenAI model: {e}")
+            self.embeddings_model = "text-embedding-ada-002"
         self.qu = QdrantClient(path="./qdrant_data")
         try:
             if self.qu.get_collection(collection_name="aixplora").vectors_count == 0:
                 self.qu.recreate_collection(
                     collection_name="aixplora",
-                    vectors_config=models.VectorParams(size=1536, distance=models.Distance.COSINE),
+                    vectors_config={
+                        "text-embedding-ada-002": models.VectorParams(size=1536, distance=models.Distance.COSINE),
+                        "all-MiniLM-L6-v2": models.VectorParams(size=384, distance=models.Distance.COSINE),
+                        "multi-qa-MiniLM-L6-cos-v1": models.VectorParams(size=384, distance=models.Distance.COSINE),
+                        "paraphrase-albert-small-v2": models.VectorParams(size=768, distance=models.Distance.COSINE),
+                        "multi-qa-mpnet-base-dot-v1": models.VectorParams(size=768, distance=models.Distance.COSINE),
                 )
         except:
             self.qu.recreate_collection(
@@ -83,11 +96,17 @@ class Genie:
         for i in range(len(texts)):
             print(i)
             print("-" * 10)
-            response = openai.Embedding.create(
-                input=texts[i],
-                model="text-embedding-ada-002"
-            )
-            embeddings = response['data'][0]['embedding']
+            if self.embeddings_model != "text-embedding-ada-002":
+                print(self.embeddings_model)
+                model = SentenceTransformer(f"{self.embeddings_model[0]}")
+                embeddings = model.encode(texts[i])
+                print(embeddings)
+            else:
+                response = openai.Embedding.create(
+                    input=texts[i],
+                    model="text-embedding-ada-002"
+                )
+                embeddings = response['data'][0]['embedding']
 
             self.qu.upsert(
                 collection_name=collection_name,
@@ -99,7 +118,8 @@ class Genie:
                             "chunk": texts[i],
                             "metadata": {"filename": self.file_meta.filename,
                                          "filetype": self.file_meta.content_type,
-                                         "page": page}
+                                         "page": page,
+                                         "embeddings_model": self.embeddings_model[0]}
                         },
                         vector=embeddings,
                     ),
@@ -117,11 +137,15 @@ class Genie:
     def search(self, query: str, specific_doc: str | None):
         openai.api_key = self.openai_api_key[0]
         print(self.openai_api_key)
-        response = openai.Embedding.create(
-            input=query,
-            model="text-embedding-ada-002"
-        )
-        embeddings = response['data'][0]['embedding']
+        if self.embeddings_model != "text-embedding-ada-002":
+            model = SentenceTransformer(f"{self.embeddings_model[0]}")
+            embeddings = model.encode(query)
+        else:
+            response = openai.Embedding.create(
+                input=query,
+                model="text-embedding-ada-002"
+            )
+            embeddings = response['data'][0]['embedding']
         results = self.qu.search(
             collection_name="aixplora",
             query_vector=embeddings,
