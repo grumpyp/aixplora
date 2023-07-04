@@ -51,13 +51,18 @@ class Genie:
                         "all-MiniLM-L6-v2": models.VectorParams(size=384, distance=models.Distance.COSINE),
                         "multi-qa-MiniLM-L6-cos-v1": models.VectorParams(size=384, distance=models.Distance.COSINE),
                         "paraphrase-albert-small-v2": models.VectorParams(size=768, distance=models.Distance.COSINE),
-                        "multi-qa-mpnet-base-dot-v1": models.VectorParams(size=768, distance=models.Distance.COSINE),
-                )
+                        "multi-qa-mpnet-base-dot-v1": models.VectorParams(size=768, distance=models.Distance.COSINE)
+                    })
         except:
             self.qu.recreate_collection(
                 collection_name="aixplora",
-                vectors_config=models.VectorParams(size=1536, distance=models.Distance.COSINE),
-            )
+                vectors_config={
+                    "text-embedding-ada-002": models.VectorParams(size=1536, distance=models.Distance.COSINE),
+                    "all-MiniLM-L6-v2": models.VectorParams(size=384, distance=models.Distance.COSINE),
+                    "multi-qa-MiniLM-L6-cos-v1": models.VectorParams(size=384, distance=models.Distance.COSINE),
+                    "paraphrase-albert-small-v2": models.VectorParams(size=768, distance=models.Distance.COSINE),
+                    "multi-qa-mpnet-base-dot-v1": models.VectorParams(size=768, distance=models.Distance.COSINE)
+                })
 
         if file_path:
             self.file_meta = file_meta
@@ -99,8 +104,7 @@ class Genie:
             if self.embeddings_model != "text-embedding-ada-002":
                 print(self.embeddings_model)
                 model = SentenceTransformer(f"{self.embeddings_model[0]}")
-                embeddings = model.encode(texts[i])
-                print(embeddings)
+                embeddings = [float(x) for x in model.encode(texts[i])]
             else:
                 response = openai.Embedding.create(
                     input=texts[i],
@@ -121,7 +125,9 @@ class Genie:
                                          "page": page,
                                          "embeddings_model": self.embeddings_model[0]}
                         },
-                        vector=embeddings,
+                        vector={
+                            f"{self.embeddings_model}": embeddings
+                        },
                     ),
                 ]
             )
@@ -139,7 +145,7 @@ class Genie:
         print(self.openai_api_key)
         if self.embeddings_model != "text-embedding-ada-002":
             model = SentenceTransformer(f"{self.embeddings_model[0]}")
-            embeddings = model.encode(query)
+            embeddings = [float(x) for x in model.encode(query)]
         else:
             response = openai.Embedding.create(
                 input=query,
@@ -148,14 +154,25 @@ class Genie:
             embeddings = response['data'][0]['embedding']
         results = self.qu.search(
             collection_name="aixplora",
-            query_vector=embeddings,
+            query_vector=(f"{self.embeddings_model[0]}", embeddings),
             limit=3,
             with_payload=True
         )
+        import time
+        print("---"*10)
+        print(self.qu.get_collection(collection_name="aixplora"))
+        print("---" * 10)
+        print(self.embeddings_model[0])
+        print("---" * 10)
+        print(embeddings)
+        print("---" * 10)
+        print(results)
+        print("---" * 10)
+        time.sleep(10)
         if specific_doc is not None:
             results = self.qu.search(
                 collection_name="aixplora",
-                query_vector=embeddings,
+                query_vector=(f"{self.embeddings_model[0]}", embeddings),
                 query_filter=models.Filter(
                     must=[
                         models.FieldCondition(
@@ -176,6 +193,9 @@ class Genie:
         if not query_embedding and not query_texts:
             raise ValueError("Either query_embedding or query_texts must be provided")
         results = self.search(query_texts, specific_doc)
+        import time
+        time.sleep(5)
+        print(results)
         relevant_docs = [doc.payload["chunk"] for doc in results]
         meta_data = [doc.payload["metadata"] for doc in results]
         print(self.openai_model)
