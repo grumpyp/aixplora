@@ -11,10 +11,11 @@ import {apiCall} from "../../utils/api";
 import {useState} from "react";
 
 
-function saveConfig(OPENAI_API_KEY: string, model: string) {
+function saveConfig(OPENAI_API_KEY: string, model: string, embeddingsmodel: string) {
     const payload = {
         apiKey: OPENAI_API_KEY,
-        model: model
+        model: model,
+        embeddingsModel: embeddingsmodel
     };
 //     return axios.post(`${config.REACT_APP_BACKEND_URL}/config`, payload)
 //         .then((response) => {
@@ -69,27 +70,30 @@ function Config() {
     const form = useForm({
         initialValues: {
             OPENAI_API_KEY: '',
-            model: ''
+            model: '',
+            embeddingsmodel: '',
         },
 
         validate: {
             OPENAI_API_KEY: (value, values) => {
                 const modelValue = values.model;
+                const embeddingsmodelValue = values.embeddingsmodel;
                 // Huggingface embeddings will activate huggingface embeddings to be completly independent of
                 // OpenAI. It's not implemented as of now 28.05.2023
-                if (!modelValue.startsWith("huggingfaceembeddings")) {
+                if (embeddingsmodelValue.startsWith("text-")) {
                     return value.startsWith("sk-") ? null : "Invalid API Key";
                 }
                 return null;
             },
-            model: (value) => (value ? null : "Choose a model")
+            model: (value) => (value ? null : "Choose a model"),
+            embeddingsmodel: (value) => (value ? null : "Choose an embeddings model"),
         },
     });
 
 
     const handleSuccess = (values) => {
         console.log(values);
-        saveConfig(values.OPENAI_API_KEY, values.model);
+        saveConfig(values.OPENAI_API_KEY, values.model, values.embeddingsmodel);
     };
 
     const handleFail = (errors) => {
@@ -120,12 +124,12 @@ function Config() {
                            onFocus={() => setFocused(true)}
                            onBlur={() => setFocused(false)}
                            inputContainer={(children) => (
-                               <Tooltip label="An OpenAI key is mandatory for the embeddings even if using a open-source LLM " position="top-start" opened={focused}>
+                               <Tooltip label="An OpenAI key is mandatory if you're using the text-embedding-ada-002 Embedding model" position="top-start" opened={focused}>
                                    {children}
                                </Tooltip>
                            )}/>
                 <Select
-                    label="OPENAI Model"
+                    label="LLM Model"
                     placeholder="gpt3.5-turbo"
                     {...form.getInputProps('model')}
                     data={[
@@ -135,6 +139,18 @@ function Config() {
                         {value: 'gpt-4-32k', label: 'gpt-4-32k'},
                         {value: 'ggml-gpt4all-j-v1.3-groovy', label: 'ggml-gpt4all-j-v1.3-groovy'},
                         {value: 'ggml-mpt-7b-instruct', label: 'ggml-mpt-7b-instruct'},
+                    ]}
+                />
+                <Select
+                    label="Embeddings Model"
+                    placeholder="text-embedding-ada-002"
+                    {...form.getInputProps('embeddingsmodel')}
+                    data={[
+                        {value: 'text-embedding-ada-002', label: 'text-embedding-ada-002'},
+                        {value: 'all-MiniLM-L6-v2', label: 'all-MiniLM-L6-v2'},
+                        {value: 'multi-qa-MiniLM-L6-cos-v1', label: 'multi-qa-MiniLM-L6-cos-v1'},
+                        {value: 'paraphrase-albert-small-v2', label: 'paraphrase-albert-small-v2'},
+                        {value: 'multi-qa-mpnet-base-dot-v1 ', label: 'multi-qa-mpnet-base-dot-v1'},
                     ]}
                 />
                 <Button type="submit" mt="sm">
