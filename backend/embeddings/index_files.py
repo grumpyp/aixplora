@@ -116,6 +116,7 @@ class Genie:
                 collection_name=collection_name,
                 wait=True,
                 points=[
+                    # TODO: Change randomint to UUID
                     models.PointStruct(
                         id=random.randint(1, 100000000),
                         payload={
@@ -126,7 +127,7 @@ class Genie:
                                          "embeddings_model": self.embeddings_model[0]}
                         },
                         vector={
-                            f"{self.embeddings_model}": embeddings
+                            f"{self.embeddings_model[0]}": embeddings
                         },
                     ),
                 ]
@@ -158,17 +159,6 @@ class Genie:
             limit=3,
             with_payload=True
         )
-        import time
-        print("---"*10)
-        print(self.qu.get_collection(collection_name="aixplora"))
-        print("---" * 10)
-        print(self.embeddings_model[0])
-        print("---" * 10)
-        print(embeddings)
-        print("---" * 10)
-        print(results)
-        print("---" * 10)
-        time.sleep(10)
         if specific_doc is not None:
             results = self.qu.search(
                 collection_name="aixplora",
