@@ -1,5 +1,5 @@
 import uvicorn
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, Request
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from typing import List
@@ -11,7 +11,9 @@ from utils import FILE_HANDLERS
 from embeddings.index_files import Genie
 from sqlalchemy.exc import DatabaseError
 import os
-
+from posthog import Posthog
+import asyncio
+import uuid
 # TODO: use best practise for routing
 
 app = FastAPI()
@@ -26,6 +28,30 @@ app.add_middleware(
 )
 
 
+@app.middleware("http")
+async def posthog_middleware(request: Request, call_next):
+    response = await call_next(request)
+
+    async def capture_posthog():
+        print(request.method)
+        posthog = Posthog(project_api_key='phc_5XDDHeXB5FS9Nz9MpywDun18suZyYceQrUuY7UIM0O7',
+                          host='https://app.posthog.com')
+        db = Database().get_session()
+        try:
+            posthog_id = db.execute(text("SELECT posthog_id FROM config")).fetchall()[-1][0]
+            route = request.url.path
+            posthog.capture(f'{posthog_id}', route)
+        except:
+            # Not configured yet
+            posthog_id = "unconfigured"
+            route = request.url.path
+            posthog.capture(f'{posthog_id}', route)
+            pass
+
+    asyncio.ensure_future(capture_posthog())
+
+    return response
+
 @app.get("/config/")
 def get_config():
     db = Database().get_session()
@@ -37,8 +63,8 @@ def get_config():
 @app.post("/config/")
 def add_config(config: Config):
     db = Database().get_session()
-    res = db.execute(text("INSERT INTO config (openai_api_key, model) VALUES (:api_key, :model)"),
-                     {"api_key": config.apiKey, "model": config.model})
+    res = db.execute(text("INSERT INTO config (openai_api_key, model, posthog_id) VALUES (:api_key, :model, :posthog_id)"),
+                     {"api_key": config.apiKey, "model": config.model, "posthog_id": str(uuid.uuid4())})
     db.commit()
     return config
 
