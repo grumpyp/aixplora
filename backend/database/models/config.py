@@ -8,3 +8,4 @@ class Config(BaseModel):
     openai_api_key = Column(String, nullable=False)
     posthog_id = Column(String, nullable=False)
     model = Column(String, nullable=False)
+    embeddings_model = Column(String, nullable=False)
