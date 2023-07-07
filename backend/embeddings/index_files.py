@@ -101,7 +101,7 @@ class Genie:
         for i in range(len(texts)):
             print(i)
             print("-" * 10)
-            if self.embeddings_model != "text-embedding-ada-002":
+            if self.embeddings_model[0] != "text-embedding-ada-002":
                 print(self.embeddings_model)
                 model = SentenceTransformer(f"{self.embeddings_model[0]}")
                 embeddings = [float(x) for x in model.encode(texts[i])]
@@ -144,7 +144,7 @@ class Genie:
     def search(self, query: str, specific_doc: str | None):
         openai.api_key = self.openai_api_key[0]
         print(self.openai_api_key)
-        if self.embeddings_model != "text-embedding-ada-002":
+        if self.embeddings_model[0] != "text-embedding-ada-002":
             model = SentenceTransformer(f"{self.embeddings_model[0]}")
             embeddings = [float(x) for x in model.encode(query)]
         else:
