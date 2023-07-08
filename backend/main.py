@@ -28,19 +28,30 @@ app.add_middleware(
 )
 
 
+posthog = Posthog(project_api_key='phc_5XDDHeXB5FS9Nz9MpywDun18suZyYceQrUuY7UIM0O7',
+                  host='https://app.posthog.com')
+
 @app.middleware("http")
 async def posthog_middleware(request: Request, call_next):
     response = await call_next(request)
 
     async def capture_posthog():
         print(request.method)
-        posthog = Posthog(project_api_key='phc_5XDDHeXB5FS9Nz9MpywDun18suZyYceQrUuY7UIM0O7',
-                          host='https://app.posthog.com')
+        print(request.url.path)
         db = Database().get_session()
         try:
+            # User has a config
             posthog_id = db.execute(text("SELECT posthog_id FROM config")).fetchall()[-1][0]
+            embeddings_model = db.execute(text("SELECT embeddings_model FROM config")).fetchall()[-1][0]
+            llm_model = db.execute(text("SELECT model FROM config")).fetchall()[-1][0]
             route = request.url.path
-            posthog.capture(f'{posthog_id}', route)
+            posthog.capture(
+                f'{posthog_id}',
+                event=route,
+                properties={
+                    '$set_once': {'embeddings_model': embeddings_model, 'llm_model': llm_model},
+                }
+            )
         except:
             # Not configured yet
             posthog_id = "unconfigured"
@@ -63,8 +74,9 @@ def get_config():
 @app.post("/config/")
 def add_config(config: Config):
     db = Database().get_session()
-    res = db.execute(text("INSERT INTO config (openai_api_key, model, posthog_id) VALUES (:api_key, :model, :posthog_id)"),
-                     {"api_key": config.apiKey, "model": config.model, "posthog_id": str(uuid.uuid4())})
+    print(config.embeddingsModel)
+    res = db.execute(text("INSERT INTO config (openai_api_key, model, embeddings_model, posthog_id) VALUES (:api_key, :model, :embeddingsmodel, :posthog_id)"),
+                     {"api_key": config.apiKey, "model": config.model, "embeddingsmodel": config.embeddingsModel, "posthog_id": str(uuid.uuid4())})
     db.commit()
     return config
 
@@ -89,8 +101,19 @@ def get_files():
 @app.post("/files/")
 async def upload_files(files: List[UploadFile] = File(...)):
     from database.models.files import File
+    db = Database().get_session()
+    posthog_id = db.execute(text("SELECT posthog_id FROM config")).fetchall()[-1][0] if db.execute(
+        text("SELECT posthog_id FROM config")).fetchall() else "unconfigured"
     for file in files:
         file_extension = os.path.splitext(file.filename)[1]
+        posthog.capture(
+            f'{posthog_id}',
+            event='/files/',
+            properties={
+                '$set_once': {'file_type': file_extension},
+            }
+        )
+
         print(file_extension * 10)
         if file_extension in FILE_HANDLERS:
             transcription = FILE_HANDLERS[file_extension](file)
