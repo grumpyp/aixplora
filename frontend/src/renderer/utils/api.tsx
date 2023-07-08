@@ -1,7 +1,7 @@
 import config from "../config";
 import axios from "axios";
 import store from "../store/store";
-import { notifications } from '@mantine/notifications';
+import { ErrorNotification } from "renderer/components/ErrorNotification";
 
 const selectBaseUrl = () => {
   const isConnected = store.getState().connectedExternalDb.value;
@@ -28,11 +28,6 @@ export const apiCall = async (endpoint, method, data) => {
     return response;
   }
   catch (error) {
-    notifications.show({
-      title: "Error!",
-      message: "An error occurred with the given request",
-      color: 'red',
-      autoClose: false,
-    });
+    ErrorNotification(endpoint, method);
   }
 };
