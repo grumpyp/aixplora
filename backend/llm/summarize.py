@@ -73,6 +73,7 @@ class Summarize:
                     time.sleep(0.25)
                     if self.model.startswith("gpt"):
                         response = openai.ChatCompletion.create(
+                            api_key=f"{self.openai_api_key}",
                             model=f"{self.openai_model}",
                             temperature=0.2,
                             max_tokens=3000,
@@ -86,7 +87,7 @@ class Summarize:
                     else:
                         # TODO: Check if this works with cl100k_base and open-source llms
 
-                        gptj = GPT4All(model_name=self.openai_model, model_path=self.models_dir)
+                        gptj = GPT4All(model_name=self.model, model_path=self.models_dir)
                         messages = [
                             {"role": "user",
                              "content": f"Write a summary: The summary should highlight the core for example: argument, conclusions and evidence. the summary should be structured in bulleted lists following the headings Core Argument, Evidence, and Conclusions use this {text_split} as reference"
@@ -100,6 +101,7 @@ class Summarize:
                 count_token = num_tokens_from_string("".join(summary), "cl100k_base")
                 if self.model.startswith("gpt"):
                     response = openai.ChatCompletion.create(
+                        api_key=f"{self.openai_api_key}",
                         model=f"{self.openai_model}",
                         temperature=0.2,
                         max_tokens=4000 - count_token,
@@ -110,7 +112,7 @@ class Summarize:
                     )
                     return {"summary": response.choices[0]["message"]["content"], "summary_list": "<hr>".join(summary)}
                 else:
-                    gptj = GPT4All(model_name=self.openai_model, model_path=self.models_dir)
+                    gptj = GPT4All(model_name=self.model, model_path=self.models_dir)
                     messages = [
                         {"role": "user",
                          "content": f"Conclude a big answer about the following summaries: {''.join(summary)}.the answer should be structured in bulleted lists following the headings Core Argument, Evidence, and Conclusions. It should also introduce everything. Take all the infos of the provided summaries if it's a reference! If you know additional internet references, add them accordingly"
@@ -120,6 +122,7 @@ class Summarize:
             else:
                 if self.model.startswith("gpt"):
                     response = openai.ChatCompletion.create(
+                        api_key=f"{self.openai_api_key}",
                         model=f"{self.openai_model}",
                         temperature=0.2,
                         max_tokens=1000,
@@ -131,7 +134,7 @@ class Summarize:
                     print({"summary": response.choices[0]["message"]["content"], "summary_list": "No additional references"})
                     return {"summary": response.choices[0]["message"]["content"], "summary_list": "No additional references"}
                 else:
-                    gptj = GPT4All(model_name=self.openai_model, model_path=self.models_dir)
+                    gptj = GPT4All(model_name=self.model, model_path=self.models_dir)
                     messages = [
                         {"role": "user",
                          "content": f"Write a summary of this summary {text}. If you know additional internet references, add them accordingly"}

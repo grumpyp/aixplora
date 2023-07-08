@@ -40,7 +40,8 @@ https://youtu.be/eKLmhJobVvc
 2. Install dependencies
       ```
       pip install -r backend/requirements.txt
-      npm install frontend
+      cd frontend && npm install
+      cd ..
       ```
 3. Run the backend and the frontend
       ```
