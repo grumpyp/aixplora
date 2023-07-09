@@ -11,9 +11,11 @@ chroma_db
 *.pyc
 /qdrant_data/
 .pytest_cache
+*.bin
 
 # frontend
 node_modules
 
 .next/
 .vscode/launch.json
+*.venv

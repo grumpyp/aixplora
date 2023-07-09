@@ -1,8 +1,8 @@
-// Summary.tsx
 import { useState, useEffect } from 'react';
 import { Select, Button, Box } from '@mantine/core';
 import axios from 'axios';
-import config from '../../config.js';
+import {config} from '../../config.js';
+import {apiCall} from "../../utils/api";
 import Answer from './components/Answer';
 
 type SummaryResponse = {
@@ -22,12 +22,15 @@ export function Summary() {
     setIsLoading(true);
     console.log("Summarizing document:", selectedFile);
     try {
-      const response = await axios.post<SummaryResponse>(
-        `${config.REACT_APP_BACKEND_URL}/summarize`,
-        {
-          document: selectedFile,
-        }
-      );
+      // const response = await axios.post<SummaryResponse>(
+      //   `${config.REACT_APP_BACKEND_URL}/summarize`,
+      //   {
+      //     document: selectedFile,
+      //   }
+      // );
+        const response = await apiCall('/summarize', 'POST', {
+            document: selectedFile,
+        });
       const data = response.data;
       setLastAnswer(data.summary);
       setSummaryList(data.summary_list !== 'No additional references' ? data.summary_list : undefined);
@@ -39,18 +42,26 @@ export function Summary() {
   };
 
   useEffect(() => {
-    axios
-      .get(
-        `${config.REACT_APP_BACKEND_URL}/files`
-      )
-      .then((response) => {
-        const fetchedFiles = response.data.map(file => file.name);
-        setFiles(fetchedFiles);
-      })
-      .catch((error) => {
+  //   axios
+  //     .get(
+  //       `${config.REACT_APP_BACKEND_URL}/files`
+  //     )
+  //     .then((response) => {
+  //       const fetchedFiles = response.data.map(file => file.name);
+  //       setFiles(fetchedFiles);
+  //     })
+  //     .catch((error) => {
+  //       console.log('Error fetching config:', error);
+  //     });
+  // }, []);
+  apiCall('/files', 'GET').then((response) => {
+    const fetchedFiles = response.data.map(file => file.name);
+    setFiles(fetchedFiles);
+  }
+    ).catch((error) => {
         console.log('Error fetching config:', error);
-      });
-  }, []);
+        });
+    }, []);
 
   return (
     <Box maw={920} mx="auto">

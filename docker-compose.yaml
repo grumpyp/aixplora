@@ -1,0 +1,30 @@
+version: "3"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: aix-be
+    command: python backend/main.py
+    volumes:
+      - ./backend:/usr/src/app/backend
+      - ./misc/:/usr/src/app/misc
+      - ./qdrant_data/:/usr/src/app/qdrant_data
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: aix-fe
+    command: sh -c "./docker-fe-command.sh"
+    volumes:
+      - ./frontend/:/usr/src/app/
+    ports:
+      - "1212:1212"
+    environment:
+      NODE_ENV: development
+      install: $install
+    depends_on:
+      - backend

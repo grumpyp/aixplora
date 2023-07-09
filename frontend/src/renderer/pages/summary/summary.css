@@ -1,12 +1,12 @@
 
 .summary_container {
-  overflow: hidden;
-  overflow-y: auto;
-  margin-top:10px;
-  padding:2px;
-  background-color: #f1f3f5;
-  width: 900px;
+  background: rgba(34, 139, 230, 0.3);
   border-radius: 10px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 1em 0.8em;
   margin-bottom: 100px;
 }
 
