@@ -7,6 +7,7 @@ from loaders.docx_loader import load_docx
 from loaders.xlsx_loader import load_xlsx
 from loaders.xls_loader import load_xls
 from loaders.epub_loader import load_epub
+from loaders.obsidian_loader import load_obsidian
 import openai
 
 FILE_HANDLERS = {
@@ -26,4 +27,5 @@ FILE_HANDLERS = {
     ".xls": lambda file: load_xls(file.file, filename=file.filename, file_meta=file),
     ".csv": lambda file: load_txt(file.file, filename=file.filename, file_meta=file),
     ".epub": lambda file: load_epub(file.file, filename=file.filename, file_meta=file),
+    ".md": lambda file: load_obsidian(file.file, filename=file.filename, file_meta=file),
     }
