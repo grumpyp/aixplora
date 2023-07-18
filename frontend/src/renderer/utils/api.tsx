@@ -1,6 +1,7 @@
 import config from "../config";
 import axios from "axios";
 import store from "../store/store";
+import { ErrorNotification } from "renderer/components/ErrorNotification";
 
 const selectBaseUrl = () => {
   const isConnected = store.getState().connectedExternalDb.value;
@@ -14,14 +15,19 @@ const selectBaseUrl = () => {
 };
 
 export const apiCall = async (endpoint, method, data) => {
-  const baseUrl = selectBaseUrl();
-  console.log("state baseUrl");
-  console.log(baseUrl);
-  const response = await axios({
-    method: method,
-    url: `${baseUrl}${endpoint}`,
-    data: data
-  });
-
-  return response;
+  try {
+    const baseUrl = selectBaseUrl();
+    console.log("state baseUrl");
+    console.log(baseUrl);
+    const response = await axios({
+      method: method,
+      url: `${baseUrl}${endpoint}`,
+      data: data
+    });
+  
+    return response;
+  }
+  catch (error) {
+    ErrorNotification(endpoint, method);
+  }
 };
