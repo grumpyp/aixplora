@@ -1,4 +1,4 @@
-import {Box, Input, Button} from '@mantine/core';
+import {Box, Input, Button, Checkbox} from '@mantine/core';
 import {IconSearch} from '@tabler/icons-react';
 import './Urlloader.css';
 
@@ -12,8 +12,10 @@ export function UrlLoader() {
             <Box>
                 <Input
                     icon={<IconSearch size="1rem"/>}
-                    placeholder="Your email"
+                    placeholder="Website URL"
+                    size={"lg"}
                 />
+                <Checkbox label={"Index whole sitemap"}/>
                 <Button>
                     Upload
                 </Button>
