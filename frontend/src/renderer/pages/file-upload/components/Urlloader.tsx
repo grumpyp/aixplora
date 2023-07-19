@@ -1,11 +1,27 @@
 import {Box, TextInput, Button, Checkbox, Tooltip} from '@mantine/core';
 import {IconSearch} from '@tabler/icons-react';
 import './Urlloader.css';
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {apiCall} from "../../../utils/api";
 
 export function UrlLoader() {
+    const [website, setWebsite] = useState('');
+    const [sitemap, setSitemap] = useState(false);
+
     const handleUrlUpload = () => {
-        console.log('Url Upload');
+        const payload = {
+            website: website, // Replace `website` with the actual value you want to send
+            sitemap: sitemap, // Replace `sitemap` with the actual value you want to send
+        };
+        console.log(payload);
+        apiCall('/files', 'POST', payload)
+            .then((response) => {
+                console.log(response.data);
+            })
+            .catch((error) => {
+                console.log('Error fetching config:', error);
+            });
+
     };
 
     const [focused, setFocused] = useState(false);
@@ -17,8 +33,9 @@ export function UrlLoader() {
                     <TextInput
                         style={{flex: '1', margin: '0 5px'}}
                         icon={<IconSearch size="1rem"/>}
-                        placeholder="Website URL"
+                        placeholder="https://aixplora.app"
                         size={"sm"}
+                        onChange={(event) => setWebsite(event.target.value)}
                         onFocus={() => setFocused(true)}
                         onBlur={() => setFocused(false)}
                         inputContainer={(children) => (
@@ -32,8 +49,11 @@ export function UrlLoader() {
                         )}
                     />
                     <div style={{display: 'flex', gap: '10px', margin: '5px 5px'}}>
-                        <Checkbox label={"Index whole sitemap"} style={{marginTop: '10px'}}/>
-                        <Button>
+                        <Checkbox label={"Index whole sitemap"} style={{marginTop: '10px'}}
+                                  onChange={(event) => setSitemap(event.currentTarget.checked)}
+                                  disabled
+                        />
+                        <Button onClick={handleUrlUpload}>
                             Upload
                         </Button>
                     </div>

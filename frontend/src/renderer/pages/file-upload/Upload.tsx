@@ -44,7 +44,7 @@ export function Upload() {
     }, []);
 
     return (
-        <div>
+        <div style={{marginTop: '-100px'}}>
             <Urlloader/>
             <DropzoneButton/>
             <UploadedTable data={files}/>

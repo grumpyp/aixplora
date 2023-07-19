@@ -2,13 +2,14 @@ import uvicorn
 from fastapi import FastAPI, File, UploadFile, Request
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
-from typing import List
+from typing import List, Optional
 from database.database import Database
 from schemas.config import Config
 from schemas.question import Question, Document
-# from schemas.file import File
+from schemas.file import UploadRequestBody
 from utils import FILE_HANDLERS
 from embeddings.index_files import Genie
+from loaders.website_loader import extract_text_from_website
 from sqlalchemy.exc import DatabaseError
 import os
 from posthog import Posthog
@@ -99,35 +100,57 @@ def get_files():
 
 
 @app.post("/files/")
-async def upload_files(files: List[UploadFile] = File(...)):
+async def upload_files(request_body: UploadRequestBody):
     from database.models.files import File
     db = Database().get_session()
     posthog_id = db.execute(text("SELECT posthog_id FROM config")).fetchall()[-1][0] if db.execute(
         text("SELECT posthog_id FROM config")).fetchall() else "unconfigured"
-    for file in files:
-        file_extension = os.path.splitext(file.filename)[1]
+
+    files = request_body.files
+    website = request_body.website
+    sitemap = request_body.sitemap
+    if website:
         posthog.capture(
             f'{posthog_id}',
             event='/files/',
             properties={
-                '$set_once': {'file_type': file_extension},
+                '$set_once': {'file_type': "website"},
             }
         )
+    else:
+        for file in files:
+            file_extension = os.path.splitext(file.filename)[1]
+            posthog.capture(
+                f'{posthog_id}',
+                event='/files/',
+                properties={
+                    '$set_once': {'file_type': file_extension},
+                }
+            )
 
-        print(file_extension * 10)
+    if not website:
         if file_extension in FILE_HANDLERS:
             transcription = FILE_HANDLERS[file_extension](file)
             print(f"{file.filename} file text extracted")
             # TODO: implement table which tracks costs of API usage OpenAI
             # TODO: implement async task for indexing
             Genie(file_path=transcription[0], file_meta=transcription[1])
+            entry = File(file_name=file.filename, file_type=file.content_type, file_size=file.size)
+            db = Database().get_session()
+            db.add(entry)
+            db.commit()
             print(f"{file.filename} file indexed")
-
-        entry = File(file_name=file.filename, file_type=file.content_type, file_size=file.size)
+    else:
+        print(website)
+        transcription = extract_text_from_website(url=website, sitemap=sitemap)
+        Genie(file_path=transcription[0], file_meta=transcription[1])
+        entry = File(file_name=website, file_type="website", file_size=0)
         db = Database().get_session()
         db.add(entry)
         db.commit()
-        print(f"added {file.filename} to db")
+        pass
+
+
     return {"message": "Files uploaded successfully"}
 
 
