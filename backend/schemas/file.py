@@ -5,6 +5,6 @@ from fastapi import UploadFile
 
 
 class UploadRequestBody(BaseModel):
-    files: Optional[List[UploadFile]] = File(...)
+    files: Optional[List[UploadFile]] = None
     website: Optional[str] = None
     sitemap: Optional[bool] = False

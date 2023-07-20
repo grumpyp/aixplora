@@ -65,6 +65,10 @@ class Genie:
                 })
 
         if file_path:
+            import time
+            print(file_path)
+            print(file_meta)
+            time.sleep(3)
             self.file_meta = file_meta
             self.file_path = file_path
             if not isinstance(self.file_path, list):
@@ -97,7 +101,8 @@ class Genie:
         return fixed_whitespaces
 
     def upload_embedding(self, texts: List[Document], collection_name: str = "aixplora", page: int = 0) -> None:
-        print(len(texts))
+        import time
+
         for i in range(len(texts)):
             print(i)
             print("-" * 10)
@@ -111,10 +116,11 @@ class Genie:
                     model="text-embedding-ada-002"
                 )
                 embeddings = response['data'][0]['embedding']
+                print(embeddings)
 
             if isinstance(self.file_meta, dict):
                 filename = self.file_meta.get("filename")
-                filetype = self.file_meta.get("content_type")
+                filetype = self.file_meta.get("content_type", "website")
             else:  # Assuming that in this case it's an object with attributes
                 filename = getattr(self.file_meta, "filename")
                 filetype = getattr(self.file_meta, "content_type")
@@ -167,6 +173,8 @@ class Genie:
             with_payload=True
         )
         if specific_doc is not None:
+            # Without the clean it won't find the document
+            specific_doc_clean = specific_doc.replace('https://', '').replace('http://', '').replace('/', '_')
             results = self.qu.search(
                 collection_name="aixplora",
                 query_vector=(f"{self.embeddings_model[0]}", embeddings),
@@ -174,7 +182,7 @@ class Genie:
                     must=[
                         models.FieldCondition(
                             key="metadata.filename",
-                            match=models.MatchValue(value=f"{specific_doc}"),
+                            match=models.MatchValue(value=f"{specific_doc_clean}"),
                         )
                     ]
                 ),

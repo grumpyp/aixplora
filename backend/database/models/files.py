@@ -31,7 +31,6 @@ class Filetype(Enum):
     ZIP = "zip"
     RAR = "rar"
     TAR = "tar"
-    WEBSITE = "website"
 
 
 class File(BaseModel):

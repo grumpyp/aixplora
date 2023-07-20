@@ -141,7 +141,6 @@ async def upload_files(request_body: UploadRequestBody):
             db.commit()
             print(f"{file.filename} file indexed")
     else:
-        print(website)
         transcription = extract_text_from_website(url=website, sitemap=sitemap)
         Genie(file_path=transcription[0], file_meta=transcription[1])
         entry = File(file_name=website, file_type="website", file_size=0)

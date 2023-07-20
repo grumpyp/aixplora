@@ -26,10 +26,10 @@ def extract_text_from_website(url: str, sitemap: bool = False) -> str:
 
             return f"{misc_dir}/{filename}.txt", file_meta
         else:
-            return "Failed to retrieve the URL"
+            return Exception(f"Failed to retrieve the URL, response code: {response.status_code}")
 
     except requests.exceptions.RequestException as e:
-        return str(e)
+        return Exception(e)
 
 
 if __name__ == '__main__':
