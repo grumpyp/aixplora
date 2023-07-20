@@ -38,7 +38,7 @@ const form = useForm({
       sitemap: sitemap,
     };
     console.log(payload);
-    apiCall('/files', 'POST', payload)
+    apiCall('/files/website', 'POST', payload)
       .then((response) => {
         console.log(response.data);
         window.location.reload();

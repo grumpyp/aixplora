@@ -38,7 +38,6 @@ export function DropzoneButton() {
         formData.append('files', file);
       });
       setIsLoading(true);
-
       // axios
       //   .post(`${config.REACT_APP_BACKEND_URL}/files/`, formData, {
       //     headers: {

@@ -1,10 +1,7 @@
 from pydantic import BaseModel
-from fastapi import File
-from typing import Optional, List
-from fastapi import UploadFile
+from typing import Optional
 
 
 class UploadRequestBody(BaseModel):
-    files: Optional[List[UploadFile]] = None
     website: Optional[str] = None
     sitemap: Optional[bool] = False

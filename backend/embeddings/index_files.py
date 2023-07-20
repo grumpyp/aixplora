@@ -65,10 +65,6 @@ class Genie:
                 })
 
         if file_path:
-            import time
-            print(file_path)
-            print(file_meta)
-            time.sleep(3)
             self.file_meta = file_meta
             self.file_path = file_path
             if not isinstance(self.file_path, list):
@@ -101,8 +97,6 @@ class Genie:
         return fixed_whitespaces
 
     def upload_embedding(self, texts: List[Document], collection_name: str = "aixplora", page: int = 0) -> None:
-        import time
-
         for i in range(len(texts)):
             print(i)
             print("-" * 10)
@@ -116,7 +110,6 @@ class Genie:
                     model="text-embedding-ada-002"
                 )
                 embeddings = response['data'][0]['embedding']
-                print(embeddings)
 
             if isinstance(self.file_meta, dict):
                 filename = self.file_meta.get("filename")
