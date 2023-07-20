@@ -115,17 +115,17 @@ async def upload_files(files: List[UploadFile] = File(...)):
             }
         )
 
-    if file_extension in FILE_HANDLERS:
-        transcription = FILE_HANDLERS[file_extension](file)
-        print(f"{file.filename} file text extracted")
-        # TODO: implement table which tracks costs of API usage OpenAI
-        # TODO: implement async task for indexing
-        Genie(file_path=transcription[0], file_meta=transcription[1])
-        entry = File(file_name=file.filename, file_type=file.content_type, file_size=file.size)
-        db = Database().get_session()
-        db.add(entry)
-        db.commit()
-        print(f"{file.filename} file indexed")
+        if file_extension in FILE_HANDLERS:
+            transcription = FILE_HANDLERS[file_extension](file)
+            print(f"{file.filename} file text extracted")
+            # TODO: implement table which tracks costs of API usage OpenAI
+            # TODO: implement async task for indexing
+            Genie(file_path=transcription[0], file_meta=transcription[1])
+            entry = File(file_name=file.filename, file_type=file.content_type, file_size=file.size)
+            db = Database().get_session()
+            db.add(entry)
+            db.commit()
+            print(f"{file.filename} file indexed")
 
     return {"message": "Files uploaded successfully"}
 
