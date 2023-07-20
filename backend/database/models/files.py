@@ -1,5 +1,7 @@
+from typing import Optional, List
 from sqlalchemy import Column, String, Boolean, TIMESTAMP, func, Integer
 from .base import BaseModel
+from fastapi import UploadFile
 from sqlalchemy.sql.sqltypes import Enum
 
 

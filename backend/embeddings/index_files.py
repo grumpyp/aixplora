@@ -4,7 +4,7 @@
 # TODO: Split class into a class which indexes and which does the querying
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.document_loaders import TextLoader
-from typing import List
+from typing import List, Dict
 from langchain.schema import Document
 from database.database import Database
 from sqlalchemy import text
@@ -27,7 +27,7 @@ from sentence_transformers import SentenceTransformer
 # 25.05.2023: Quickfix, seems also to be a problem with chromadb, now using qudrant vector db, needs refactor
 class Genie:
 
-    def __init__(self, file_path: str = None, file_meta: UploadFile = None):
+    def __init__(self, file_path: str = None, file_meta: UploadFile | Dict[str, str] = None):
         try:
             self.openai_api_key = \
                 Database().get_session().execute(text("SELECT openai_api_key FROM config")).fetchall()[-1]
@@ -97,7 +97,6 @@ class Genie:
         return fixed_whitespaces
 
     def upload_embedding(self, texts: List[Document], collection_name: str = "aixplora", page: int = 0) -> None:
-        print(len(texts))
         for i in range(len(texts)):
             print(i)
             print("-" * 10)
@@ -112,6 +111,13 @@ class Genie:
                 )
                 embeddings = response['data'][0]['embedding']
 
+            if isinstance(self.file_meta, dict):
+                filename = self.file_meta.get("filename")
+                filetype = self.file_meta.get("content_type", "website")
+            else:  # Assuming that in this case it's an object with attributes
+                filename = getattr(self.file_meta, "filename")
+                filetype = getattr(self.file_meta, "content_type")
+
             self.qu.upsert(
                 collection_name=collection_name,
                 wait=True,
@@ -121,8 +127,8 @@ class Genie:
                         id=random.randint(1, 100000000),
                         payload={
                             "chunk": texts[i],
-                            "metadata": {"filename": self.file_meta.filename,
-                                         "filetype": self.file_meta.content_type,
+                            "metadata": {"filename": filename,
+                                         "filetype": filetype,
                                          "page": page,
                                          "embeddings_model": self.embeddings_model[0]}
                         },
@@ -160,6 +166,8 @@ class Genie:
             with_payload=True
         )
         if specific_doc is not None:
+            # Without the clean it won't find the document
+            specific_doc_clean = specific_doc.replace('https://', '').replace('http://', '').replace('/', '_')
             results = self.qu.search(
                 collection_name="aixplora",
                 query_vector=(f"{self.embeddings_model[0]}", embeddings),
@@ -167,7 +175,7 @@ class Genie:
                     must=[
                         models.FieldCondition(
                             key="metadata.filename",
-                            match=models.MatchValue(value=f"{specific_doc}"),
+                            match=models.MatchValue(value=f"{specific_doc_clean}"),
                         )
                     ]
                 ),

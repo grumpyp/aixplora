@@ -1,4 +1,7 @@
 from pydantic import BaseModel
-from fastapi import File
+from typing import Optional
 
-# TODO: file(s) schema
+
+class UploadRequestBody(BaseModel):
+    website: Optional[str] = None
+    sitemap: Optional[bool] = False
