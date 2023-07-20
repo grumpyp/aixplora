@@ -2,7 +2,7 @@ import uvicorn
 from fastapi import FastAPI, File, UploadFile, Request
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
-from typing import List, Optional
+from typing import List
 from database.database import Database
 from schemas.config import Config
 from schemas.question import Question, Document
@@ -100,7 +100,7 @@ def get_files():
 
 
 @app.post("/files/")
-async def upload_files(files: Optional[List[UploadFile]] = File(...)):
+async def upload_files(files: List[UploadFile] = File(...)):
     from database.models.files import File
     db = Database().get_session()
     posthog_id = db.execute(text("SELECT posthog_id FROM config")).fetchall()[-1][0] if db.execute(
