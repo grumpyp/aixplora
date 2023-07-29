@@ -9,41 +9,50 @@ AIxplora is your new personal assistant, an open-source project that opens up un
 It leverages AI and LLMs to understand all types of documents, unrestricted by their length or format.
 
 **Imagine being able to query PDF files, MP3 audio, videos, and other types of documents with equal ease and proficiency. 
-Yes, that's the limitless world AIxplora is inviting you into!***
+Yes, that's the limitless world AIxplora is inviting you into!**
 
 
-## How Can You Contribute?
-There are several ways you can contribute as I just released a PoC of the project:
-
-- Code: Write, refactor, optimize - every line of code matters!
-
-- Documentation: Help us make our project more understandable and user-friendly.
-
-- Testing: Every bug found is a step towards perfection.
-
-- Suggest Features: We believe in the power of ideas, no matter where they come from.
-
-- Spread the Word: Share our project within your networks. The more people know about AIxplora, the better it can become!
+## Contributing
+We welcome contributors of all backgrounds and interests, testing, accessibility, community building, and writing code. If you would like to contribute code, feel free to check out our  [contributing guide](https://github.com/grumpyp/aixplora/blob/main/CONTRIBUTING.md).
 
 ## Demo and introduction videos
-[![Summary function showcase](https://img.youtube.com/vi/8x9HhWjjNtY/hqdefault.jpg)](https://youtu.be/8x9HhWjjNtY)
-https://youtu.be/2lNNKLM0o7U
-https://youtu.be/eKLmhJobVvc
+- [Summarize documents](https://youtu.be/8x9HhWjjNtY)
+- [Audio query](https://youtu.be/2lNNKLM0o7U)
+- [Vector databases and LLMs query](https://youtu.be/eKLmhJobVvc)
 
 
 ## How to run locally
+### Install
 
-1. Clone the repo and Install dependencies
+You can set up a development environment with the following steps.  **Note:**  some Python installations provide a  `python`  command instead of  `python3`, so you may need to substitute  `python`  in the instructions below.
+1. Clone this repository
       ```
       git clone git@github.com:grumpyp/aixplora.git
       ```
-2. Install dependencies
+2. Change into the application directory
+	 ```
+	 cd aixplora/
+	 ```
+3. Create a virtual environment (using  `python`  or  `python3`)
+	```
+	python -m venv .venv
+	```
+4. Activate the virtual environment
+    -   **Mac/Linux**:
+    ```
+    source .venv/bin/activate
+    ```
+    -   **Windows PowerShell**:  
+    ```
+    .venv\Scripts\Activate.ps1
+    ```
+5. Install the project dependencies (using `pip` or `pip3`)
       ```
       pip install -r backend/requirements.txt
       cd frontend && npm install
       cd ..
       ```
-3. Run the backend and the frontend
+6. Run the backend and the frontend
       ```
       python backend/main.py
       cd frontend
@@ -89,4 +98,3 @@ https://youtu.be/eKLmhJobVvc
 - Integrations (Google Drive, Dropbox, etc.)
 
 [![Star History Chart](https://api.star-history.com/svg?repos=grumpyp/aixplora&type=Date)](https://star-history.com/#grumpyp/aixplora&Date)
-
