@@ -63,13 +63,13 @@ class Genie:
                     "paraphrase-albert-small-v2": models.VectorParams(size=768, distance=models.Distance.COSINE),
                     "multi-qa-mpnet-base-dot-v1": models.VectorParams(size=768, distance=models.Distance.COSINE)
                 })
-
         if file_path:
             self.file_meta = file_meta
             self.file_path = file_path
             if not isinstance(self.file_path, list):
                 self.file_path = [self.file_path]
             for i in self.file_path:
+                print(i)
                 self.loader = TextLoader(i)
                 self.documents = self.loader.load()
                 self.texts = self.text_split(self.documents)

@@ -147,11 +147,19 @@ async def upload_website(request_body: UploadRequestBody = None):
     )
 
     transcription = extract_text_from_website(url=website, sitemap=sitemap)
-    Genie(file_path=transcription[0], file_meta=transcription[1])
-    entry = File(file_name=website, file_type="website", file_size=0)
-    db = Database().get_session()
-    db.add(entry)
-    db.commit()
+    if isinstance(transcription, list):
+        for file in transcription:
+            Genie(file_path=file[0], file_meta=file[1])
+            entry = File(file_name=file[1]["filename"], file_type="website", file_size=0)
+            db = Database().get_session()
+            db.add(entry)
+            db.commit()
+    else:
+        Genie(file_path=transcription[0], file_meta=transcription[1])
+        entry = File(file_name=website, file_type="website", file_size=0)
+        db = Database().get_session()
+        db.add(entry)
+        db.commit()
 
     return {"message": "Files uploaded successfully"}
 
