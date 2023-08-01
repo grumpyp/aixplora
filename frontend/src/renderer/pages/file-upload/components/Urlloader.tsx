@@ -78,7 +78,6 @@ const form = useForm({
                 label={'Index whole sitemap'}
                 style={{ marginTop: '10px' }}
                 onChange={(event) => setSitemap(event.currentTarget.checked)}
-                disabled
               />
               <Button type="submit">Upload</Button>
             </div>

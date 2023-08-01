@@ -63,7 +63,6 @@ class Genie:
                     "paraphrase-albert-small-v2": models.VectorParams(size=768, distance=models.Distance.COSINE),
                     "multi-qa-mpnet-base-dot-v1": models.VectorParams(size=768, distance=models.Distance.COSINE)
                 })
-
         if file_path:
             self.file_meta = file_meta
             self.file_path = file_path
@@ -98,8 +97,6 @@ class Genie:
 
     def upload_embedding(self, texts: List[Document], collection_name: str = "aixplora", page: int = 0) -> None:
         for i in range(len(texts)):
-            print(i)
-            print("-" * 10)
             if self.embeddings_model[0] != "text-embedding-ada-002":
                 print(self.embeddings_model)
                 model = SentenceTransformer(f"{self.embeddings_model[0]}")
