@@ -33,7 +33,8 @@ def extract_text_from_website(url: str, sitemap: bool = False) -> str:
         except requests.exceptions.RequestException as e:
             return Exception(e)
     if sitemap:
-        exclude_extensions = ['.jpeg', '.png', 'jpg', 'gif']
+        exclude_extensions = ['.jpeg', '.png', '.jpg', '.gif', '.webp', '.bmp', '.tiff', '.ico', '.jfif', '.svg',
+                              '.heif', '.indd', '.ai', '.eps', '.pdf']
         data = []
         try:
             if url.endswith('/'):
