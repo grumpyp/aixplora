@@ -18,13 +18,15 @@ export const apiCall = async (endpoint, method, data) => {
   try {
     const baseUrl = selectBaseUrl();
     console.log("state baseUrl");
+    console.log(store.getState())
     console.log(baseUrl);
     const response = await axios({
       method: method,
       url: `${baseUrl}${endpoint}`,
-      data: data
+      data: data,
+      api_key: store.getState().ApiKey.value,
+      email: store.getState().Email.value,
     });
-  
     return response;
   }
   catch (error) {

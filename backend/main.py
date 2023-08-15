@@ -86,9 +86,10 @@ def add_config(config: Config, db_session=Depends(get_db_session)):
 
 
 @app.get("/files/")
-def get_files(db_session = Depends(get_db_session)):
+def get_files(db_session=Depends(get_db_session)):
     try:
-        db = Database().get_session()
+        api_key = request
+        db = db_session()
         files = db.execute(text("SELECT * FROM files")).fetchall()
         res = []
         if files is not None:
