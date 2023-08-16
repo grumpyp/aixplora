@@ -2,7 +2,6 @@
 # TODO: Implement other embeddings algorithm than OpenAI
 
 # TODO: Split class into a class which indexes and which does the querying
-from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.document_loaders import TextLoader
 from typing import List
 from langchain.schema import Document
