@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {DropzoneButton} from "./components/Dropzone";
 import UploadedTable from "./components/Uploaded";
+import Urlloader from "./components/Urlloader";
 import {apiCall} from "../../utils/api";
 import {useSelector} from "react-redux";
 
@@ -43,7 +44,8 @@ export function Upload() {
     }, []);
 
     return (
-        <div>
+        <div style={{marginTop: '-100px'}}>
+            <Urlloader/>
             <DropzoneButton/>
             <UploadedTable data={files}/>
         </div>
