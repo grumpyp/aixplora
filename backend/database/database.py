@@ -7,10 +7,7 @@ SQLITE_DATABASE_URL = "sqlite:///backend/database/aixplora.db"
 
 class Database:
 
-    def __init__(self, api_key=None):
-        if api_key is not None:
-            # Make the call to the API to get the model
-            self.engine = create_engine()
+    def __init__(self):
         self.engine = create_engine(SQLITE_DATABASE_URL, echo=True, connect_args={"check_same_thread": False})
         Base.metadata.create_all(self.engine)
         self.sessionmaker = sessionmaker(autocommit=False, autoflush=False, bind=self.engine)
