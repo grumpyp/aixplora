@@ -10,6 +10,7 @@ import {
 import { Dropzone } from '@mantine/dropzone';
 import { IconCloudUpload, IconX, IconDownload } from '@tabler/icons-react';
 import {apiCall} from "../../../utils/api";
+import { notifications } from '@mantine/notifications';
 
 const useStyles = createStyles((theme) => ({
   // Styles definition here
@@ -61,7 +62,8 @@ export function DropzoneButton() {
         .then((response) => {
             // Handle API response data
             console.log(response.data);
-            window.location.reload();
+            notifications.show({"title": "Files uploaded", "message": "Files uploaded successfully"});
+            setSelectedFiles([]);
         })
         .catch((error) => {
             // Handle API request error

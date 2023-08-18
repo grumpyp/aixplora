@@ -12,9 +12,11 @@ from embeddings.index_files import Genie
 from loaders.website_loader import extract_text_from_website
 from sqlalchemy.exc import DatabaseError
 import os
+import json
 from posthog import Posthog
 import asyncio
 import uuid
+import requests
 # TODO: use best practise for routing
 
 app = FastAPI()
@@ -83,7 +85,15 @@ def add_config(config: Config):
 
 
 @app.get("/files/")
-def get_files():
+def get_files(request: Request):
+    if request.headers.get("apikey", False) and request.headers.get("email", False):
+        # TODO: Check with Cloud API URL
+        headers = {"apikey": request.headers.get("apikey"), "email": request.headers.get("email")}
+        files = requests.get("http://localhost:8000/api/db/", headers=headers)
+        if files.status_code == 200:
+            return files.json().get("files", [])
+        else:
+            return {"error": "No files found."}
     try:
         db = Database().get_session()
         files = db.execute(text("SELECT * FROM files")).fetchall()
@@ -102,34 +112,47 @@ def get_files():
 @app.post("/files/")
 async def upload_files(request: Request, files: List[UploadFile] = File(...)):
     from database.models.files import File
+    import time
     db = Database().get_session()
-    print("apikey,email")
-    print(request.headers)
-    posthog_id = db.execute(text("SELECT posthog_id FROM config")).fetchall()[-1][0] if db.execute(
-        text("SELECT posthog_id FROM config")).fetchall() else "unconfigured"
-    for file in files:
-        file_extension = os.path.splitext(file.filename)[1]
-        posthog.capture(
-            f'{posthog_id}',
-            event='/files/',
-            properties={
-                '$set_once': {'file_type': file_extension},
-            }
-        )
+    if request.headers.get("apikey", False) and request.headers.get("email", False):
+        for file in files:
+            file_extension = os.path.splitext(file.filename)[1]
+            if file_extension in FILE_HANDLERS:
+                transcription = FILE_HANDLERS[file_extension](file)
+                Genie(file_path=transcription[0], file_meta=transcription[1], apikey=apikey, email=email)
+                file_content = await file.read()
+                files = {'file': (file.filename, file_content, file.content_type)}
+                headers = {"apikey": request.headers.get("apikey"), "email": request.headers.get("email")}
+                # TODO: Change with Cloud API URL
+                r = requests.post("http://localhost:8000/api/db/", files=files, headers=headers)
 
-        if file_extension in FILE_HANDLERS:
-            transcription = FILE_HANDLERS[file_extension](file)
-            print(f"{file.filename} file text extracted")
-            # TODO: implement table which tracks costs of API usage OpenAI
-            # TODO: implement async task for indexing
-            Genie(file_path=transcription[0], file_meta=transcription[1])
-            entry = File(file_name=file.filename, file_type=file.content_type, file_size=file.size)
-            db = Database().get_session()
-            db.add(entry)
-            db.commit()
-            print(f"{file.filename} file indexed")
+        return {"message": "Files uploaded successfully"}
+    else:
+        posthog_id = db.execute(text("SELECT posthog_id FROM config")).fetchall()[-1][0] if db.execute(
+            text("SELECT posthog_id FROM config")).fetchall() else "unconfigured"
+        for file in files:
+            file_extension = os.path.splitext(file.filename)[1]
+            posthog.capture(
+                f'{posthog_id}',
+                event='/files/',
+                properties={
+                    '$set_once': {'file_type': file_extension},
+                }
+            )
 
-    return {"message": "Files uploaded successfully"}
+            if file_extension in FILE_HANDLERS:
+                transcription = FILE_HANDLERS[file_extension](file)
+                print(f"{file.filename} file text extracted")
+                # TODO: implement table which tracks costs of API usage OpenAI
+                # TODO: implement async task for indexing
+                Genie(file_path=transcription[0], file_meta=transcription[1])
+                entry = File(file_name=file.filename, file_type=file.content_type, file_size=file.size)
+                db = Database().get_session()
+                db.add(entry)
+                db.commit()
+                print(f"{file.filename} file indexed")
+
+        return {"message": "Files uploaded successfully"}
 
 
 @app.post("/files/website/")
@@ -196,4 +219,4 @@ def test(document: Document):
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8888)

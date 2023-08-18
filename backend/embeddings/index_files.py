@@ -16,6 +16,7 @@ from fastapi import UploadFile
 from embeddings.text_splitter import TextSplitter
 from embeddings.basesplit import ContextTypes
 import re
+import requests
 from gpt4all import GPT4All
 import os
 from sentence_transformers import SentenceTransformer
@@ -26,7 +27,8 @@ from sentence_transformers import SentenceTransformer
 # 25.05.2023: Quickfix, seems also to be a problem with chromadb, now using qudrant vector db, needs refactor
 class Genie:
 
-    def __init__(self, file_path: str = None, file_meta: UploadFile | Dict[str, str] = None):
+    def __init__(self, file_path: str = None, file_meta: UploadFile | Dict[str, str] = None, remote_db: bool = False,
+                 apikey: str = None, email: str = None):
         try:
             self.openai_api_key = \
                 Database().get_session().execute(text("SELECT openai_api_key FROM config")).fetchall()[-1]
@@ -40,9 +42,23 @@ class Genie:
         except Exception as e:
             print(f"Using default OpenAI model: {e}")
             self.embeddings_model = "text-embedding-ada-002"
-        self.qu = QdrantClient(path="./qdrant_data")
-        try:
-            if self.qu.get_collection(collection_name="aixplora").vectors_count == 0:
+        self.remote_db = remote_db
+        self.apikey = apikey
+        self.email = email
+        if not remote_db:
+            self.qu = QdrantClient(path="./qdrant_data")
+            try:
+                if self.qu.get_collection(collection_name="aixplora").vectors_count == 0:
+                    self.qu.recreate_collection(
+                        collection_name="aixplora",
+                        vectors_config={
+                            "text-embedding-ada-002": models.VectorParams(size=1536, distance=models.Distance.COSINE),
+                            "all-MiniLM-L6-v2": models.VectorParams(size=384, distance=models.Distance.COSINE),
+                            "multi-qa-MiniLM-L6-cos-v1": models.VectorParams(size=384, distance=models.Distance.COSINE),
+                            "paraphrase-albert-small-v2": models.VectorParams(size=768, distance=models.Distance.COSINE),
+                            "multi-qa-mpnet-base-dot-v1": models.VectorParams(size=768, distance=models.Distance.COSINE)
+                        })
+            except:
                 self.qu.recreate_collection(
                     collection_name="aixplora",
                     vectors_config={
@@ -52,16 +68,6 @@ class Genie:
                         "paraphrase-albert-small-v2": models.VectorParams(size=768, distance=models.Distance.COSINE),
                         "multi-qa-mpnet-base-dot-v1": models.VectorParams(size=768, distance=models.Distance.COSINE)
                     })
-        except:
-            self.qu.recreate_collection(
-                collection_name="aixplora",
-                vectors_config={
-                    "text-embedding-ada-002": models.VectorParams(size=1536, distance=models.Distance.COSINE),
-                    "all-MiniLM-L6-v2": models.VectorParams(size=384, distance=models.Distance.COSINE),
-                    "multi-qa-MiniLM-L6-cos-v1": models.VectorParams(size=384, distance=models.Distance.COSINE),
-                    "paraphrase-albert-small-v2": models.VectorParams(size=768, distance=models.Distance.COSINE),
-                    "multi-qa-mpnet-base-dot-v1": models.VectorParams(size=768, distance=models.Distance.COSINE)
-                })
         if file_path:
             self.file_meta = file_meta
             self.file_path = file_path
@@ -113,27 +119,40 @@ class Genie:
             else:  # Assuming that in this case it's an object with attributes
                 filename = getattr(self.file_meta, "filename")
                 filetype = getattr(self.file_meta, "content_type")
-
-            self.qu.upsert(
-                collection_name=collection_name,
-                wait=True,
-                points=[
-                    # TODO: Change randomint to UUID
-                    models.PointStruct(
-                        id=random.randint(1, 100000000),
-                        payload={
-                            "chunk": texts[i],
-                            "metadata": {"filename": filename,
-                                         "filetype": filetype,
-                                         "page": page,
-                                         "embeddings_model": self.embeddings_model[0]}
-                        },
-                        vector={
-                            f"{self.embeddings_model[0]}": embeddings
-                        },
-                    ),
-                ]
-            )
+            if not self.remote_db:
+                self.qu.upsert(
+                    collection_name=collection_name,
+                    wait=True,
+                    points=[
+                        # TODO: Change randomint to UUID
+                        models.PointStruct(
+                            id=random.randint(1, 100000000),
+                            payload={
+                                "chunk": texts[i],
+                                "metadata": {"filename": filename,
+                                             "filetype": filetype,
+                                             "page": page,
+                                             "embeddings_model": self.embeddings_model[0]}
+                            },
+                            vector={
+                                f"{self.embeddings_model[0]}": embeddings
+                            },
+                        ),
+                    ]
+                )
+            else:
+                payload = {
+                    "chunk": texts[i],
+                    "metadata": {"filename": filename,
+                                 "filetype": filetype,
+                                 "page": page,
+                                 "embeddings_model": self.embeddings_model[0]},
+                    "vector": {
+                        f"{self.embeddings_model[0]}": embeddings
+                    },
+                },
+                headers = {"apikey": self.api_key, "email": self.email}
+                requests.post(headers=headers)
         return
 
     def embeddings(self, texts: List[str], page: int):

@@ -10,7 +10,7 @@ const selectBaseUrl = () => {
   if (isConnected === false) {
     return config.REACT_APP_BACKEND_URL;
   } else {
-    return 'http://localhost:8000';
+    return 'http://0.0.0.0:8888';
   }
 };
 
