@@ -86,9 +86,12 @@ def add_config(config: Config):
 
 @app.get("/files/")
 def get_files(request: Request):
-    if request.headers.get("apikey", False) and request.headers.get("email", False):
+    apikey = request.headers.get("apikey", False)
+    email = request.headers.get("email", False)
+
+    if apikey and email:
         # TODO: Check with Cloud API URL
-        headers = {"apikey": request.headers.get("apikey"), "email": request.headers.get("email")}
+        headers = {"apikey": apikey, "email": email}
         files = requests.get("http://localhost:8000/api/db/", headers=headers)
         if files.status_code == 200:
             return files.json().get("files", [])
@@ -114,7 +117,9 @@ async def upload_files(request: Request, files: List[UploadFile] = File(...)):
     from database.models.files import File
     import time
     db = Database().get_session()
-    if request.headers.get("apikey", False) and request.headers.get("email", False):
+    apikey = request.headers.get("apikey", False)
+    email = request.headers.get("email", False)
+    if apikey and email:
         for file in files:
             file_extension = os.path.splitext(file.filename)[1]
             if file_extension in FILE_HANDLERS:
