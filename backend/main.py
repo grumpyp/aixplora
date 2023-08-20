@@ -1,5 +1,6 @@
 import uvicorn
-from fastapi import FastAPI, File, UploadFile, Request
+from fastapi import FastAPI, File, UploadFile, Request, Body
+from typing import Optional
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from typing import List
@@ -164,9 +165,10 @@ async def upload_website(request_body: UploadRequestBody = None):
     return {"message": "Files uploaded successfully"}
 
 @app.post("/chat/")
-def chat(question: Question, document: Document):
+def chat(question: Question, document: Document, usebrain: bool = Body(...)):
     genie = Genie()
-    answer = genie.query(query_texts=question.question, specific_doc=document.document)
+    answer = genie.query(query_texts=question.question, specific_doc=document.document,
+                         use_brain=usebrain)
     print(answer)
     return {"question": question.question, "answer": answer["answer"], "meta_data": answer["meta_data"]}
 
