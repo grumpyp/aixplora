@@ -123,10 +123,15 @@ async def upload_files(request: Request, files: List[UploadFile] = File(...)):
         for file in files:
             file_extension = os.path.splitext(file.filename)[1]
             if file_extension in FILE_HANDLERS:
+                file_content = await file.read()
                 transcription = FILE_HANDLERS[file_extension](file)
                 Genie(file_path=transcription[0], file_meta=transcription[1], apikey=apikey, email=email)
-                file_content = await file.read()
+                print("file content"*10)
+                print(file_content)
+
                 files = {'file': (file.filename, file_content, file.content_type)}
+                print(files)
+                time.sleep(3)
                 headers = {"apikey": request.headers.get("apikey"), "email": request.headers.get("email")}
                 # TODO: Change with Cloud API URL
                 r = requests.post("http://localhost:8000/api/db/", files=files, headers=headers)
