@@ -68,6 +68,8 @@ class Genie:
                         "paraphrase-albert-small-v2": models.VectorParams(size=768, distance=models.Distance.COSINE),
                         "multi-qa-mpnet-base-dot-v1": models.VectorParams(size=768, distance=models.Distance.COSINE)
                     })
+        else:
+
         if file_path:
             self.file_meta = file_meta
             self.file_path = file_path
@@ -196,7 +198,9 @@ class Genie:
                 ),
                 limit=3
             )
-
+        print("das sind die reults" * 10)
+        print(results)
+        print("das sind die reults"* 10)
         return results
 
     # This is used to ask questions on all documents
