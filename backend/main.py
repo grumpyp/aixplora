@@ -125,7 +125,8 @@ async def upload_files(request: Request, files: List[UploadFile] = File(...)):
             if file_extension in FILE_HANDLERS:
                 file_content = await file.read()
                 transcription = FILE_HANDLERS[file_extension](file)
-                Genie(file_path=transcription[0], file_meta=transcription[1], apikey=apikey, email=email)
+                Genie(file_path=transcription[0], file_meta=transcription[1], apikey=apikey, email=email,
+                      remote_db=True)
                 print("file content"*10)
                 print(file_content)
 
@@ -199,8 +200,13 @@ async def upload_website(request_body: UploadRequestBody = None):
     return {"message": "Files uploaded successfully"}
 
 @app.post("/chat/")
-def chat(question: Question, document: Document):
+def chat(request: Request, question: Question, document: Document):
+    apikey = request.headers.get("apikey", False)
+    email = request.headers.get("email", False)
     genie = Genie()
+    print(email, apikey)
+    if apikey and email:
+        genie = Genie(remote_db=True, apikey=apikey, email=email)
     answer = genie.query(query_texts=question.question, specific_doc=document.document)
     print(answer)
     return {"question": question.question, "answer": answer["answer"], "meta_data": answer["meta_data"]}

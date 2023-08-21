@@ -45,6 +45,7 @@ class Genie:
         self.remote_db = remote_db
         self.apikey = apikey
         self.email = email
+        self.remote_headers = {"apikey": self.apikey, "email": self.email}
         if not remote_db:
             self.qu = QdrantClient(path="./qdrant_data")
             try:
@@ -68,8 +69,6 @@ class Genie:
                         "paraphrase-albert-small-v2": models.VectorParams(size=768, distance=models.Distance.COSINE),
                         "multi-qa-mpnet-base-dot-v1": models.VectorParams(size=768, distance=models.Distance.COSINE)
                     })
-        else:
-
         if file_path:
             self.file_meta = file_meta
             self.file_path = file_path
@@ -121,6 +120,9 @@ class Genie:
             else:  # Assuming that in this case it's an object with attributes
                 filename = getattr(self.file_meta, "filename")
                 filetype = getattr(self.file_meta, "content_type")
+            print(self.remote_db)
+            import time
+            time.sleep(5)
             if not self.remote_db:
                 self.qu.upsert(
                     collection_name=collection_name,
@@ -143,6 +145,7 @@ class Genie:
                     ]
                 )
             else:
+                # TODO: Clientside restriction if Cloud responses no WRITE access (401, {'message': 'Write permission is not granted'})
                 payload = {
                     "chunk": texts[i],
                     "metadata": {"filename": filename,
@@ -152,9 +155,11 @@ class Genie:
                     "vector": {
                         f"{self.embeddings_model[0]}": embeddings
                     },
-                },
-                headers = {"apikey": self.api_key, "email": self.email}
-                requests.post(headers=headers)
+                }
+                print(payload)
+                time.sleep(5)
+                # needs to be json not payload -> because of the encoding application/x-www-form-urlencoded isn't supported
+                r = requests.post("http://localhost:8000/api/qdrant/upload/", headers=self.remote_headers, json=payload)
         return
 
     def embeddings(self, texts: List[str], page: int):
@@ -167,37 +172,58 @@ class Genie:
     def search(self, query: str, specific_doc: str | None):
         openai.api_key = self.openai_api_key[0]
         print(self.openai_api_key)
-        if self.embeddings_model[0] != "text-embedding-ada-002":
-            model = SentenceTransformer(f"{self.embeddings_model[0]}")
-            embeddings = [float(x) for x in model.encode(query)]
-        else:
-            response = openai.Embedding.create(
-                input=query,
-                model="text-embedding-ada-002"
-            )
-            embeddings = response['data'][0]['embedding']
-        results = self.qu.search(
-            collection_name="aixplora",
-            query_vector=(f"{self.embeddings_model[0]}", embeddings),
-            limit=3,
-            with_payload=True
-        )
-        if specific_doc is not None:
-            # Without the clean it won't find the document
-            specific_doc_clean = specific_doc.replace('https://', '').replace('http://', '').replace('/', '_')
+        if not self.remote_db:
+            if self.embeddings_model[0] != "text-embedding-ada-002":
+                model = SentenceTransformer(f"{self.embeddings_model[0]}")
+                embeddings = [float(x) for x in model.encode(query)]
+            else:
+                response = openai.Embedding.create(
+                    input=query,
+                    model="text-embedding-ada-002"
+                )
+                embeddings = response['data'][0]['embedding']
             results = self.qu.search(
                 collection_name="aixplora",
                 query_vector=(f"{self.embeddings_model[0]}", embeddings),
-                query_filter=models.Filter(
-                    must=[
-                        models.FieldCondition(
-                            key="metadata.filename",
-                            match=models.MatchValue(value=f"{specific_doc_clean}"),
-                        )
-                    ]
-                ),
-                limit=3
+                limit=3,
+                with_payload=True
             )
+            if specific_doc is not None:
+                # Without the clean it won't find the document
+                specific_doc_clean = specific_doc.replace('https://', '').replace('http://', '').replace('/', '_')
+                results = self.qu.search(
+                    collection_name="aixplora",
+                    query_vector=(f"{self.embeddings_model[0]}", embeddings),
+                    query_filter=models.Filter(
+                        must=[
+                            models.FieldCondition(
+                                key="metadata.filename",
+                                match=models.MatchValue(value=f"{specific_doc_clean}"),
+                            )
+                        ]
+                    ),
+                    limit=3
+                )
+        else:
+            if self.embeddings_model[0] != "text-embedding-ada-002":
+                model = SentenceTransformer(f"{self.embeddings_model[0]}")
+                embeddings = [float(x) for x in model.encode(query)]
+            else:
+                response = openai.Embedding.create(
+                    input=query,
+                    model="text-embedding-ada-002"
+                )
+                embeddings = response['data'][0]['embedding']
+
+            payload = {"query_vector": {f"{self.embeddings_model[0]}": embeddings}}
+            r = requests.post(headers=self.remote_headers, json=payload, url="http://localhost:8000/api/qdrant/get/")
+            if specific_doc is not None:
+                specific_doc_clean = specific_doc.replace('https://', '').replace('http://', '').replace('/', '_')
+                payload = {"query_vector": {f"{self.embeddings_model[0]}": embeddings}, "specific_doc": specific_doc_clean}
+                r = requests.post(headers=self.remote_headers, json=payload, url="http://localhost:8000/api/qdrant/get/")
+            print(r.json())
+            return (r.json(), r.status_code)
+
         print("das sind die reults" * 10)
         print(results)
         print("das sind die reults"* 10)
@@ -210,8 +236,13 @@ class Genie:
         if not query_embedding and not query_texts:
             raise ValueError("Either query_embedding or query_texts must be provided")
         results = self.search(query_texts, specific_doc)
-        relevant_docs = [doc.payload["chunk"] for doc in results]
-        meta_data = [doc.payload["metadata"] for doc in results]
+        if isinstance(results, tuple):
+            relevant_docs = [doc["payload"]["chunk"] for doc in results[0]]
+            meta_data = [doc["payload"]["metadata"] for doc in results[0]]
+        else:
+            relevant_docs = [doc.payload["chunk"] for doc in results]
+            meta_data = [doc.payload["metadata"] for doc in results]
+        print("halloooo")
         print(self.openai_model)
         if not self.openai_model[0].startswith("gpt"):
             print(f"Using local model: {self.openai_model[0]}")
