@@ -10,6 +10,7 @@ const selectBaseUrl = () => {
   if (isConnected === false) {
     return config.REACT_APP_BACKEND_URL;
   } else {
+    // TODO: Change this to Cloud URL e.g. cloud.aixplora.app/api
     return 'http://0.0.0.0:8888';
   }
 };

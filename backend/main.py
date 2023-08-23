@@ -127,12 +127,14 @@ async def upload_files(request: Request, files: List[UploadFile] = File(...)):
                 transcription = FILE_HANDLERS[file_extension](file)
                 Genie(file_path=transcription[0], file_meta=transcription[1], apikey=apikey, email=email,
                       remote_db=True)
-                print("file content"*10)
-                print(file_content)
+                # Debug
+                # print("file content"*10)
+                # print(file_content)
 
                 files = {'file': (file.filename, file_content, file.content_type)}
-                print(files)
-                time.sleep(3)
+                # Debug
+                # print(files)
+                # time.sleep(3)
                 headers = {"apikey": request.headers.get("apikey"), "email": request.headers.get("email")}
                 # TODO: Change with Cloud API URL
                 r = requests.post("http://localhost:8000/api/db/", files=files, headers=headers)
@@ -235,4 +237,4 @@ def test(document: Document):
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8888)
+    uvicorn.run(app, host="0.0.0.0", port=8000)

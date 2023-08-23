@@ -121,8 +121,9 @@ class Genie:
                 filename = getattr(self.file_meta, "filename")
                 filetype = getattr(self.file_meta, "content_type")
             print(self.remote_db)
-            import time
-            time.sleep(5)
+            # Debug
+            # import time
+            # time.sleep(5)
             if not self.remote_db:
                 self.qu.upsert(
                     collection_name=collection_name,
@@ -156,8 +157,9 @@ class Genie:
                         f"{self.embeddings_model[0]}": embeddings
                     },
                 }
-                print(payload)
-                time.sleep(5)
+                # Debug
+                # print(payload)
+                # time.sleep(5)
                 # needs to be json not payload -> because of the encoding application/x-www-form-urlencoded isn't supported
                 r = requests.post("http://localhost:8000/api/qdrant/upload/", headers=self.remote_headers, json=payload)
         return
