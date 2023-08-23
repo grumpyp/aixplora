@@ -7,7 +7,7 @@ from typing import List, Dict
 from langchain.schema import Document
 from database.database import Database
 from sqlalchemy import text
-from embeddings.utils import openai_ask
+from embeddings.utils import openai_ask, openai_ask_no_aixplora_brain
 import random
 from qdrant_client import QdrantClient
 from qdrant_client.http import models
@@ -244,24 +244,36 @@ class Genie:
         else:
             relevant_docs = [doc.payload["chunk"] for doc in results]
             meta_data = [doc.payload["metadata"] for doc in results]
-        print("halloooo")
-        print(self.openai_model)
         if not self.openai_model[0].startswith("gpt"):
             print(f"Using local model: {self.openai_model[0]}")
             # TODO: refactor this path to be global
             models_dir = os.path.join(os.getcwd(), "llmsmodels")
             gptj = GPT4All(model_name=self.openai_model[0], model_path=models_dir)
-            messages = [
-                {"role": "user",
-                 "content": f"Answer the following question: {query_texts} based on that context: {relevant_docs},"
-                            " Make sure that the answer of you is in the same language then the question. if you can't just answer: I don't know"}
-            ]
+            if use_brain:
+                messages = [
+                    {"role": "user",
+                     "content": f"Answer the following question: {query_texts} based on that context: {relevant_docs},"
+                                " Make sure that the answer of you is in the same language then the question. if you can't just answer: I don't know"}
+                ]
+            else:
+                messages = [
+                    {"role": "user",
+                     "content": f"{query_texts}"}]
             answer = gptj.chat_completion(messages, streaming=False)["choices"][0]["message"]["content"]
         else:
-            if self.openai_model[0].startswith("gpt"):
-                print(f"Using openai model: {self.openai_model[0]}")
-                answer = openai_ask(context=relevant_docs, question=query_texts, openai_api_key=self.openai_api_key[0],
-                                    openai_model=self.openai_model[0])
+            if use_brain:
+                if self.openai_model[0].startswith("gpt"):
+                    print(f"Using openai model: {self.openai_model[0]}")
+                    answer = openai_ask(context=relevant_docs, question=query_texts, openai_api_key=self.openai_api_key[0],
+                                        openai_model=self.openai_model[0])
+                else:
+                    answer = openai_ask(context=relevant_docs, question=query_texts,
+                                        openai_api_key=self.openai_api_key[0],
+                                        openai_model=self.openai_model[0])
+            else:
+                if self.openai_model[0].startswith("gpt"):
+                    answer = openai_ask_no_aixplora_brain(question=query_texts, openai_api_key=self.openai_api_key[0],
+                                                          openai_model=self.openai_model[0])
         _answer = {"answer": answer, "meta_data": meta_data}
         print(meta_data)
         return _answer
