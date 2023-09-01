@@ -26,7 +26,31 @@ body {
     rgb(var(--background-start-rgb));
 }
 
-
+.btn_3 {
+    align-items: center;
+  background: linear-gradient(144deg, #f68a71, #d801d1 80%, #ec0505);
+  -webkit-text-color: transparent;
+  border: 0;
+  border-radius: 8px;
+  box-shadow: rgba(17, 31, 53, 255) 0 15px 30px -5px;
+  box-sizing: border-box;
+  color: #ffffff;
+  display: flex;
+  font-size: 18px;
+  justify-content: center;
+  line-height: 1em;
+  font-family: "Poppins", sans-serif;
+  max-width: 100%;
+  min-width: 100px;
+  padding: 3px;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.3s;
+}
 
 .btn_1 {
   align-items: center;
@@ -66,6 +90,21 @@ body {
 
   outline: 0;
 }
+
+/* Default styles: stacked buttons for small devices */
+.buttons {
+    flex-direction: column;
+    gap: 1rem; /* adjust vertical spacing for stacked buttons */
+}
+
+/* Media query for larger screens (e.g., tablets and desktops) */
+@media (min-width: 640px) { /* 640px is typically the breakpoint for medium screens in Tailwind */
+    .buttons {
+        flex-direction: row;
+        gap: 3rem; /* adjust horizontal spacing for side-by-side buttons */
+    }
+}
+
 
 button span {
   background-color: rgb(5, 6, 45);
@@ -347,3 +386,16 @@ button span {
     padding: 2em 10em;
   }
 }
+
+
+.icon-button-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.icon-button-container svg {
+    width: 32px;
+    height: 32px;
+}
+
