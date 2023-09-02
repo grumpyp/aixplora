@@ -8,7 +8,7 @@
 
 ## 🖥️ Now available for download 🖥️!
 
-[🖥 Windows version](https://we.tl/t-3GIdXFcojo)
+[🖥 Windows version](https://we.tl/t-Xxyd4j4XUr)
 
 [🖥 Mac version (coming soon)](#)
 
