@@ -135,8 +135,9 @@ button span {
   -webkit-text-fill-color: transparent;
 }
 .card {
-  width: 190px;
-  height: 254px;
+  padding-left: 20px;
+  width: 600px;
+  height: 354px;
   transition: all 0.2s;
   position: relative;
   cursor: pointer;
@@ -190,13 +191,13 @@ button span {
 }
 
 .circle:nth-child(1) {
-  top: -25px;
+  top: -35px;
   left: -25px;
 }
 
 .circle:nth-child(2) {
   bottom: -25px;
-  right: -25px;
+  right: -65px;
   animation-name: move-down1;
 }
 
@@ -333,7 +334,7 @@ button span {
 
 @media (max-width: 992px) {
   .hero_intro_text {
-    line-height: 1.3em;
+    line-height: 1f.3em;
   }
 
   #hero {

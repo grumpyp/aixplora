@@ -46,7 +46,13 @@ function Hero() {
                 <div className="card">
                     <div className="circle"></div>
                     <div className="circle"></div>
-                    <div className="card-inner"></div>
+                    <div className="card-inner">
+                       <video width="640" height="400" autoPlay loop muted>
+      <source src="/video.mp4" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+
+                    </div>
                 </div>
             </div>
         </section>
