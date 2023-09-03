@@ -1,5 +1,5 @@
 import uvicorn
-from fastapi import FastAPI, File, UploadFile, Request, Body
+from fastapi import FastAPI, File, UploadFile, Request, Header
 from typing import Optional
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
@@ -13,9 +13,11 @@ from embeddings.index_files import Genie
 from loaders.website_loader import extract_text_from_website
 from sqlalchemy.exc import DatabaseError
 import os
+import json
 from posthog import Posthog
 import asyncio
 import uuid
+import requests
 # TODO: use best practise for routing
 
 app = FastAPI()
@@ -84,7 +86,18 @@ def add_config(config: Config):
 
 
 @app.get("/files/")
-def get_files():
+def get_files(request: Request):
+    apikey = request.headers.get("apikey", False)
+    email = request.headers.get("email", False)
+
+    if apikey and email:
+        # TODO: Check with Cloud API URL
+        headers = {"apikey": apikey, "email": email}
+        files = requests.get("http://localhost:8000/api/db/", headers=headers)
+        if files.status_code == 200:
+            return files.json().get("files", [])
+        else:
+            return {"error": "No files found."}
     try:
         db = Database().get_session()
         files = db.execute(text("SELECT * FROM files")).fetchall()
@@ -101,34 +114,59 @@ def get_files():
 
 
 @app.post("/files/")
-async def upload_files(files: List[UploadFile] = File(...)):
+async def upload_files(request: Request, files: List[UploadFile] = File(...)):
     from database.models.files import File
+    import time
     db = Database().get_session()
-    posthog_id = db.execute(text("SELECT posthog_id FROM config")).fetchall()[-1][0] if db.execute(
-        text("SELECT posthog_id FROM config")).fetchall() else "unconfigured"
-    for file in files:
-        file_extension = os.path.splitext(file.filename)[1]
-        posthog.capture(
-            f'{posthog_id}',
-            event='/files/',
-            properties={
-                '$set_once': {'file_type': file_extension},
-            }
-        )
+    apikey = request.headers.get("apikey", False)
+    email = request.headers.get("email", False)
+    if apikey and email:
+        for file in files:
+            file_extension = os.path.splitext(file.filename)[1]
+            if file_extension in FILE_HANDLERS:
+                file_content = await file.read()
+                transcription = FILE_HANDLERS[file_extension](file)
+                Genie(file_path=transcription[0], file_meta=transcription[1], apikey=apikey, email=email,
+                      remote_db=True)
+                # Debug
+                # print("file content"*10)
+                # print(file_content)
 
-        if file_extension in FILE_HANDLERS:
-            transcription = FILE_HANDLERS[file_extension](file)
-            print(f"{file.filename} file text extracted")
-            # TODO: implement table which tracks costs of API usage OpenAI
-            # TODO: implement async task for indexing
-            Genie(file_path=transcription[0], file_meta=transcription[1])
-            entry = File(file_name=file.filename, file_type=file.content_type, file_size=file.size)
-            db = Database().get_session()
-            db.add(entry)
-            db.commit()
-            print(f"{file.filename} file indexed")
+                files = {'file': (file.filename, file_content, file.content_type)}
+                # Debug
+                # print(files)
+                # time.sleep(3)
+                headers = {"apikey": request.headers.get("apikey"), "email": request.headers.get("email")}
+                # TODO: Change with Cloud API URL
+                r = requests.post("http://localhost:8000/api/db/", files=files, headers=headers)
 
-    return {"message": "Files uploaded successfully"}
+        return {"message": "Files uploaded successfully"}
+    else:
+        posthog_id = db.execute(text("SELECT posthog_id FROM config")).fetchall()[-1][0] if db.execute(
+            text("SELECT posthog_id FROM config")).fetchall() else "unconfigured"
+        for file in files:
+            file_extension = os.path.splitext(file.filename)[1]
+            posthog.capture(
+                f'{posthog_id}',
+                event='/files/',
+                properties={
+                    '$set_once': {'file_type': file_extension},
+                }
+            )
+
+            if file_extension in FILE_HANDLERS:
+                transcription = FILE_HANDLERS[file_extension](file)
+                print(f"{file.filename} file text extracted")
+                # TODO: implement table which tracks costs of API usage OpenAI
+                # TODO: implement async task for indexing
+                Genie(file_path=transcription[0], file_meta=transcription[1])
+                entry = File(file_name=file.filename, file_type=file.content_type, file_size=file.size)
+                db = Database().get_session()
+                db.add(entry)
+                db.commit()
+                print(f"{file.filename} file indexed")
+
+        return {"message": "Files uploaded successfully"}
 
 
 @app.post("/files/website/")
@@ -165,10 +203,14 @@ async def upload_website(request_body: UploadRequestBody = None):
     return {"message": "Files uploaded successfully"}
 
 @app.post("/chat/")
-def chat(question: Question, document: Document, usebrain: bool = Body(...)):
+def chat(request: Request, question: Question, document: Document):
+    apikey = request.headers.get("apikey", False)
+    email = request.headers.get("email", False)
     genie = Genie()
-    answer = genie.query(query_texts=question.question, specific_doc=document.document,
-                         use_brain=usebrain)
+    if apikey and email:
+        genie = Genie(remote_db=True, apikey=apikey, email=email)
+    answer = genie.query(query_texts=question.question, specific_doc=document.document)
+
     print(answer)
     return {"question": question.question, "answer": answer["answer"], "meta_data": answer["meta_data"]}
 

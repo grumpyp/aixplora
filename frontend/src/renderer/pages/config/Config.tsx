@@ -38,8 +38,10 @@ function saveConfig(OPENAI_API_KEY: string, model: string, embeddingsmodel: stri
 //         });
 // }
     return apiCall('/config', 'POST', payload).then((response) => {
+        console.log("hallo");
             const fetchedConfig = response.data;
             console.log(fetchedConfig);
+
 
             if (Object.keys(fetchedConfig).length === 0) {
                 return false;
