@@ -19,8 +19,8 @@ function PromptConfiguration() {
     };
 
     const setPromptDb = () => {
-        apiCall('/prompt', 'POST', {'prompt': prompt}).then((response: any) => {
-            const fetchedPrompt = response.data;
+        apiCall('/prompt', 'POST', { prompt: prompt }).then((response: any) => {
+            const fetchedPrompt = response.data.prompt;
             console.log(fetchedPrompt);
             setPrompt(fetchedPrompt['prompt']);
         }).catch((error) => {
