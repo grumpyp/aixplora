@@ -205,9 +205,6 @@ class Genie:
             meta_data = [doc.payload["metadata"] for doc in results]
             prompt = prompt.replace("{question}", query_texts)
             prompt = prompt.replace("{relevant_docs}", " ".join([doc.payload["chunk"] for doc in results]))
-            import time
-            print(prompt)
-            time.sleep(5)
             print(self.openai_model)
         if not self.openai_model[0].startswith("gpt"):
             print(f"Using local model: {self.openai_model[0]}")
