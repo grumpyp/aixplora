@@ -17,6 +17,7 @@ import os
 from posthog import Posthog
 import asyncio
 import uuid
+
 # TODO: use best practise for routing
 
 app = FastAPI()
@@ -30,9 +31,9 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
-
 posthog = Posthog(project_api_key='phc_5XDDHeXB5FS9Nz9MpywDun18suZyYceQrUuY7UIM0O7',
                   host='https://app.posthog.com')
+
 
 @app.middleware("http")
 async def posthog_middleware(request: Request, call_next):
@@ -66,6 +67,7 @@ async def posthog_middleware(request: Request, call_next):
 
     return response
 
+
 @app.get("/config/")
 def get_config():
     db = Database().get_session()
@@ -78,8 +80,10 @@ def get_config():
 def add_config(config: Config):
     db = Database().get_session()
     print(config.embeddingsModel)
-    res = db.execute(text("INSERT INTO config (openai_api_key, model, embeddings_model, posthog_id) VALUES (:api_key, :model, :embeddingsmodel, :posthog_id)"),
-                     {"api_key": config.apiKey, "model": config.model, "embeddingsmodel": config.embeddingsModel, "posthog_id": str(uuid.uuid4())})
+    res = db.execute(text(
+        "INSERT INTO config (openai_api_key, model, embeddings_model, posthog_id) VALUES (:api_key, :model, :embeddingsmodel, :posthog_id)"),
+                     {"api_key": config.apiKey, "model": config.model, "embeddingsmodel": config.embeddingsModel,
+                      "posthog_id": str(uuid.uuid4())})
     db.commit()
     return config
 
@@ -165,6 +169,7 @@ async def upload_website(request_body: UploadRequestBody = None):
 
     return {"message": "Files uploaded successfully"}
 
+
 @app.post("/chat/")
 def chat(question: Question, document: Document, usebrain: bool = Body(...)):
     genie = Genie()
@@ -202,8 +207,11 @@ def get_prompt():
     prompts = db.execute(text("SELECT * FROM prompt")).fetchall()
     prompts = sorted(prompts, key=lambda x: x[2], reverse=True)
     print(prompts)
-    if prompts is None:
-        return {"error": "No prompt found."}
+    if len(prompts) == 0:
+        return {
+            "prompt": "Answer the following question: {question} based on that context:"
+                      " {relevant_docs}, make sure that the answer of you is in the same language"
+                      " then the question. if you can't just answer: I don't know."}
     return {"prompt": prompts[0][1]}
 
 
