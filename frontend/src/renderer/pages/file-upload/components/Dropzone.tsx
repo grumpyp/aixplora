@@ -10,12 +10,15 @@ import {
 import { Dropzone } from '@mantine/dropzone';
 import { IconCloudUpload, IconX, IconDownload } from '@tabler/icons-react';
 import {apiCall} from "../../../utils/api";
+import { Notifications } from '@mantine/notifications';
 
 const useStyles = createStyles((theme) => ({
   // Styles definition here
 }));
 
-export function DropzoneButton() {
+
+
+export function DropzoneButton({ onFilesUploaded }: { onFilesUploaded: (uploadedFiles: File[]) => void }) {
   const { classes, theme } = useStyles();
   const openRef = useRef();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -61,7 +64,14 @@ export function DropzoneButton() {
         .then((response) => {
             // Handle API response data
             console.log(response.data);
-            window.location.reload();
+            Notifications.show({
+              title: 'File Upload Successful',
+              message: 'The file was successfully uploaded.',
+              color: 'green'
+            });
+
+            onFilesUploaded(selectedFiles); // Call the callback function to update the state in the parent component
+            setSelectedFiles([]); 
         })
         .catch((error) => {
             // Handle API request error
