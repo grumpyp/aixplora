@@ -23,9 +23,7 @@ export function DropzoneButton({ onFilesUploaded }: { onFilesUploaded: (uploaded
   const openRef = useRef();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  useEffect(() => {
-    console.log(selectedFiles);
-  }, [selectedFiles]);
+  
 
   const handleFileDrop = async (files: File[]) => {
     const isSelected = selectedFiles.find((f) => f.name === files[0].name);
@@ -69,7 +67,7 @@ export function DropzoneButton({ onFilesUploaded }: { onFilesUploaded: (uploaded
               message: 'The file was successfully uploaded.',
               color: 'green'
             });
-
+            
             onFilesUploaded(selectedFiles); // Call the callback function to update the state in the parent component
             setSelectedFiles([]); 
         })
