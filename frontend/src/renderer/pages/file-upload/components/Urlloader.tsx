@@ -4,6 +4,8 @@ import './UrlLoader.css';
 import { useEffect, useState } from 'react';
 import { apiCall } from '../../../utils/api';
 import { useForm } from '@mantine/form';
+import { Notifications } from '@mantine/notifications';
+import { check } from 'prettier';
 
 export function UrlLoader() {
   const [sitemap, setSitemap] = useState(false);
@@ -26,6 +28,7 @@ const form = useForm({
   const handleSuccess = (values) => {
     console.log(values);
     handleUrlUpload();
+    
   };
 
   const handleFail = (errors) => {
@@ -41,7 +44,15 @@ const form = useForm({
     apiCall('/files/website', 'POST', payload)
       .then((response) => {
         console.log(response.data);
-        window.location.reload();
+        Notifications.show({
+          title: 'URL Upload Successful',
+          message: 'The URL was successfully uploaded.',
+          color: 'green'
+        });
+        
+        form.setFieldValue('URL', '');
+        setSitemap(false);
+        
       })
       .catch((error) => {
         console.log('Error fetching config:', error);
@@ -77,6 +88,7 @@ const form = useForm({
               <Checkbox
                 label={'Index whole sitemap'}
                 style={{ marginTop: '10px' }}
+                checked={sitemap}
                 onChange={(event) => setSitemap(event.currentTarget.checked)}
               />
               <Button type="submit">Upload</Button>

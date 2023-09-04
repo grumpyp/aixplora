@@ -1,4 +1,5 @@
 import {useForm} from '@mantine/form';
+import { useEffect } from 'react';
 import {TextInput, Button, Box, Drawer, Avatar, Text, Group, Select, Tooltip} from '@mantine/core';
 import {config} from '../../config.js';
 import {IconDatabase} from '@tabler/icons-react';
@@ -10,7 +11,7 @@ import {connect, disconnect} from '../../store/slices/externalDbSlice';
 import {apiCall} from "../../utils/api";
 import {useState} from "react";
 import PromptConfiguration from "./PromptConfig";
-
+import { Notifications } from '@mantine/notifications';
 
 function saveConfig(OPENAI_API_KEY: string, model: string, embeddingsmodel: string) {
     const payload = {
@@ -49,7 +50,6 @@ function saveConfig(OPENAI_API_KEY: string, model: string, embeddingsmodel: stri
             // The fetched config is not an empty object, save it and return true
             localStorage.setItem('config', JSON.stringify(fetchedConfig));
             console.log(fetchedConfig);
-            window.location.reload();
 
             return true;
         }
@@ -91,11 +91,35 @@ function Config() {
         },
     });
 
+    // Add useEffect to initialize form values from localStorage
+    useEffect(() => {
+        const savedConfig = JSON.parse(localStorage.getItem('config') || '{}');
+        form.setValues({
+        OPENAI_API_KEY: savedConfig.apiKey || '', 
+        model: savedConfig.model || '', 
+        embeddingsmodel: savedConfig.embeddingsModel || '', 
+        });
+    }, []);
 
     const handleSuccess = (values) => {
-        console.log(values);
-        saveConfig(values.OPENAI_API_KEY, values.model, values.embeddingsmodel);
-    };
+    console.log(values);
+    saveConfig(values.OPENAI_API_KEY, values.model, values.embeddingsmodel)
+      .then((success) => {
+        if (success) {
+          Notifications.show({
+            title: 'Configuration Saved',
+            message: 'Your configuration has been saved successfully.',
+            color: 'green',
+          });
+        } else {
+          Notifications.show({
+            title: 'Configuration Error',
+            message: 'There was an error saving your configuration.',
+            color: 'red',
+          });
+        }
+      });
+  };
 
     const handleFail = (errors) => {
         console.log(errors);
