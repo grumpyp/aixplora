@@ -9,8 +9,6 @@ def is_valid_api_key(openai_api_key: str):
                 {"role": "system", "content": "You are a helpful assistant."}
             ]
         )
-        print('Validated api key')
         return { 'validApiKey': True }
     except Exception as e:
-        print('Error validating api key: ', e)
         return { 'validApiKey': False }
