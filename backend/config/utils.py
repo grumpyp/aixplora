@@ -11,5 +11,8 @@ def is_valid_api_key(openai_api_key: str):
         )
         return { 'validApiKey': True }
     except Exception as e:
-        return { 'validApiKey': False }
+        return {
+            'validApiKey': False,
+            'message': e.error.message
+        }
     
