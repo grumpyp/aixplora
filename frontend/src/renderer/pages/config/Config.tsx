@@ -67,27 +67,6 @@ function saveConfig(OPENAI_API_KEY: string, model: string, embeddingsmodel: stri
 //             return false;
 //         });
 // }
-    // return apiCall('/config', 'POST', payload).then((response) => {
-    //         const fetchedConfig = response.data;
-    //         console.log(fetchedConfig);
-
-    //         if (Object.keys(fetchedConfig).length === 0) {
-    //             return false;
-    //         }
-
-    //         // The fetched config is not an empty object, save it and return true
-    //         localStorage.setItem('config', JSON.stringify(fetchedConfig));
-    //         console.log(fetchedConfig);
-    //         window.location.reload();
-
-    //         return true;
-    //     }
-    // )
-    //     .catch((error) => {
-    //             console.log('Error fetching config:', error);
-    //             return false;
-    //         }
-    //     );
 }
 
 function Config() {

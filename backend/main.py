@@ -79,7 +79,6 @@ def get_config():
         return False
     return True
 
-# TODO: This is where the api key gets set
 @app.post("/config/")
 def add_config(config: Config):
     db = Database().get_session()
