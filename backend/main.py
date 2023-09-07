@@ -9,6 +9,7 @@ from schemas.config import Config
 from schemas.question import Question, Document
 from schemas.file import UploadRequestBody
 from schemas.prompt import Prompt
+from config import utils
 from utils import FILE_HANDLERS
 from embeddings.index_files import Genie
 from loaders.website_loader import extract_text_from_website
@@ -67,6 +68,9 @@ async def posthog_middleware(request: Request, call_next):
 
     return response
 
+@app.post("/config/validate-api-key/")
+def validate_api_key(config: Config):
+    return utils.is_valid_api_key(config.apiKey)
 
 @app.get("/config/")
 def get_config():
@@ -75,7 +79,7 @@ def get_config():
         return False
     return True
 
-
+# TODO: This is where the api key gets set
 @app.post("/config/")
 def add_config(config: Config):
     db = Database().get_session()
