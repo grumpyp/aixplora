@@ -11,14 +11,12 @@ import { Dropzone } from '@mantine/dropzone';
 import { IconCloudUpload, IconX, IconDownload } from '@tabler/icons-react';
 import {apiCall} from "../../../utils/api";
 import { Notifications } from '@mantine/notifications';
-import { Progress } from '@mantine/core';
 import axios from 'axios';
 import appConfig from '../../../config';
 
 const useStyles = createStyles((theme) => ({
   // Styles definition here
 }));
-
 
 export function DropzoneButton({ onFilesUploaded }: { onFilesUploaded: (uploadedFiles: File[]) => void }) {
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -37,38 +35,36 @@ export function DropzoneButton({ onFilesUploaded }: { onFilesUploaded: (uploaded
     }
   };
 
-const handleFileUpload = () => {
+  const handleFileUpload = () => {
     if (selectedFiles.length > 0) {
-        const formData = new FormData();
-        selectedFiles.forEach((file) => {
-            formData.append('files', file);
-        });
-        setIsLoading(true);
+      const formData = new FormData();
+      selectedFiles.forEach((file) => {
+        formData.append('files', file);
+      });
+      setIsLoading(true);
 
-        const config = {
-            onUploadProgress: function(progressEvent: any) {
-                const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-                setUploadProgress(percentCompleted);
-            },
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            }
-        };
+      axios.post(`${appConfig.REACT_APP_BACKEND_URL}/files/`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          setUploadProgress(percentCompleted);
+        }
+      })
+      .then((response) => {
+        console.log(response.data);
+        
+        window.location.reload();
+        setUploadProgress(0);  // Reset Progress Bar when done
+      })
+      .catch((error) => {
+        console.error(error);
+      });
 
-        axios.post(`${appConfig.REACT_APP_BACKEND_URL}/files/`, formData, config)
-            .then(response => {
-                console.log(response.data);
-                window.location.reload();
-                setUploadProgress(0);  // Reset Progress Bar when done
-            })
-            .catch(error => {
-                console.error(error);
-            });
-
-        setIsLoading(false);
+      setIsLoading(false);
     }
-};
-
+  };
 
   const removeSelectedFile = (fileName: string) => {
     const newFiles = selectedFiles.filter((file) => file.name !== fileName);
