@@ -4,11 +4,9 @@ import './App.css';
 import Upload from './pages/file-upload/Upload';
 import {HeaderResponsive} from './components/Menu';
 import Footer from './components/Footer';
-import GettingStarted from './components/Start';
-import axios from 'axios';
+import Home from './pages/home/Home';
 import Config from './pages/config/Config';
 import Chat from './pages/Chat/Chat';
-import {apiCall} from "./utils/api";
 import {useState, useEffect} from "react";
 import {Summary} from './pages/summary/Summary';
 import store from './store/store';
@@ -24,64 +22,18 @@ const randomLinks = [
 
 ];
 
-function checkConfig() {
-    console.log("executed CheckConfig");
-
-//     return axios.get(`${config.REACT_APP_BACKEND_URL}/config`)
-//         .then((response) => {
-//             const fetchedConfig = response.data;
-//             console.log(fetchedConfig);
-//             if (fetchedConfig === false) {
-//                 // The fetched config is an empty object, return false
-//                 return false;
-//             }
-//             // The fetched config is not an empty object, save it and return true
-//             localStorage.setItem('config', JSON.stringify(fetchedConfig));
-//             console.log(fetchedConfig);
-//             return true;
-//         })
-//         .catch((error) => {
-//             console.log('Error fetching config:', error);
-//             // Return false if there's an error
-//             return false;
-//         });
-// }
-    return apiCall('/config', 'GET').then((response) => {
-        const fetchedConfig = response.data;
-        console.log(fetchedConfig);
-        console.log(fetchedConfig);
-        if (fetchedConfig === false) {
-            // The fetched config is an empty object, return false
-            return false;
-        }
-        // The fetched config is not an empty object, save it and return true
-        localStorage.setItem('config', JSON.stringify(fetchedConfig));
-        console.log(fetchedConfig);
-        return true;
-    }
-    )
-    .catch((error) => {
-        console.log('Error fetching config:', error);
-        // Return false if there's an error
-        return false;
-    }
-    );
-}
-
-
 export default function Hello() {
-    const [isConfigValid, setConfigValid] = useState(null);
+   
   const [colorScheme, setColorScheme] = useState<any>('light');
+  // placeholder for props Config setConfigValid={setConfigValid}
+  // this prop is used in Home component to get the config status from Config component
+  const [isConfigValid, setConfigValid] = useState<boolean | undefined>(undefined);
 
-    useEffect(() => {
-        checkConfig().then((isValid) => {
-            setConfigValid(isValid);
-        });
-    }, []);
-
-    if (isConfigValid === null) {
-        return <div>Loading...</div>;
-    }
+  useEffect(() => {
+    window.addEventListener('beforeunload', () => {
+      localStorage.clear();
+    });
+  }, []);
 
   const toggleTheme = () => {
     setColorScheme(colorScheme === 'dark' ? 'light' : 'dark');
@@ -95,10 +47,10 @@ export default function Hello() {
                     <Router>
                         <HeaderResponsive links={randomLinks}/>
                         <Routes>
-                            <Route path="/" element={isConfigValid ? <GettingStarted/> : <Config/>}/>
+                            <Route path="/" element={<Home />}/>
                             <Route path="/upload" element={<Upload/>}/>
                             <Route path="/chat" element={<Chat/>}/>
-                            <Route path="/config" element={<Config/>}/>
+                            <Route path="/config" element={<Config setConfigValid={setConfigValid}/>}/>
                             <Route path="/summary" element={<Summary/>}/>
 
                         </Routes>

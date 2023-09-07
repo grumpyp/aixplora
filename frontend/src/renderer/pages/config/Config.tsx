@@ -38,9 +38,10 @@ function saveConfig(OPENAI_API_KEY: string, model: string, embeddingsmodel: stri
 //             console.log('Error fetching config:', error);
 //             return false;
 //         });
-// }
+// }console.log("saveconfig");
     return apiCall('/config', 'POST', payload).then((response) => {
             const fetchedConfig = response.data;
+            console.log("fetchedConfig");
             console.log(fetchedConfig);
 
             if (Object.keys(fetchedConfig).length === 0) {
@@ -49,8 +50,7 @@ function saveConfig(OPENAI_API_KEY: string, model: string, embeddingsmodel: stri
 
             // The fetched config is not an empty object, save it and return true
             localStorage.setItem('config', JSON.stringify(fetchedConfig));
-            console.log(fetchedConfig);
-
+            console.log("length", Object.keys(fetchedConfig).length);
             return true;
         }
     )
@@ -61,7 +61,7 @@ function saveConfig(OPENAI_API_KEY: string, model: string, embeddingsmodel: stri
         );
 }
 
-function Config() {
+function Config({ setConfigValid }) {
     const isConnected = useSelector((state) => state.connectedExternalDb.value);
     const dispatch = useDispatch();
     const [opened, {open, close}] = useDisclosure(false);
@@ -102,24 +102,26 @@ function Config() {
     }, []);
 
     const handleSuccess = (values) => {
-    console.log(values);
-    saveConfig(values.OPENAI_API_KEY, values.model, values.embeddingsmodel)
-      .then((success) => {
-        if (success) {
-          Notifications.show({
-            title: 'Configuration Saved',
-            message: 'Your configuration has been saved successfully.',
-            color: 'green',
-          });
-        } else {
-          Notifications.show({
-            title: 'Configuration Error',
-            message: 'There was an error saving your configuration.',
-            color: 'red',
-          });
-        }
-      });
-  };
+        console.log(values);
+        saveConfig(values.OPENAI_API_KEY, values.model, values.embeddingsmodel)
+        .then((success) => {
+            if (success) {
+                Notifications.show({
+                    title: 'Configuration Saved',
+                    message: 'Your configuration has been saved successfully.',
+                    color: 'green',
+                });
+                setConfigValid(true);
+            } else {
+                Notifications.show({
+                    title: 'Configuration Error',
+                    message: 'There was an error saving your configuration.',
+                    color: 'red',
+                });
+                setConfigValid(false);
+            }
+        });
+    };
 
     const handleFail = (errors) => {
         console.log(errors);
