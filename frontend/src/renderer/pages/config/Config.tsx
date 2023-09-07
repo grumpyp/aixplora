@@ -21,7 +21,7 @@ function saveConfig(OPENAI_API_KEY: string, model: string, embeddingsmodel: stri
 
     // validate api key before saving config
     return apiCall('/config/validate-api-key', 'POST', payload).then((response) => {
-        if (response.data.validApiKey === false) return ErrorNotification('/config/validate-api-key', 'POST', response?.data.message);
+        if (response?.data.validApiKey === false) return ErrorNotification('/config/validate-api-key', 'POST', response?.data.message, 'Invalid OpenAI API Key');
 
         apiCall('/config', 'POST', payload).then((response) => {
             const fetchedConfig = response.data;
