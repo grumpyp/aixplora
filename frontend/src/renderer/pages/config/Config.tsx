@@ -10,7 +10,7 @@ import {connect, disconnect} from '../../store/slices/externalDbSlice';
 import {apiCall} from "../../utils/api";
 import {useState} from "react";
 import PromptConfiguration from "./PromptConfig";
-
+import { ErrorNotification } from "../../../renderer/components/ErrorNotification";
 
 function saveConfig(OPENAI_API_KEY: string, model: string, embeddingsmodel: string) {
     const payload = {
@@ -18,6 +18,35 @@ function saveConfig(OPENAI_API_KEY: string, model: string, embeddingsmodel: stri
         model: model,
         embeddingsModel: embeddingsmodel
     };
+
+    // validate api key before saving config
+    return apiCall('/config/validate-api-key', 'POST', payload).then((response) => {
+        if (response?.data.validApiKey === false) return ErrorNotification('/config/validate-api-key', 'POST', response?.data.message, 'Invalid OpenAI API Key');
+
+        apiCall('/config', 'POST', payload).then((response) => {
+            const fetchedConfig = response.data;
+            console.log(fetchedConfig);
+
+            if (Object.keys(fetchedConfig).length === 0) {
+                return false;
+            }
+
+            // The fetched config is not an empty object, save it and return true
+            localStorage.setItem('config', JSON.stringify(fetchedConfig));
+            console.log(fetchedConfig);
+            window.location.reload();
+
+            return true;
+        })
+        .catch((error) => {
+                console.log('Error fetching config:', error);
+                return false;
+            }
+        );
+    }).catch((error) => {
+        console.log('error:', error)
+        return false;
+    });
 //     return axios.post(`${config.REACT_APP_BACKEND_URL}/config`, payload)
 //         .then((response) => {
 //             const fetchedConfig = response.data;
@@ -38,35 +67,12 @@ function saveConfig(OPENAI_API_KEY: string, model: string, embeddingsmodel: stri
 //             return false;
 //         });
 // }
-    return apiCall('/config', 'POST', payload).then((response) => {
-            const fetchedConfig = response.data;
-            console.log(fetchedConfig);
-
-            if (Object.keys(fetchedConfig).length === 0) {
-                return false;
-            }
-
-            // The fetched config is not an empty object, save it and return true
-            localStorage.setItem('config', JSON.stringify(fetchedConfig));
-            console.log(fetchedConfig);
-            window.location.reload();
-
-            return true;
-        }
-    )
-        .catch((error) => {
-                console.log('Error fetching config:', error);
-                return false;
-            }
-        );
 }
-
 function Config() {
     const isConnected = useSelector((state) => state.connectedExternalDb.value);
     const dispatch = useDispatch();
     const [opened, {open, close}] = useDisclosure(false);
     const [focused, setFocused] = useState(false);
-
 
     const form = useForm({
         initialValues: {
