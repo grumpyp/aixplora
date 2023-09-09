@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   Text,
   Group,
@@ -68,7 +68,7 @@ export function DropzoneButton({ onFilesUploaded }: { onFilesUploaded: (uploaded
               color: 'green'
             });
             
-            onFilesUploaded(selectedFiles); // Call the callback function to update the state in the parent component
+            onFilesUploaded(selectedFiles); // Call the callback function to update the state in the Upload.tsx component
             setSelectedFiles([]); 
         })
         .catch((error) => {

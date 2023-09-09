@@ -29,12 +29,6 @@ export default function Hello() {
   // this prop is used in Home component to get the config status from Config component
   const [isConfigValid, setConfigValid] = useState<boolean | undefined>(undefined);
 
-  useEffect(() => {
-    window.addEventListener('beforeunload', () => {
-      localStorage.clear();
-    });
-  }, []);
-
   const toggleTheme = () => {
     setColorScheme(colorScheme === 'dark' ? 'light' : 'dark');
   };

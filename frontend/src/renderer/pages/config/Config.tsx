@@ -41,8 +41,6 @@ function saveConfig(OPENAI_API_KEY: string, model: string, embeddingsmodel: stri
 // }console.log("saveconfig");
     return apiCall('/config', 'POST', payload).then((response) => {
             const fetchedConfig = response.data;
-            console.log("fetchedConfig");
-            console.log(fetchedConfig);
 
             if (Object.keys(fetchedConfig).length === 0) {
                 return false;
@@ -50,7 +48,7 @@ function saveConfig(OPENAI_API_KEY: string, model: string, embeddingsmodel: stri
 
             // The fetched config is not an empty object, save it and return true
             localStorage.setItem('config', JSON.stringify(fetchedConfig));
-            console.log("length", Object.keys(fetchedConfig).length);
+            console.log(fetchedConfig);
             return true;
         }
     )

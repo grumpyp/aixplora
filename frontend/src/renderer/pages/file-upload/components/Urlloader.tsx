@@ -1,7 +1,7 @@
 import { Box, TextInput, Button, Checkbox, Tooltip } from '@mantine/core';
 import { IconSearch } from '@tabler/icons-react';
 import './UrlLoader.css';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { apiCall } from '../../../utils/api';
 import { useForm } from '@mantine/form';
 import { Notifications } from '@mantine/notifications';
@@ -9,20 +9,20 @@ import { Notifications } from '@mantine/notifications';
 export function UrlLoader({ onFilesUploaded }: { onFilesUploaded: (uploadedFiles: string[]) => void }) {
   const [sitemap, setSitemap] = useState(false);
 
-const form = useForm({
-    initialValues: { URL: '' },
-    validate: {
-      URL: (value) => {
-        if (!value) {
-          return 'URL is required';
-        }
-        if (!value.startsWith('http://') && !value.startsWith('https://')) {
-          return 'URL must start with http:// or https://';
-        }
-        return null;
+  const form = useForm({
+      initialValues: { URL: '' },
+      validate: {
+        URL: (value) => {
+          if (!value) {
+            return 'URL is required';
+          }
+          if (!value.startsWith('http://') && !value.startsWith('https://')) {
+            return 'URL must start with http:// or https://';
+          }
+          return null;
+        },
       },
-    },
-  });
+    });
 
   const handleSuccess = (values) => {
     console.log(values);
@@ -49,6 +49,7 @@ const form = useForm({
           color: 'green'
         });
         
+        // passing the website to the Upload.tsx component
         onFilesUploaded([payload.website]);
       })
       .catch((error) => {
