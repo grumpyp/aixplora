@@ -39,16 +39,15 @@ function saveConfig(OPENAI_API_KEY: string, model: string, embeddingsmodel: stri
 //             return false;
 //         });
 // }console.log("saveconfig");
-    return apiCall('/config', 'POST', payload).then((response) => {
+    return apiCall('/config', 'POST', payload, true).then((response) => {
             const fetchedConfig = response.data;
-
+            console.log("fetched", fetchedConfig);
             if (Object.keys(fetchedConfig).length === 0) {
                 return false;
             }
 
             // The fetched config is not an empty object, save it and return true
-            localStorage.setItem('config', JSON.stringify(fetchedConfig));
-            console.log(fetchedConfig);
+            localStorage.setItem('config', JSON.stringify(fetchedConfig)); 
             return true;
         }
     )
@@ -59,12 +58,12 @@ function saveConfig(OPENAI_API_KEY: string, model: string, embeddingsmodel: stri
         );
 }
 
-function Config({ setConfigValid }) {
+function Config() {
     const isConnected = useSelector((state) => state.connectedExternalDb.value);
     const dispatch = useDispatch();
     const [opened, {open, close}] = useDisclosure(false);
     const [focused, setFocused] = useState(false);
-
+    const [dataLoaded, setDataLoaded] = useState(false);
 
     const form = useForm({
         initialValues: {
@@ -89,18 +88,39 @@ function Config({ setConfigValid }) {
         },
     });
 
-    // Add useEffect to initialize form values from localStorage
     useEffect(() => {
+        // Make an API call to fetch the configuration data only on the first load
+        if (!dataLoaded) {
+            apiCall('/config', 'GET', null, true)
+                .then((response) => {
+                    const fetchedConfig = response.data;
+                    // Set the form values based on the retrieved data
+                    form.setValues({
+                        OPENAI_API_KEY: fetchedConfig.openai_api_key || '',
+                        model: fetchedConfig.model || '',
+                        embeddingsmodel: fetchedConfig.embeddings_model || '',
+                    });
+                    // Save to localStorage for future loads
+                    localStorage.setItem('config', JSON.stringify(fetchedConfig));
+                    // Set the dataLoaded flag to true to prevent future API calls
+                    setDataLoaded(true);
+                })
+                .catch((error) => {
+                    console.log('Error fetching config:', error);
+                    // Handle the error as needed, maybe show a notification or take other actions
+                });
+        }
+
         const savedConfig = JSON.parse(localStorage.getItem('config') || '{}');
         form.setValues({
-        OPENAI_API_KEY: savedConfig.apiKey || '', 
-        model: savedConfig.model || '', 
-        embeddingsmodel: savedConfig.embeddingsModel || '', 
+            OPENAI_API_KEY: savedConfig.apiKey || '',
+            model: savedConfig.model || '',
+            embeddingsmodel: savedConfig.embeddingsModel || '',
         });
     }, []);
 
     const handleSuccess = (values) => {
-        console.log(values);
+       
         saveConfig(values.OPENAI_API_KEY, values.model, values.embeddingsmodel)
         .then((success) => {
             if (success) {
@@ -109,14 +129,14 @@ function Config({ setConfigValid }) {
                     message: 'Your configuration has been saved successfully.',
                     color: 'green',
                 });
-                setConfigValid(true);
+                
             } else {
                 Notifications.show({
                     title: 'Configuration Error',
                     message: 'There was an error saving your configuration.',
                     color: 'red',
                 });
-                setConfigValid(false);
+                
             }
         });
     };

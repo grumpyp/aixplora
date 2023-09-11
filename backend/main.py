@@ -71,9 +71,17 @@ async def posthog_middleware(request: Request, call_next):
 @app.get("/config/")
 def get_config():
     db = Database().get_session()
-    if db.execute(text("SELECT * FROM config")).first() is None:
+    config_data = db.execute(text("SELECT * FROM config ORDER BY id DESC LIMIT 1")).first()
+    if config_data:
+        # You can return the config_data as a JSON response here.
+        return {
+            "openai_api_key": config_data.openai_api_key,
+            "posthog_id": config_data.posthog_id,
+            "model": config_data.model,
+            "embeddings_model": config_data.embeddings_model
+        }
+    else:
         return False
-    return True
 
 
 @app.post("/config/")
