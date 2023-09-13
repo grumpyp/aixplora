@@ -63,7 +63,6 @@ function Config() {
     const dispatch = useDispatch();
     const [opened, {open, close}] = useDisclosure(false);
     const [focused, setFocused] = useState(false);
-    const [dataLoaded, setDataLoaded] = useState(false);
 
     const form = useForm({
         initialValues: {
@@ -89,33 +88,12 @@ function Config() {
     });
 
     useEffect(() => {
-        // Make an API call to fetch the configuration data only on the first load
-        if (!dataLoaded) {
-            apiCall('/config', 'GET', null, true)
-                .then((response) => {
-                    const fetchedConfig = response.data;
-                    // Set the form values based on the retrieved data
-                    form.setValues({
-                        OPENAI_API_KEY: fetchedConfig.openai_api_key || '',
-                        model: fetchedConfig.model || '',
-                        embeddingsmodel: fetchedConfig.embeddings_model || '',
-                    });
-                    // Save to localStorage for future loads
-                    localStorage.setItem('config', JSON.stringify(fetchedConfig));
-                    // Set the dataLoaded flag to true to prevent future API calls
-                    setDataLoaded(true);
-                })
-                .catch((error) => {
-                    console.log('Error fetching config:', error);
-                    // Handle the error as needed, maybe show a notification or take other actions
-                });
-        }
-
         const savedConfig = JSON.parse(localStorage.getItem('config') || '{}');
+        console.log("savedConfig", savedConfig);
         form.setValues({
             OPENAI_API_KEY: savedConfig.apiKey || '',
             model: savedConfig.model || '',
-            embeddingsmodel: savedConfig.embeddingsModel || '',
+            embeddingsmodel: savedConfig.embeddings_model || '',
         });
     }, []);
 

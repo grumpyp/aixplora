@@ -46,10 +46,10 @@ function checkConfig() {
 //             return false;
 //         });
 // }
-    return apiCall('/config', 'GET', null, true).then((response) => {
+    return apiCall('/config', 'GET').then((response) => {
         const fetchedConfig = response.data;
         
-        if (fetchedConfig === false) {
+        if (Object.keys(fetchedConfig).length === 0) {
             // The fetched config is an empty object, return false
             return false;
         }

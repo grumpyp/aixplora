@@ -80,8 +80,7 @@ def get_config():
             "model": config_data.model,
             "embeddings_model": config_data.embeddings_model
         }
-    else:
-        return False
+    
 
 
 @app.post("/config/")
