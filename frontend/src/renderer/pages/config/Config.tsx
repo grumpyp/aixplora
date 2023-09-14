@@ -1,6 +1,6 @@
 import {useForm} from '@mantine/form';
+import { useEffect } from 'react';
 import {TextInput, Button, Box, Drawer, Avatar, Text, Group, Select, Tooltip} from '@mantine/core';
-import {config} from '../../config.js';
 import {IconDatabase} from '@tabler/icons-react';
 import {useDisclosure} from '@mantine/hooks';
 import ExternalDb from './Externaldb';
@@ -10,7 +10,7 @@ import {connect, disconnect} from '../../store/slices/externalDbSlice';
 import {apiCall} from "../../utils/api";
 import {useState} from "react";
 import PromptConfiguration from "./PromptConfig";
-import { ErrorNotification } from "../../../renderer/components/ErrorNotification";
+import { Notifications } from '@mantine/notifications';
 
 function saveConfig(OPENAI_API_KEY: string, model: string, embeddingsmodel: string) {
     const payload = {
@@ -66,7 +66,24 @@ function saveConfig(OPENAI_API_KEY: string, model: string, embeddingsmodel: stri
 //             console.log('Error fetching config:', error);
 //             return false;
 //         });
-// }
+// }console.log("saveconfig");
+    return apiCall('/config', 'POST', payload, true).then((response) => {
+            const fetchedConfig = response.data;
+            console.log("fetched", fetchedConfig);
+            if (Object.keys(fetchedConfig).length === 0) {
+                return false;
+            }
+
+            // The fetched config is not an empty object, save it and return true
+            localStorage.setItem('config', JSON.stringify(fetchedConfig)); 
+            return true;
+        }
+    )
+        .catch((error) => {
+                console.log('Error fetching config:', error);
+                return false;
+            }
+        );
 }
 function Config() {
     const isConnected = useSelector((state) => state.connectedExternalDb.value);
@@ -97,10 +114,36 @@ function Config() {
         },
     });
 
+    useEffect(() => {
+        const savedConfig = JSON.parse(localStorage.getItem('config') || '{}');
+        console.log("savedConfig", savedConfig);
+        form.setValues({
+            OPENAI_API_KEY: savedConfig.apiKey || '',
+            model: savedConfig.model || '',
+            embeddingsmodel: savedConfig.embeddings_model || '',
+        });
+    }, []);
 
     const handleSuccess = (values) => {
-        console.log(values);
-        saveConfig(values.OPENAI_API_KEY, values.model, values.embeddingsmodel);
+       
+        saveConfig(values.OPENAI_API_KEY, values.model, values.embeddingsmodel)
+        .then((success) => {
+            if (success) {
+                Notifications.show({
+                    title: 'Configuration Saved',
+                    message: 'Your configuration has been saved successfully.',
+                    color: 'green',
+                });
+                
+            } else {
+                Notifications.show({
+                    title: 'Configuration Error',
+                    message: 'There was an error saving your configuration.',
+                    color: 'red',
+                });
+                
+            }
+        });
     };
 
     const handleFail = (errors) => {

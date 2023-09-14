@@ -15,10 +15,24 @@ export function Upload() {
     // React state to store the files
     const [files, setFiles] = useState<FileData[]>([]);
 
-    // Callback function to update the files state when files are added in the Dropzone component
-    const handleFilesUploaded = (uploadedFiles: File[]) => {
-        setFiles((prevFiles) => [...prevFiles, ...uploadedFiles]);
-      };
+    // Callback function to update the files state when files are added in the Dropzone and Urlloader component
+    const handleFilesUploaded = (uploadedFiles: (File[] | string[])) => {
+        const newFiles: FileData[] = uploadedFiles.map((item) => {
+            if (typeof item === 'string') {
+                // Convert string to FileData object
+                return {
+                    name: item,
+                    type: 'website', 
+                    size: 0  // Placeholder
+                };
+            } else {
+                // If it's already a FileData object, keep it as is
+                return item;
+            }
+        });
+
+        setFiles((prevFiles) => [...prevFiles, ...newFiles]);
+    };
 
     // useEffect(() => { // Using useEffect hook to call API on component mount
     //     axios.get<FileData[]>(`${config.REACT_APP_BACKEND_URL}/files`)
@@ -50,7 +64,7 @@ export function Upload() {
 
     return (
         <div style={{marginTop: '-100px'}}>
-            <Urlloader/>
+            <Urlloader onFilesUploaded={handleFilesUploaded}/>
             <DropzoneButton onFilesUploaded={handleFilesUploaded}/> 
             <UploadedTable data={files}/>
         </div>
@@ -58,4 +72,5 @@ export function Upload() {
 }
 
 export default Upload;
+
 
