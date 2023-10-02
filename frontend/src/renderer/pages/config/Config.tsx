@@ -8,24 +8,32 @@ import logo from '../../components/assets/AIxplora_logo_round.png';
 import {useSelector, useDispatch} from 'react-redux';
 import {connect, disconnect} from '../../store/slices/externalDbSlice';
 import {apiCall} from "../../utils/api";
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import PromptConfiguration from "./PromptConfig";
+import { Notifications } from '@mantine/notifications';
 import { ErrorNotification } from "../../../renderer/components/ErrorNotification";
 
-function saveConfig(OPENAI_API_KEY: string, model: string, embeddingsmodel: string) {
+async function saveConfig(OPENAI_API_KEY: string, model: string, embeddingsmodel: string) {
     const payload = {
         apiKey: OPENAI_API_KEY,
         model: model,
         embeddingsModel: embeddingsmodel
     };
 
-    // validate api key before saving config
-    return apiCall('/config/validate-api-key', 'POST', payload).then((response) => {
-        if (response?.data.validApiKey === false) return ErrorNotification('/config/validate-api-key', 'POST', response?.data.message, 'Invalid OpenAI API Key');
+    try {
+        // Validate API key
+        const apiKeyValidationResponse = await apiCall('/config/validate-api-key', 'POST', payload);
+        
+        if (apiKeyValidationResponse?.data.validApiKey === false) {
+            ErrorNotification('/config/validate-api-key', 'POST', apiKeyValidationResponse?.data.message, 'Invalid OpenAI API Key');
+            return false;
+        }
 
-        apiCall('/config', 'POST', payload).then((response) => {
-            const fetchedConfig = response.data;
-            console.log(fetchedConfig);
+        // If the API key is valid, proceed to save the configuration
+        const configSaveResponse = await apiCall('/config', 'POST', payload);
+
+        if (configSaveResponse) {
+            const fetchedConfig = configSaveResponse.data;
 
             if (Object.keys(fetchedConfig).length === 0) {
                 return false;
@@ -33,42 +41,18 @@ function saveConfig(OPENAI_API_KEY: string, model: string, embeddingsmodel: stri
 
             // The fetched config is not an empty object, save it and return true
             localStorage.setItem('config', JSON.stringify(fetchedConfig));
-            console.log(fetchedConfig);
-            window.location.reload();
-
             return true;
-        })
-        .catch((error) => {
-                console.log('Error fetching config:', error);
-                return false;
-            }
-        );
-    }).catch((error) => {
-        console.log('error:', error)
+        } else {
+            console.log('Invalid response format:', configSaveResponse);
+            return false;
+        }
+    } catch (error) {
+        console.log('Error during API calls:', error);
         return false;
-    });
-//     return axios.post(`${config.REACT_APP_BACKEND_URL}/config`, payload)
-//         .then((response) => {
-//             const fetchedConfig = response.data;
-//
-//             if (Object.keys(fetchedConfig).length === 0) {
-//                 return false;
-//             }
-//
-//             // The fetched config is not an empty object, save it and return true
-//             localStorage.setItem('config', JSON.stringify(fetchedConfig));
-//             console.log(fetchedConfig);
-//             window.location.reload();
-//
-//             return true;
-//         })
-//         .catch((error) => {
-//             console.log('Error fetching config:', error);
-//             return false;
-//         });
-// }
+    }
 }
-function Config() {
+
+function Config({ setConfigValid }) {
     const isConnected = useSelector((state) => state.connectedExternalDb.value);
     const dispatch = useDispatch();
     const [opened, {open, close}] = useDisclosure(false);
@@ -97,10 +81,52 @@ function Config() {
         },
     });
 
+    // Load the saved configuration from the local storage
+    useEffect(() => {
+        try {
+            const savedConfig = JSON.parse(localStorage.getItem('config') || '{}') as {
+                openai_api_key: string;
+                model: string;
+                embeddings_model: string;
+            };            
+            console.log(savedConfig, "savedconfig");
+            form.setValues({
+                OPENAI_API_KEY: savedConfig.openai_api_key || savedConfig.apiKey || '',
+                model: savedConfig.model || '',
+                embeddingsmodel: savedConfig.embeddings_model || savedConfig.embeddingsModel || '',
+            });
+                
+        } catch (error) {
+            console.error('Error parsing saved configuration:', error);
+            }
+    }, []);   
 
     const handleSuccess = (values) => {
-        console.log(values);
-        saveConfig(values.OPENAI_API_KEY, values.model, values.embeddingsmodel);
+       
+        saveConfig(values.OPENAI_API_KEY, values.model, values.embeddingsmodel)
+        .then((success) => {
+            if (success) {
+                Notifications.show({
+                    title: 'Configuration Saved',
+                    message: 'Your configuration has been saved successfully.',
+                    color: 'green',
+                });
+            
+                // Update the form values
+                form.setValues(values);
+
+                // Update the state to indicate that the form has been saved
+                setConfigValid(true);
+                
+            } else {
+                Notifications.show({
+                    title: 'Configuration Error',
+                    message: 'There was an error saving your configuration.',
+                    color: 'red',
+                });
+                form.setFieldValue('OPENAI_API_KEY', '');
+            }
+        });
     };
 
     const handleFail = (errors) => {
