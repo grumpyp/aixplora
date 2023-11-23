@@ -9,7 +9,7 @@ from schemas.config import Config
 from schemas.question import Question, Document
 from schemas.file import UploadRequestBody
 from schemas.prompt import Prompt
-from config import utils
+from config.utils import is_valid_api_key
 from utils import FILE_HANDLERS
 from embeddings.index_files import Genie
 from loaders.website_loader import extract_text_from_website
@@ -70,26 +70,26 @@ async def posthog_middleware(request: Request, call_next):
 
 @app.post("/config/validate-api-key/")
 def validate_api_key(config: Config):
-    return utils.is_valid_api_key(config.apiKey)
+    return is_valid_api_key(config.apiKey)
 
 @app.get("/config/")
 def get_config():
     db = Database().get_session()
     config_data = db.execute(text("SELECT * FROM config ORDER BY id DESC LIMIT 1")).first()
     if config_data:
+
         # You can return the config_data as a JSON response here.
         return {
-            "openai_api_key": config_data.openai_api_key,
-            "posthog_id": config_data.posthog_id,
-            "model": config_data.model,
-            "embeddings_model": config_data.embeddings_model
-        }
-    
+                "openai_api_key": config_data.openai_api_key,
+                "model": config_data.model,
+                "embeddings_model": config_data.embeddings_model
+                }
+
+
 
 @app.post("/config/")
 def add_config(config: Config):
     db = Database().get_session()
-    print(config.embeddingsModel)
     res = db.execute(text(
         "INSERT INTO config (openai_api_key, model, embeddings_model, posthog_id) VALUES (:api_key, :model, :embeddingsmodel, :posthog_id)"),
                      {"api_key": config.apiKey, "model": config.model, "embeddingsmodel": config.embeddingsModel,

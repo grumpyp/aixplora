@@ -16,6 +16,7 @@ const selectBaseUrl = () => {
 
 export const apiCall = async (endpoint, method, data, disableNotification = false) => {
   try {
+    
     const baseUrl = selectBaseUrl();
     console.log("state baseUrl");
     console.log(baseUrl);

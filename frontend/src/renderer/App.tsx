@@ -48,9 +48,15 @@ function checkConfig() {
 // }
     return apiCall('/config', 'GET').then((response) => {
         const fetchedConfig = response.data;
+<<<<<<< HEAD
         
         if (Object.keys(fetchedConfig).length === 0) {
+=======
+        if (fetchedConfig === null) {
+>>>>>>> 7b93ff644272c7664511f0d6d1df20c1d0c5bcca
             // The fetched config is an empty object, return false
+            // delete config from the local storage so it won't be shown in the form
+            localStorage.removeItem('config');
             return false;
         }
         // The fetched config is not an empty object, save it and return true
@@ -93,10 +99,10 @@ export default function Hello() {
                     <Router>
                         <HeaderResponsive links={randomLinks}/>
                         <Routes>
-                            <Route path="/" element={isConfigValid ? <GettingStarted/> : <Config/>}/>
+                            <Route path="/" element={isConfigValid ? <GettingStarted/> : <Config setConfigValid={setConfigValid} />}/>
                             <Route path="/upload" element={<Upload/>}/>
                             <Route path="/chat" element={<Chat/>}/>
-                            <Route path="/config" element={<Config/>}/>
+                            <Route path="/config" element={<Config setConfigValid={setConfigValid} />}/>
                             <Route path="/summary" element={<Summary/>}/>
                         </Routes>
                         <Footer toggleTheme={toggleTheme} colorScheme={colorScheme}/>
