@@ -30,11 +30,14 @@ export function Upload() {
     // }, []); // The empty array makes this run on mount only
 
     useEffect(() => {
-        apiCall('/files', 'GET').then((response) => {
+        apiCall('/files/', 'GET').then((response) => {
             const fetchedFiles = response.data;
             console.log(fetchedFiles);
+            console.log('feched');
             if (fetchedFiles.length > 0) {
                 setFiles(fetchedFiles); // Setting state when data is fetched
+                console.log("saved files");
+                console.log(files);
             }
         })
         .catch((error) => {

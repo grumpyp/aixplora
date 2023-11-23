@@ -54,7 +54,7 @@ export function DropzoneButton() {
       //     // Handle API request error
       //     console.error(error);
       //   });
-      apiCall('/files', 'POST', formData, {
+      apiCall('/files/', 'POST', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },

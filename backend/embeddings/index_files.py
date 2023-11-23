@@ -70,6 +70,9 @@ class Genie:
                         "multi-qa-mpnet-base-dot-v1": models.VectorParams(size=768, distance=models.Distance.COSINE)
                     })
         if file_path:
+            import time
+            print(file_path*10)
+            time.sleep(3)
             self.file_meta = file_meta
             self.file_path = file_path
             if not isinstance(self.file_path, list):
@@ -98,13 +101,13 @@ class Genie:
             replaced = replaced.replace('\n', '')
             fixed_whitespaces.append(replaced)
 
-        print(fixed_whitespaces)
+        # print(fixed_whitespaces)
         return fixed_whitespaces
 
     def upload_embedding(self, texts: List[Document], collection_name: str = "aixplora", page: int = 0) -> None:
         for i in range(len(texts)):
             if self.embeddings_model[0] != "text-embedding-ada-002":
-                print(self.embeddings_model)
+                # print(self.embeddings_model)
                 model = SentenceTransformer(f"{self.embeddings_model[0]}")
                 embeddings = [float(x) for x in model.encode(texts[i])]
             else:
@@ -122,8 +125,8 @@ class Genie:
                 filetype = getattr(self.file_meta, "content_type")
             print(self.remote_db)
             # Debug
-            # import time
-            # time.sleep(5)
+            import time
+            time.sleep(5)
             if not self.remote_db:
                 self.qu.upsert(
                     collection_name=collection_name,
@@ -161,13 +164,15 @@ class Genie:
                 # print(payload)
                 # time.sleep(5)
                 # needs to be json not payload -> because of the encoding application/x-www-form-urlencoded isn't supported
-                r = requests.post("http://localhost:8000/api/qdrant/upload/", headers=self.remote_headers, json=payload)
+                r = requests.post("https://api.aixplora.app/api/qdrant/upload/", headers=self.remote_headers, json=payload)
         return
 
     def embeddings(self, texts: List[str], page: int):
         texts = [text for text in texts]
         openai.api_key = self.openai_api_key[0]
-        print(len(texts))
+        import time
+        print("embeddings upload "*10)
+        time.sleep(3)
         self.upload_embedding(texts=texts, page=page)
         return
 
@@ -218,12 +223,15 @@ class Genie:
                 embeddings = response['data'][0]['embedding']
 
             payload = {"query_vector": {f"{self.embeddings_model[0]}": embeddings}}
-            r = requests.post(headers=self.remote_headers, json=payload, url="http://localhost:8000/api/qdrant/get/")
+            r = requests.post(headers=self.remote_headers, json=payload, url="https://api.aixplora.app/api/qdrant/get/")
             if specific_doc is not None:
                 specific_doc_clean = specific_doc.replace('https://', '').replace('http://', '').replace('/', '_')
                 payload = {"query_vector": {f"{self.embeddings_model[0]}": embeddings}, "specific_doc": specific_doc_clean}
-                r = requests.post(headers=self.remote_headers, json=payload, url="http://localhost:8000/api/qdrant/get/")
-            print(r.json())
+                r = requests.post(headers=self.remote_headers, json=payload, url="https://api.aixplora.app/api/qdrant/get/")
+            import time
+            print(r.status_code)
+            print("-"*10)
+            time.sleep(3)
             return (r.json(), r.status_code)
 
         print("das sind die reults" * 10)
@@ -238,6 +246,10 @@ class Genie:
         if not query_embedding and not query_texts:
             raise ValueError("Either query_embedding or query_texts must be provided")
         results = self.search(query_texts, specific_doc)
+        import time
+        print(results)
+        print("-"*10)
+        time.sleep(3)
         if isinstance(results, tuple):
             relevant_docs = [doc["payload"]["chunk"] for doc in results[0]]
             meta_data = [doc["payload"]["metadata"] for doc in results[0]]

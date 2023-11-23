@@ -15,6 +15,11 @@ export const connectedExternalDbSlice = createSlice({
     },
     disconnect: state => {
       state.value = false;
+      // Reset Cloud Access
+      state.apiKey = null;
+      state.email = null;
+      console.log("apikey---");
+      console.log(state.apiKey);
     },
     setApiKey: (state, action) => {
       state.apiKey = action.payload;

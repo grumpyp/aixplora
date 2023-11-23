@@ -35,7 +35,8 @@ interface TableScrollAreaProps {
 export default function UploadedTable({ data }: TableScrollAreaProps) {
   const { classes, cx } = useStyles();
   const [scrolled, setScrolled] = useState(false);
-
+  console.log("--------------");
+  console.log(data);
   const rows = data.map((row) => (
     <tr key={row.name}>
       <td>{row.name}</td>

@@ -88,11 +88,11 @@ def add_config(config: Config):
 def get_files(request: Request):
     apikey = request.headers.get("apikey", False)
     email = request.headers.get("email", False)
-
     if apikey and email:
         # TODO: Check with Cloud API URL
         headers = {"apikey": apikey, "email": email}
-        files = requests.get("http://localhost:8000/api/db/", headers=headers)
+        files = requests.get("https://api.aixplora.app/api/files/", headers=headers)
+        print(files.json())
         if files.status_code == 200:
             return files.json().get("files", [])
         else:
@@ -115,7 +115,6 @@ def get_files(request: Request):
 @app.post("/files/")
 async def upload_files(request: Request, files: List[UploadFile] = File(...)):
     from database.models.files import File
-    import time
     db = Database().get_session()
     apikey = request.headers.get("apikey", False)
     email = request.headers.get("email", False)
@@ -125,19 +124,22 @@ async def upload_files(request: Request, files: List[UploadFile] = File(...)):
             if file_extension in FILE_HANDLERS:
                 file_content = await file.read()
                 transcription = FILE_HANDLERS[file_extension](file)
+                import time
+                print(transcription[0])
+                time.sleep(3)
                 Genie(file_path=transcription[0], file_meta=transcription[1], apikey=apikey, email=email,
                       remote_db=True)
                 # Debug
                 # print("file content"*10)
                 # print(file_content)
 
-                files = {'file': (file.filename, file_content, file.content_type)}
+                files = {'files': (file.filename, file_content, file.content_type)}
                 # Debug
                 # print(files)
                 # time.sleep(3)
                 headers = {"apikey": request.headers.get("apikey"), "email": request.headers.get("email")}
                 # TODO: Change with Cloud API URL
-                r = requests.post("http://localhost:8000/api/db/", files=files, headers=headers)
+                r = requests.post("https://api.aixplora.app/api/files/", files=files, headers=headers)
 
         return {"message": "Files uploaded successfully"}
     else:
