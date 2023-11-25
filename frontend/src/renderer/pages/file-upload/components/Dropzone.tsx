@@ -11,14 +11,15 @@ import { Dropzone } from '@mantine/dropzone';
 import { IconCloudUpload, IconX, IconDownload } from '@tabler/icons-react';
 import {apiCall} from "../../../utils/api";
 import { Notifications } from '@mantine/notifications';
+import axios from 'axios';
+import appConfig from '../../../config';
 
 const useStyles = createStyles((theme) => ({
   // Styles definition here
 }));
 
-
-
 export function DropzoneButton({ onFilesUploaded }: { onFilesUploaded: (uploadedFiles: File[]) => void }) {
+  const [uploadProgress, setUploadProgress] = useState(0);
   const { classes, theme } = useStyles();
   const openRef = useRef();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -41,42 +42,26 @@ export function DropzoneButton({ onFilesUploaded }: { onFilesUploaded: (uploaded
         formData.append('files', file);
       });
       setIsLoading(true);
-      // axios
-      //   .post(`${config.REACT_APP_BACKEND_URL}/files/`, formData, {
-      //     headers: {
-      //       'Content-Type': 'multipart/form-data',
-      //     },
-      //   })
-      //   .then((response) => {
-      //     // Handle API response data
-      //     console.log(response.data);
-      //     window.location.reload();
-      //   })
-      //   .catch((error) => {
-      //     // Handle API request error
-      //     console.error(error);
-      //   });
-      apiCall('/files', 'POST', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        })
-        .then((response) => {
-            // Handle API response data
-            console.log(response.data);
-            Notifications.show({
-              title: 'File Upload Successful',
-              message: 'The file was successfully uploaded.',
-              color: 'green'
-            });
 
-            onFilesUploaded(selectedFiles); // Call the callback function to update the state in the parent component
-            setSelectedFiles([]); 
-        })
-        .catch((error) => {
-            // Handle API request error
-            console.error(error);
-        });
+      axios.post(`${appConfig.REACT_APP_BACKEND_URL}/files/`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          setUploadProgress(percentCompleted);
+        }
+      })
+      .then((response) => {
+        console.log(response.data);
+        
+        window.location.reload();
+        setUploadProgress(0);  // Reset Progress Bar when done
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
       setIsLoading(false);
     }
   };
@@ -163,6 +148,8 @@ export function DropzoneButton({ onFilesUploaded }: { onFilesUploaded: (uploaded
           </Text>
         </div>
       </Dropzone>
+
+      <Progress value={uploadProgress} color="blue" />
 
       {selectedFiles.length > 0 && (
         <Button
