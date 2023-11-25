@@ -40,7 +40,6 @@ body {
   justify-content: center;
   line-height: 1em;
   font-family: "Poppins", sans-serif;
-  max-width: 100%;
   min-width: 100px;
   padding: 3px;
   text-decoration: none;
@@ -66,7 +65,6 @@ body {
   justify-content: center;
   line-height: 1em;
   font-family: "Poppins", sans-serif;
-  max-width: 100%;
   min-width: 100px;
   padding: 3px;
   text-decoration: none;
@@ -98,7 +96,7 @@ body {
 }
 
 /* Media query for larger screens (e.g., tablets and desktops) */
-@media (min-width: 640px) { /* 640px is typically the breakpoint for medium screens in Tailwind */
+@media (min-width: 720px) { /* 640px is typically the breakpoint for medium screens in Tailwind */
     .buttons {
         flex-direction: row;
         gap: 3rem; /* adjust horizontal spacing for side-by-side buttons */
@@ -110,8 +108,6 @@ button span {
   background-color: rgb(5, 6, 45);
   padding: 10px 20px;
   border-radius: 6px;
-  width: 100%;
-  height: 100%;
   transition: 300ms;
 }
 
@@ -135,17 +131,12 @@ button span {
   -webkit-text-fill-color: transparent;
 }
 .card {
-  padding-left: 20px;
-  width: 600px;
-  height: 354px;
   transition: all 0.2s;
   position: relative;
   cursor: pointer;
 }
 
 .card-inner {
-  width: inherit;
-  height: inherit;
   background: rgba(255, 255, 255, 0.05);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
   backdrop-filter: blur(10px);
@@ -166,7 +157,7 @@ button span {
   justify-content: center;
   line-height: 1em;
   font-family: "Poppins", sans-serif;
-  max-width: 100%;
+  width: 100%;
   padding: 3px;
   text-decoration: none;
   user-select: none;
@@ -188,6 +179,7 @@ button span {
   border-radius: 50%;
   position: absolute;
   animation: move-up6 2s ease-in infinite alternate-reverse;
+  overflow-x: hidden;
 }
 
 .circle:nth-child(1) {
@@ -326,41 +318,30 @@ button span {
 @media (max-width: 576px) {
 }
 
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
   #header{
     padding: 2em 2em;
   }
-}
+} */
 
-@media (max-width: 992px) {
+@media (max-width: 1200px) {
   .hero_intro_text {
-    line-height: 1f.3em;
+    line-height: 1.3em;
   }
 
   #hero {
     flex-direction: column;
     align-items: center;
     gap: 3em;
-    padding: 0 2em;
-    width: 100%;
   }
+  
 
-  #header{
-    padding: 2em 2em;
-  }
-  .text {
-    width: 100%;
-  }
+  
   .hero_intro_text {
-    width: 100%;
     font-size: 34px;
   }
   .text-lg {
-    width: 100%;
     font-size: 16px;
-  }
-  header {
-    padding: 0.2em 2em;
   }
 }
 
@@ -371,22 +352,8 @@ button span {
   .text-lg {
     font-size: 18px;
   }
-  .hero {
-    padding: 0 8em;
-  }
-  .navbar {
-    padding: 2em 8em;
-  }
 }
 
-@media (max-width: 1701px) {
-  .hero {
-    padding: 0 10em;
-  }
-  .navbar {
-    padding: 2em 10em;
-  }
-}
 
 
 .icon-button-container {
