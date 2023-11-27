@@ -7,7 +7,7 @@ import logo from '../../public/logo.png'
 
 function Navbar() {
   return (
-    <header id="header" className="navbar flex flex-row w-full py-10 px-96 justify-between items-center max-xl:px-48">
+    <header id="header" className="navbar flex flex-row w-full justify-between items-center pt-4">
       <div className="logo">
         <Image className="logo_image" src={logo} alt="logo" width={70} height={70}/>
         
