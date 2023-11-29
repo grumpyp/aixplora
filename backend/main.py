@@ -7,6 +7,7 @@ from database.database import Database
 from schemas.config import Config
 from schemas.question import Question, Document
 from schemas.file import UploadRequestBody
+from schemas.prompt import Prompt
 from utils import FILE_HANDLERS
 from embeddings.index_files import Genie
 from loaders.website_loader import extract_text_from_website
@@ -235,6 +236,27 @@ def test(document: Document):
     db.add(entry)
     db.commit()
     return s.get_summary()
+
+
+@app.get("/prompt/")
+def get_prompt():
+    db = Database().get_session()
+    prompts = db.execute(text("SELECT * FROM prompt")).fetchall()
+    prompts = sorted(prompts, key=lambda x: x[2], reverse=True)
+    print(prompts)
+    if prompts is None:
+        return {"error": "No prompt found."}
+    return {"prompt": prompts[0][1]}
+
+
+@app.post("/prompt/")
+def add_prompt(prompt: Prompt):
+    from database.models.prompt import Prompt
+    db = Database().get_session()
+    entry = Prompt(prompt=prompt.prompt)
+    db.add(entry)
+    db.commit()
+    return {"prompt": prompt}
 
 
 if __name__ == "__main__":

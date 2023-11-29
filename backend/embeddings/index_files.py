@@ -6,6 +6,7 @@ from langchain.document_loaders import TextLoader
 from typing import List, Dict
 from langchain.schema import Document
 from database.database import Database
+from database.models.prompt import Prompt
 from sqlalchemy import text
 from embeddings.utils import openai_ask, openai_ask_no_aixplora_brain
 import random
@@ -225,12 +226,24 @@ class Genie:
     def query(self, query_embedding: List[List[float]] = None, query_texts: str = None, specific_doc: str = None,
               use_brain: bool = True):
         meta_data = []
+        db = Database().get_session()
+        prompts = sorted(db.execute(text("SELECT * FROM prompt")).fetchall(), key=lambda x: x[2], reverse=True)
+        if len(prompts) == 0:
+            prompt = "Answer the following question: {query_texts} based on that context: {relevant_docs}," \
+                     " make sure that the answer of you is in the same language then the question." \
+                     " if you can't just answer: I don't know."
+        else:
+            prompt = prompts[0][1]
+        # The question is referenced as {question} in the prompt
+        # The chunks/ relevant docs are referenced as {relevant_docs} in the prompt
         if use_brain:
             if not query_embedding and not query_texts:
                 raise ValueError("Either query_embedding or query_texts must be provided")
             results = self.search(query_texts, specific_doc)
             relevant_docs = [doc.payload["chunk"] for doc in results]
             meta_data = [doc.payload["metadata"] for doc in results]
+            prompt = prompt.replace("{question}", query_texts)
+            prompt = prompt.replace("{relevant_docs}", " ".join([doc.payload["chunk"] for doc in results]))
             print(self.openai_model)
         if not self.openai_model[0].startswith("gpt"):
             print(f"Using local model: {self.openai_model[0]}")
@@ -240,8 +253,7 @@ class Genie:
             if use_brain:
                 messages = [
                     {"role": "user",
-                     "content": f"Answer the following question: {query_texts} based on that context: {relevant_docs},"
-                                " Make sure that the answer of you is in the same language then the question. if you can't just answer: I don't know"}
+                     "content": f"{prompt}"}
                 ]
             else:
                 messages = [
@@ -253,11 +265,11 @@ class Genie:
                 if self.openai_model[0].startswith("gpt"):
                     print(f"Using openai model: {self.openai_model[0]}")
                     answer = openai_ask(context=relevant_docs, question=query_texts, openai_api_key=self.openai_api_key[0],
-                                        openai_model=self.openai_model[0])
+                                        openai_model=self.openai_model[0], prompt=prompt)
                 else:
                     answer = openai_ask(context=relevant_docs, question=query_texts,
                                         openai_api_key=self.openai_api_key[0],
-                                        openai_model=self.openai_model[0])
+                                        openai_model=self.openai_model[0], prompt=prompt)
             else:
                 if self.openai_model[0].startswith("gpt"):
                     answer = openai_ask_no_aixplora_brain(question=query_texts, openai_api_key=self.openai_api_key[0],

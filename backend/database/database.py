@@ -1,6 +1,9 @@
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 from database.models.config import Config
+from database.models.files import File
+from database.models.summary import Summary
+from database.models.prompt import Prompt
 from database.models.base import Base
 
 SQLITE_DATABASE_URL = "sqlite:///backend/database/aixplora.db"

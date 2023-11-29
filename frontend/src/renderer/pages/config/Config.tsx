@@ -9,6 +9,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import {connect, disconnect} from '../../store/slices/externalDbSlice';
 import {apiCall} from "../../utils/api";
 import {useState} from "react";
+import PromptConfiguration from "./PromptConfig";
 
 
 function saveConfig(OPENAI_API_KEY: string, model: string, embeddingsmodel: string) {
@@ -167,6 +168,7 @@ function Config() {
             <Button leftIcon={<IconDatabase size="1rem"/>} loaderPosition="right" onClick={handleClick}>
                 {isConnected ? "Connect Local-knowledge" : "Connect to database"}
             </Button>
+            <PromptConfiguration></PromptConfiguration>
         </Box>
     );
 }
