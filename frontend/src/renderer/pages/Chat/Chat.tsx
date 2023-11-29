@@ -5,7 +5,7 @@ import {Message} from 'renderer/utils';
 import Question from './components/Question';
 import Answer from './components/Answer';
 import {IconSend, IconTrash, IconArrowUp} from '@tabler/icons-react';
-import {Modal, Select} from '@mantine/core';
+import {Modal, Select, Switch} from '@mantine/core';
 import {useDisclosure} from '@mantine/hooks';
 import Block from './components/Block';
 
@@ -22,6 +22,7 @@ function Chat() {
     const [error, setError] = useState(false);
     const [input, setInput] = useState('');
     const discussionRef = useRef<HTMLDivElement>(null);
+    const [useBrain, setUseBrain] = useState(true);
 
 
     // used for the specific_document chat
@@ -79,6 +80,7 @@ function Chat() {
                 document: {
                     document: selectedFile,
                 },
+                usebrain: useBrain,
             });
             const data = response.data;
 
@@ -146,6 +148,13 @@ function Chat() {
             <div onClick={up} className="arrow_up">
                 <IconArrowUp color="white"/>
             </div>
+            <div className={'switch'}>
+                AIxplora brain
+                <Switch
+                    onLabel="ON" offLabel="OFF" defaultChecked="true"
+                    onClick={() => { setUseBrain(!useBrain) }}
+                />
+                </div>
             <Modal.Root opened={opened} onClose={close}>
                 <Modal.Overlay/>
                 <Modal.Content>

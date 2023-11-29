@@ -7,7 +7,7 @@ from typing import List, Dict
 from langchain.schema import Document
 from database.database import Database
 from sqlalchemy import text
-from embeddings.utils import openai_ask
+from embeddings.utils import openai_ask, openai_ask_no_aixplora_brain
 import random
 from qdrant_client import QdrantClient
 from qdrant_client.http import models
@@ -70,9 +70,6 @@ class Genie:
                         "multi-qa-mpnet-base-dot-v1": models.VectorParams(size=768, distance=models.Distance.COSINE)
                     })
         if file_path:
-            import time
-            print(file_path*10)
-            time.sleep(3)
             self.file_meta = file_meta
             self.file_path = file_path
             if not isinstance(self.file_path, list):
@@ -101,13 +98,11 @@ class Genie:
             replaced = replaced.replace('\n', '')
             fixed_whitespaces.append(replaced)
 
-        # print(fixed_whitespaces)
         return fixed_whitespaces
 
     def upload_embedding(self, texts: List[Document], collection_name: str = "aixplora", page: int = 0) -> None:
         for i in range(len(texts)):
             if self.embeddings_model[0] != "text-embedding-ada-002":
-                # print(self.embeddings_model)
                 model = SentenceTransformer(f"{self.embeddings_model[0]}")
                 embeddings = [float(x) for x in model.encode(texts[i])]
             else:
@@ -123,10 +118,6 @@ class Genie:
             else:  # Assuming that in this case it's an object with attributes
                 filename = getattr(self.file_meta, "filename")
                 filetype = getattr(self.file_meta, "content_type")
-            print(self.remote_db)
-            # Debug
-            import time
-            time.sleep(5)
             if not self.remote_db:
                 self.qu.upsert(
                     collection_name=collection_name,
@@ -170,9 +161,7 @@ class Genie:
     def embeddings(self, texts: List[str], page: int):
         texts = [text for text in texts]
         openai.api_key = self.openai_api_key[0]
-        import time
-        print("embeddings upload "*10)
-        time.sleep(3)
+        print(len(texts))
         self.upload_embedding(texts=texts, page=page)
         return
 
@@ -228,52 +217,51 @@ class Genie:
                 specific_doc_clean = specific_doc.replace('https://', '').replace('http://', '').replace('/', '_')
                 payload = {"query_vector": {f"{self.embeddings_model[0]}": embeddings}, "specific_doc": specific_doc_clean}
                 r = requests.post(headers=self.remote_headers, json=payload, url="https://api.aixplora.app/api/qdrant/get/")
-            import time
-            print(r.status_code)
-            print("-"*10)
-            time.sleep(3)
             return (r.json(), r.status_code)
-
-        print("das sind die reults" * 10)
-        print(results)
-        print("das sind die reults"* 10)
         return results
 
     # This is used to ask questions on all documents
     # TODO: evaluate how many embeddings are in db, based on that change n_results dynamcially
-    def query(self, query_embedding: List[List[float]] = None, query_texts: str = None, specific_doc: str = None):
-
-        if not query_embedding and not query_texts:
-            raise ValueError("Either query_embedding or query_texts must be provided")
-        results = self.search(query_texts, specific_doc)
-        import time
-        print(results)
-        print("-"*10)
-        time.sleep(3)
-        if isinstance(results, tuple):
-            relevant_docs = [doc["payload"]["chunk"] for doc in results[0]]
-            meta_data = [doc["payload"]["metadata"] for doc in results[0]]
-        else:
+    def query(self, query_embedding: List[List[float]] = None, query_texts: str = None, specific_doc: str = None,
+              use_brain: bool = True):
+        meta_data = []
+        if use_brain:
+            if not query_embedding and not query_texts:
+                raise ValueError("Either query_embedding or query_texts must be provided")
+            results = self.search(query_texts, specific_doc)
             relevant_docs = [doc.payload["chunk"] for doc in results]
             meta_data = [doc.payload["metadata"] for doc in results]
-        print("halloooo")
-        print(self.openai_model)
+            print(self.openai_model)
         if not self.openai_model[0].startswith("gpt"):
             print(f"Using local model: {self.openai_model[0]}")
             # TODO: refactor this path to be global
             models_dir = os.path.join(os.getcwd(), "llmsmodels")
             gptj = GPT4All(model_name=self.openai_model[0], model_path=models_dir)
-            messages = [
-                {"role": "user",
-                 "content": f"Answer the following question: {query_texts} based on that context: {relevant_docs},"
-                            " Make sure that the answer of you is in the same language then the question. if you can't just answer: I don't know"}
-            ]
+            if use_brain:
+                messages = [
+                    {"role": "user",
+                     "content": f"Answer the following question: {query_texts} based on that context: {relevant_docs},"
+                                " Make sure that the answer of you is in the same language then the question. if you can't just answer: I don't know"}
+                ]
+            else:
+                messages = [
+                    {"role": "user",
+                     "content": f"{query_texts}"}]
             answer = gptj.chat_completion(messages, streaming=False)["choices"][0]["message"]["content"]
         else:
-            if self.openai_model[0].startswith("gpt"):
-                print(f"Using openai model: {self.openai_model[0]}")
-                answer = openai_ask(context=relevant_docs, question=query_texts, openai_api_key=self.openai_api_key[0],
-                                    openai_model=self.openai_model[0])
+            if use_brain:
+                if self.openai_model[0].startswith("gpt"):
+                    print(f"Using openai model: {self.openai_model[0]}")
+                    answer = openai_ask(context=relevant_docs, question=query_texts, openai_api_key=self.openai_api_key[0],
+                                        openai_model=self.openai_model[0])
+                else:
+                    answer = openai_ask(context=relevant_docs, question=query_texts,
+                                        openai_api_key=self.openai_api_key[0],
+                                        openai_model=self.openai_model[0])
+            else:
+                if self.openai_model[0].startswith("gpt"):
+                    answer = openai_ask_no_aixplora_brain(question=query_texts, openai_api_key=self.openai_api_key[0],
+                                                          openai_model=self.openai_model[0])
         _answer = {"answer": answer, "meta_data": meta_data}
         print(meta_data)
         return _answer

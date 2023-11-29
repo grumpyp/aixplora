@@ -1,5 +1,5 @@
 import uvicorn
-from fastapi import FastAPI, File, UploadFile, Request, Header
+from fastapi import FastAPI, File, UploadFile, Request, Body
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from typing import List
@@ -208,7 +208,6 @@ def chat(request: Request, question: Question, document: Document):
     apikey = request.headers.get("apikey", False)
     email = request.headers.get("email", False)
     genie = Genie()
-    print(email, apikey)
     if apikey and email:
         genie = Genie(remote_db=True, apikey=apikey, email=email)
     answer = genie.query(query_texts=question.question, specific_doc=document.document)
