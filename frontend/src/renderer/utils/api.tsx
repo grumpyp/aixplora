@@ -16,7 +16,8 @@ const selectBaseUrl = () => {
   }
 };
 
-export const apiCall = async (endpoint, method, data = {}) => {
+
+export const apiCall = async (endpoint, method, data, disableNotification = false) => {
   try {
     const baseUrl = selectBaseUrl();
     console.log(baseUrl);
@@ -47,9 +48,12 @@ export const apiCall = async (endpoint, method, data = {}) => {
     });
 
     return response;
-  } catch (error) {
-    console.error('API call error:', error);
-    throw error;
-    ErrorNotification(endpoint, method);
+
+  }
+  catch (error) {
+    if (!disableNotification) {
+      ErrorNotification(endpoint, method);
+    }
   }
 };
+

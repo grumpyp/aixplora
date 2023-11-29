@@ -75,9 +75,16 @@ def validate_api_key(config: Config):
 @app.get("/config/")
 def get_config():
     db = Database().get_session()
-    if db.execute(text("SELECT * FROM config")).first() is None:
-        return False
-    return True
+    config_data = db.execute(text("SELECT * FROM config ORDER BY id DESC LIMIT 1")).first()
+    if config_data:
+        # You can return the config_data as a JSON response here.
+        return {
+            "openai_api_key": config_data.openai_api_key,
+            "posthog_id": config_data.posthog_id,
+            "model": config_data.model,
+            "embeddings_model": config_data.embeddings_model
+        }
+    
 
 @app.post("/config/")
 def add_config(config: Config):

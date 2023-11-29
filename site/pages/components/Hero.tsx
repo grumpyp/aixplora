@@ -34,7 +34,7 @@ function Hero() {
 
                     <div className="icon-button-container">
                         <IconBrandWindows/>
-                        <a href="https://we.tl/t-Xxyd4j4XUr">
+                        <a href="https://www.dropbox.com/scl/fi/jnscprr2lvj1acr88xh09/AIxplora-Setup-0.0.2.exe?rlkey=0cl3xsmgqmzyo8o1rov08gcnl&dl=0">
                             <button className="btn_3">
                                 <span className="text">Download</span>
                             </button>
