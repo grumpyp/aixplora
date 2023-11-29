@@ -1,9 +1,9 @@
 import { notifications } from '@mantine/notifications';
 
-export function ErrorNotification(endpoint, method) {
+export function ErrorNotification(endpoint, method, customMsg=null, title="Error!") {
     notifications.show({
-        title: "Error!",
-        message: "An error occurred with the " + method + " request to endpoint " + endpoint,
+        title: title,
+        message: customMsg || "An error occurred with the " + method + " request to endpoint " + endpoint,
         color: 'red',
         autoClose: false,
       });
