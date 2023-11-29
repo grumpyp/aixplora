@@ -4,13 +4,21 @@
 <a href="https://discord.com/invite/M2AuGZvgHq">
   <img src="https://img.shields.io/badge/discord-join%20chat-blue.svg" alt="Join our Discord" height="40"></a>
 </p>
+<hr>
+
+## 🖥️ Now available for download 🖥️!
+
+[🖥 Windows version](https://we.tl/t-3GIXFcojo)
+
+[🖥 Mac version (coming soon)](#)
+
+<hr>
 
 AIxplora is your new personal assistant, an open-source project that opens up unlimited possibilities.
 It leverages AI and LLMs to understand all types of documents, unrestricted by their length or format.
 
 **Imagine being able to query PDF files, MP3 audio, videos, and other types of documents with equal ease and proficiency. 
 Yes, that's the limitless world AIxplora is inviting you into!**
-
 
 ## 🚀 Highlighted Features
 
