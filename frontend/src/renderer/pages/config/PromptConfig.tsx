@@ -3,6 +3,7 @@ import {Modal, Group, Button, Textarea, Box} from '@mantine/core';
 import {IconSettings} from "@tabler/icons-react";
 import {useState, useEffect} from 'react';
 import {apiCall} from "../../utils/api";
+import {Notifications} from "@mantine/notifications";
 
 function PromptConfiguration() {
     const [opened, {open, close}] = useDisclosure(false);
@@ -23,6 +24,7 @@ function PromptConfiguration() {
             const fetchedPrompt = response.data.prompt;
             console.log(fetchedPrompt);
             setPrompt(fetchedPrompt['prompt']);
+            Notifications.show({title: 'Prompt set', message: 'The prompt was set successfully', color: 'green'})
         }).catch((error) => {
             console.log('Error fetching prompt:', error);
         });
