@@ -48,12 +48,7 @@ function checkConfig() {
 // }
     return apiCall('/config', 'GET').then((response) => {
         const fetchedConfig = response.data;
-<<<<<<< HEAD
-        
-        if (Object.keys(fetchedConfig).length === 0) {
-=======
         if (fetchedConfig === null) {
->>>>>>> 7b93ff644272c7664511f0d6d1df20c1d0c5bcca
             // The fetched config is an empty object, return false
             // delete config from the local storage so it won't be shown in the form
             localStorage.removeItem('config');

@@ -4,7 +4,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import {useState} from "react";
 
 
-export default function ExternalDb() {
+export default function ExternalDb({onClose}) {
     const isConnected = useSelector((state) => state.connectedExternalDb.value);
     const [apiKeyValue, setApiKeyValue] = useState('');
     const dispatch = useDispatch();
@@ -14,6 +14,7 @@ export default function ExternalDb() {
         dispatch(connect());
         dispatch(setApiKey(apiKeyValue));
         dispatch(setEmail(emailValue));
+        onClose();
     }
 
 
@@ -29,7 +30,7 @@ export default function ExternalDb() {
                     />
                     <Group position="apart" mt="lg">
                         <Anchor component="button" size="sm">
-                            Create a shared Knowledgebase
+                            <a href={"https://cloud.aixplora.app/"} target={"_blank"}>Create a shared Knowledgebase</a>
                         </Anchor>
                     </Group>
                     <Button fullWidth mt="xl" onClick={handleConnect}>

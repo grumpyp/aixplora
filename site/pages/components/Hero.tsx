@@ -17,9 +17,9 @@ function Hero() {
                     revolutionize the way you understand your data.
                 </p>
                 <div className="buttons flex justify-evenly gap-x-1 items-center">
-                    <a href="mailto:info@aixplora.app?subject=AIxplora%20cloud&body=Hi%20there,%0A%0AI'd%20like%20to%20request%20access%20to%20the%20AIxplora%20cloud.%0A%0AMy%20team%20has%20X%20members,%20here%20are%20the%20emails:%0A%0Aexample@example.com%20-%20WRITE%20ACCESS%0Aexample2@example.com%20-%20READ%20ACCESS%0A%0AThank%20you,%0AX">
+                    <a href="https://cloud.aixplora.app">
                         <button className="btn_3">
-                            <span className="text">Request Cloud access</span>
+                            <span className="text">Cloud access</span>
                         </button>
                     </a>
 

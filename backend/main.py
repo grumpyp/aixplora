@@ -219,13 +219,13 @@ async def upload_website(request_body: UploadRequestBody = None):
 
 
 @app.post("/chat/")
-def chat(request: Request, question: Question, document: Document):
+def chat(request: Request, question: Question, document: Document, usebrain: bool = Body(...)):
     apikey = request.headers.get("apikey", False)
     email = request.headers.get("email", False)
     genie = Genie()
     if apikey and email:
         genie = Genie(remote_db=True, apikey=apikey, email=email)
-    answer = genie.query(query_texts=question.question, specific_doc=document.document)
+    answer = genie.query(query_texts=question.question, specific_doc=document.document, use_brain=usebrain)
     print(answer)
     return {"question": question.question, "answer": answer["answer"], "meta_data": answer["meta_data"]}
 

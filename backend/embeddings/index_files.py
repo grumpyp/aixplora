@@ -240,10 +240,16 @@ class Genie:
             if not query_embedding and not query_texts:
                 raise ValueError("Either query_embedding or query_texts must be provided")
             results = self.search(query_texts, specific_doc)
-            relevant_docs = [doc.payload["chunk"] for doc in results]
-            meta_data = [doc.payload["metadata"] for doc in results]
-            prompt = prompt.replace("{question}", query_texts)
-            prompt = prompt.replace("{relevant_docs}", " ".join([doc.payload["chunk"] for doc in results]))
+            if isinstance(results, tuple):
+                relevant_docs = [doc["payload"]["chunk"] for doc in results[0]]
+                meta_data = [doc["payload"]["metadata"] for doc in results[0]]
+                prompt = prompt.replace("{question}", query_texts)
+                prompt = prompt.replace("{relevant_docs}", " ".join(doc["payload"]["chunk"] for doc in results[0]))
+            else:
+                relevant_docs = [doc.payload["chunk"] for doc in results]
+                meta_data = [doc.payload["metadata"] for doc in results]
+                prompt = prompt.replace("{question}", query_texts)
+                prompt = prompt.replace("{relevant_docs}", " ".join([doc.payload["chunk"] for doc in results]))
             print(self.openai_model)
         if not self.openai_model[0].startswith("gpt"):
             print(f"Using local model: {self.openai_model[0]}")
