@@ -6,19 +6,45 @@
 </p>
 <hr>
 
-## 🖥️ Now available for download 🖥️!
+---
+
+## 🌐 AIxplora-Cloud: Share Knowledge Seamlessly 🌐
+
+We are thrilled to introduce AIxplora-Cloud! This innovative feature enables seamless knowledge sharing, ideal for businesses, groups, or families focused on collaborative learning.
+
+- **Cloud-Based Knowledge Sharing**: Easily share insights and information with your network.
+- **Anywhere Access**: Reach your AIxplora brain from any location, anytime.
+
+Learn more at [AIxplora Cloud](https://cloud.aixplora.app).
+
+## 🧩 AIxplora Widget: Embed AI in Your Website 🧩
+
+Meet the AIxplora Widget – your tool to integrate the AIxplora brain directly into your website. This widget offers a similar experience to the AIxplora Client, complete with personalization and your unique knowledge base.
+
+- **Direct Website Integration**: Provide AI-powered responses to user queries on your site.
+- **Tailored to Your Needs**: Customize the widget to seamlessly blend with your website's design.
+
+Start with the AIxplora Widget [here](https://cloud.aixplora.app).
+
+---
+
+## 🖥️ Download AIxplora Now 🖥️
 
 [🖥 Windows version](https://www.dropbox.com/scl/fi/jnscprr2lvj1acr88xh09/AIxplora-Setup-0.0.2.exe?rlkey=0cl3xsmgqmzyo8o1rov08gcnl&dl=0)
 
-[🖥 Mac version (coming soon)](#)
+🖥 Mac version (coming soon)
 
-<hr>
+---
 
-AIxplora is your new personal assistant, an open-source project that opens up unlimited possibilities.
-It leverages AI and LLMs to understand all types of documents, unrestricted by their length or format.
+AIxplora is your innovative personal assistant, an open-source project designed for unlimited possibilities. Leveraging AI and LLMs, it understands various document types, not limited by format or length.
 
-**Imagine being able to query PDF files, MP3 audio, videos, and other types of documents with equal ease and proficiency. 
-Yes, that's the limitless world AIxplora is inviting you into!**
+**Imagine querying PDFs, MP3s, videos, and more with ease and proficiency. Welcome to the world of AIxplora!**
+
+## 🚀 Highlighted Features
+
+- **Universal File Integration**: Accepts all file types, no length restrictions.
+- **Open-Source Transparency**: Full source code access for maximum flexibility and trust.
+- **Flexible Privacy Options**: Use official OpenAI and ChatGPT models with assured data confidentiality, or opt for open-source models for enhanced privacy.
 
 ## 🚀 Highlighted Features
 
