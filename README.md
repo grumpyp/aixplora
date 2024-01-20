@@ -42,12 +42,6 @@ AIxplora is your innovative personal assistant, an open-source project designed 
 
 ## 🚀 Highlighted Features
 
-- **Universal File Integration**: Accepts all file types, no length restrictions.
-- **Open-Source Transparency**: Full source code access for maximum flexibility and trust.
-- **Flexible Privacy Options**: Use official OpenAI and ChatGPT models with assured data confidentiality, or opt for open-source models for enhanced privacy.
-
-## 🚀 Highlighted Features
-
 - **Universal File Integration**: Accepts any file type without restrictions on length.
 - **Open-Source Transparency**: Complete access to the source code, granting unparalleled flexibility and trust.
 - **Flexible Privacy Options**:
