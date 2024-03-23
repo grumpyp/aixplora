@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { getSortedPostsData } from '../blog/posts';
 import Navbar from "@/pages/components/Navbar";
 import Footer from "@/pages/components/Footer";
-import { Post, PostsPageProps } from '../blog/types';
+import { PostsPageProps } from '../../pages/blog/types';
 
 export async function getStaticProps() {
     const allPostsData = await getSortedPostsData();
