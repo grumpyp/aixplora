@@ -31,3 +31,44 @@
     line-height: 1.6;
   }
   
+  .content h2 {
+    font-size: 24px; /* Larger font size for h2 headings */
+    color: #fff; /* Dark grey color */
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+  
+  .content h3 {
+    font-size: 20px; /* Medium font size for h3 headings */
+    color: #fff; /* Medium grey color */
+    margin-top: 18px;
+    margin-bottom: 8px;
+  }
+  
+  .content p {
+    font-size: 16px; /* Standard font size for paragraph text */
+    color: #fff; /* Light grey color */
+    line-height: 1.6; /* Spacing between lines */
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .content hr {
+    border: 0;
+    height: 1px;
+    background-color: #fff; /* Light grey horizontal line */
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .content ul {
+    list-style-type: disc; /* Bullet points for list items */
+    margin-left: 20px; /* Indent list items */
+  }
+  
+  .content li {
+    font-size: 16px; /* Matching paragraph text size for list items */
+    color: #fff; /* Light grey color */
+    margin-bottom: 8px; /* Space between list items */
+  }
+  
