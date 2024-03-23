@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { getSortedPostsData } from '../blog/posts';
 import Navbar from "@/pages/components/Navbar";
 import Footer from "@/pages/components/Footer";
+import { Post, PostsPageProps } from '../blog/types';
 
 export async function getStaticProps() {
     const allPostsData = await getSortedPostsData();
@@ -13,7 +14,7 @@ export async function getStaticProps() {
     };
 }
 
-export default function PostsPage({ allPostsData }) {
+export default function PostsPage({ allPostsData }: PostsPageProps) {
   const blogPostStyle = {
     width: '100%', // On mobile, the blog post takes full width
     marginBottom: '20px',
