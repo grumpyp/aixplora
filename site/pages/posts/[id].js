@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import Image from 'next/image';
-import { getPostData, getAllPostIds } from '../../pages/blog/posts';
+import { getPostData, getAllPostIds } from '../../utils/posts';
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import styles from './Post.module.css';
