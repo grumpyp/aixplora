@@ -1,9 +1,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { getSortedPostsData } from '../blog/posts';
+import { getSortedPostsData } from '../../utils/posts';
 import Navbar from "@/pages/components/Navbar";
 import Footer from "@/pages/components/Footer";
-import { PostsPageProps } from '../blog/types';
+import { PostsPageProps } from '../../utils/types';
 
 export async function getStaticProps() {
     const allPostsData = await getSortedPostsData();
