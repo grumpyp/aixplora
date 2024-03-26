@@ -2,6 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+
+@font-face {
+  font-family: "Object Sans";
+  src: url("../../public/fonts/ObjectSans-Regular.otf");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Object Sans";
+  src: url("../../public/fonts/ObjectSans-Heavy.otf");
+  font-weight: bold;
+  font-style: normal;
+}
+
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -16,14 +31,15 @@
   }
 }
 
+
+
+html,
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  padding: 0;
+  margin: 0;
+  font-family: "Object Sans", sans-serif;
+  scroll-behavior: smooth;
+  overscroll-behavior-y: none;
 }
 
 .btn_3 {
@@ -75,6 +91,7 @@ body {
   cursor: pointer;
   transition: all 0.3s;
 }
+
 .logo {
   font-family: "Poppins", sans-serif;
 }
