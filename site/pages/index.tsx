@@ -7,6 +7,7 @@ import Header from "./components/Header";
 import HowItWorks from "./components/HowItWorks";
 import Benefits from "./components/Benefits";
 import Testimonials from "./components/Testimonials";
+import VideoDemo from "./components/VideoDemo";
 
 export default function Home() {
   return (
@@ -17,6 +18,7 @@ export default function Home() {
       <HowItWorks />
       <Benefits />
       <Testimonials />
+      <VideoDemo />
       <Footer />
     </main>
   );

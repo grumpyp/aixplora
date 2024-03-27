@@ -152,6 +152,11 @@ color: black
 }
 
 
+.gradient-bg {
+  background: var(--Linear-primary, linear-gradient(90deg, #F68A71 -2.29%, #D801D1 81.02%, #EC0505 113.41%));
+}
+
+
 
 /* md screens */
 @media (min-width: 768px) {
