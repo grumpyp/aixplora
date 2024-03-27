@@ -5,6 +5,7 @@ import Navbar from "@/pages/components/Navbar";
 import Footer from "@/pages/components/Footer";
 import SEOConfig from "./components/SEOConfig";
 import Header from "./components/Header";
+import HowItWorks from "./components/HowItWorks";
 
 export default function Home() {
   return (
@@ -12,9 +13,9 @@ export default function Home() {
       {/* p-6 sm:px-16 md:px-20 lg:px-24 */}
 
       <SEOConfig name="Home" />
-
       <Header />
       <Hero />
+      <HowItWorks />
       <Footer />
     </main>
   );

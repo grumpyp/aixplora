@@ -70,6 +70,7 @@ opacity: 0.5
 }
 
 
+
 /* BUTTONS */
 button {
 transition: all;
@@ -143,6 +144,13 @@ color: black
 	from { --angle: 0deg; }
 	to { --angle: 360deg; }
 }
+
+
+
+.benefits-bg {
+  background: linear-gradient(180deg, rgba(248, 250, 255, 0.00) 0%, #F8FAFF 100%);
+}
+
 
 
 /* md screens */
