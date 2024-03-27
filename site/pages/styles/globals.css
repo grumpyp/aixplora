@@ -51,6 +51,20 @@ line-height: 100%;
 }
 
 
+h2 {
+  font-weight: bold;
+  line-height: 100%;
+}
+
+
+h3 {
+  font-weight: bold;
+  font-size: 1.5rem;
+letter-spacing: -0.576px;
+line-height: 100%;
+}
+
+
 /* For gradient text */
 .gradient-text {
   background: linear-gradient(90deg, #F68A71 -2.29%, #D801D1 81.02%, #EC0505 113.41%);
@@ -87,9 +101,19 @@ justify-content: center;
 align-items: center;
 gap: 0.75rem;
 border-radius: 1000px;
-/* border: 4px solid rgba(24, 35, 54, 0.06); */
 background: #182336;
 color: white
+}
+
+.btn_1_alt {
+  display: flex;
+padding: 1rem 3rem;
+justify-content: center;
+align-items: center;
+gap: 0.75rem;
+border-radius: 1000px;
+background: white;
+color: #182336;
 }
 
 .btn_2 {
@@ -99,9 +123,19 @@ justify-content: center;
 align-items: center;
 gap: 0.75rem;
 border-radius: 1000px;
-/* border: 4px solid rgba(24, 35, 54, 0.06); */
 background: rgba(24, 35, 54, 0.06);
 color: black
+}
+
+.btn_2_alt {
+  display: flex;
+padding: 1rem 3rem;
+justify-content: center;
+align-items: center;
+gap: 0.75rem;
+border-radius: 1000px;
+background: rgba(255, 255, 255, 0.06);
+color: white
 }
 
 
@@ -157,6 +191,26 @@ color: black
 }
 
 
+/* FOr Moving Gradient */
+.cta-bg {
+background: linear-gradient(180deg, #45659C -59.16%, #182336 99.89%);
+  background-size: 400% 400%;
+  animation: backgroundChange 15s ease infinite;
+}
+
+@keyframes backgroundChange {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+
 
 /* md screens */
 @media (min-width: 768px) {
@@ -174,6 +228,21 @@ color: black
     letter-spacing: -1.344px;
     line-height: 110%;
   }
+
+
+  h2 {
+    font-weight: bold;
+    line-height: 100%;
+  }
+  
+  
+  h3 {
+    font-weight: bold;
+    font-size: 2.5rem;
+  letter-spacing: -0.96px;
+  line-height: 110%;
+  }
+  
 }
 
 

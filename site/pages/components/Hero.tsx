@@ -8,7 +8,7 @@ function Hero() {
   return (
     <section id="hero" className="min-h-screen relative">
       <Container>
-        <div className="mx-auto text-center max-w-[54rem]">
+        <div className="mx-auto text-center max-w-[54rem] relative z-[5]">
           <h1 className="mb-5">
             Never get stuck <span className="opacity-40">analyzing files</span>{" "}
             again. <span className="gradient-text">Let AIxplora help.</span>

@@ -8,6 +8,7 @@ import HowItWorks from "./components/HowItWorks";
 import Benefits from "./components/Benefits";
 import Testimonials from "./components/Testimonials";
 import VideoDemo from "./components/VideoDemo";
+import CTACard from "./components/CTACard";
 
 export default function Home() {
   return (
@@ -19,6 +20,7 @@ export default function Home() {
       <Benefits />
       <Testimonials />
       <VideoDemo />
+      <CTACard />
       <Footer />
     </main>
   );
