@@ -1,6 +1,7 @@
 from typing import List
 from gpt4all import GPT4All
 import openai
+import litellm
 import os
 
 
@@ -12,8 +13,8 @@ def openai_ask(prompt: str, context: str = None, pages: List[int] = None, questi
     print(pages)
     # TODO: make answer to same language
     if openai_model.startswith("gpt"):
-        openai.api_key = openai_api_key
-        completion = openai.ChatCompletion.create(
+        litellm.api_key = openai_api_key
+        completion = litellm.completion(
             model=f"{openai_model}",
             messages=[
                 {"role": "user", "content": f"{prompt}"}
@@ -36,8 +37,8 @@ def openai_ask(prompt: str, context: str = None, pages: List[int] = None, questi
 
 def openai_ask_no_aixplora_brain(question: str, openai_api_key: str = None, openai_model: str = "gpt-3.5-turbo"):
     if openai_model.startswith("gpt"):
-        openai.api_key = openai_api_key
-        completion = openai.ChatCompletion.create(
+        litellm.api_key = openai_api_key
+        completion = litellm.completion(
             model=f"{openai_model}",
             messages=[
                 {"role": "user", "content": f"{question}"}
