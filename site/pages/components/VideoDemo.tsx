@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import Container from "./Container";
+import { FaPause, FaPlay } from "react-icons/fa";
 
 export default function VideoDemo() {
   const [playing, setPlaying] = useState(false);
@@ -7,7 +8,7 @@ export default function VideoDemo() {
 
   return (
     <Container className="pt-20" id="videoDemo">
-      <div className="p-8 gradient-bg rounded-3xl max-h-[39rem] overflow-hidden">
+      <div className="relative p-8 gradient-bg rounded-3xl max-h-[39rem] overflow-hidden">
         <video
           autoPlay
           loop
@@ -25,6 +26,16 @@ export default function VideoDemo() {
           <source src="/video.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
+
+        <div
+          className="absolute bottom-4 left-4 p-3 bg-black rounded-xl text-white shadow cursor-pointer"
+          onClick={(e) => {
+            playing ? videoRef.current?.pause() : videoRef.current?.play();
+          }}
+          title={playing ? "pause" : "play"}
+        >
+          {playing ? <FaPause /> : <FaPlay />}
+        </div>
       </div>
     </Container>
   );
