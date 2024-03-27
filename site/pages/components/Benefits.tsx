@@ -1,6 +1,46 @@
 import React from "react";
-
 import Container from "./Container";
+import Image from "next/image";
+
+import ill1 from "../../public/static/bene-1.svg";
+import ill2 from "../../public/static/bene-2.svg";
+import ill3 from "../../public/static/bene-3.svg";
+import ill4 from "../../public/static/bene-4.svg";
+import ill5 from "../../public/static/bene-5.svg";
+import ill6 from "../../public/static/bene-6.svg";
+
+const data = [
+  {
+    icon: ill1,
+    title: "Save time and effort with intelligent analysis.",
+    body: "Focus on what matters.  AIxplora automates tedious analysis, summarizing key points and identifying crucial information in seconds.",
+  },
+  {
+    icon: ill2,
+    title: "Gain deeper understanding of complex information.",
+    body: "AIxplora goes beyond surface-level analysis, revealing hidden patterns and connections within your data.",
+  },
+  {
+    icon: ill3,
+    title: "Make data-driven decisions with confidence",
+    body: "We provide the insights you need, empowering you to make data-driven choices with complete confidence.",
+  },
+  {
+    icon: ill4,
+    title: "Improve collaboration and knowledge sharing",
+    body: "AIxplora Cloud fosters seamless collaboration by allowing teams to share insights and analyze data collectively. ",
+  },
+  {
+    icon: ill5,
+    title: "Enhance customer experience with AI-powered website responses",
+    body: "AIxplora Widget delivers instant, accurate answers to customer queries directly on your website.",
+  },
+  {
+    icon: ill6,
+    title: "Always Learning: AIxplora gets smarter with use.",
+    body: "Over time, the AI engine tailors its analysis to your specific needs and data, providing even more relevant insights.",
+  },
+];
 
 export default function Benefits() {
   return (
@@ -18,9 +58,20 @@ export default function Benefits() {
           </p>
         </div>
 
+        <ul className="grid gap-8 grid-cols-1 lg:grid-cols-3">
+          {data?.map((benefit) => {
+            return (
+              <li className="flex flex-col gap-3" key={benefit.title}>
+                <figure>
+                  <Image src={benefit.icon} alt={`${benefit.title} icon`} />
+                </figure>
 
-
-        
+                <h6 className="text-xl font-bold mb-2">{benefit.title}</h6>
+                <p className="opacity-50 leading-loose">{benefit.body}</p>
+              </li>
+            );
+          })}
+        </ul>
       </Container>
     </section>
   );
