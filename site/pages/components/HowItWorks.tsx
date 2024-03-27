@@ -21,16 +21,16 @@ const data = [
   {
     illustration: ill3,
     title: "Universal File Integration",
-    body: "Analyze any file type, from documents and emails to images and audio.",
+    body: "Analyze any file type, from documents and emails to videos and audio.",
   },
   {
     illustration: ill4,
-    title: "Cloud-Based Knowledge Sharing (For Cloud)",
+    title: "Cloud-Based Knowledge Sharing",
     body: "Foster collaboration and share insights seamlessly within teams or businesses.",
   },
   {
     illustration: ill5,
-    title: "Seamless Integration (For Widget)",
+    title: "Seamless Integration",
     body: "Embed AIxplora's capabilities directly into your website, empowering users with AI-powered answers.",
   },
 ];

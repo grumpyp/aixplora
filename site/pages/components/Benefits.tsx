@@ -38,7 +38,7 @@ const data = [
   {
     icon: ill6,
     title: "Always Learning: AIxplora gets smarter with use.",
-    body: "Over time, the AI engine tailors its analysis to your specific needs and data, providing even more relevant insights.",
+    body: "Over time, the AI engine tailors its analysis to your specific needs and data, providing even more relevant insights. You can always extend the knowledge of AIxplora.",
   },
 ];
 

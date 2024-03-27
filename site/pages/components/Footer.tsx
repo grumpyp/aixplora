@@ -1,5 +1,5 @@
 import React from "react";
-import { AiFillYoutube } from "react-icons/ai";
+import { AiFillYoutube, AiFillGithub } from "react-icons/ai";
 import { FaAngleRight, FaDiscord } from "react-icons/fa";
 import Container from "./Container";
 import { IconAlignBoxTopRight } from "@tabler/icons-react";
@@ -32,6 +32,12 @@ function Footer() {
             className="hover:opacity-50"
           >
             <AiFillYoutube className="cursor-pointer" size="28px" />
+          </a>
+          <a
+            href="https://github.com/grumpyp/aixplora"
+            className="hover:opacity-50"
+          >
+            <AiFillGithub className="cursor-pointer" size="28px" />
           </a>
         </div>
 

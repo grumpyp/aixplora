@@ -64,7 +64,7 @@ export default function Testimonials() {
           <span className="opacity-40">Trust our customers</span>
         </h1>
         <p className="opacity-50 lg:text-xl">
-          We’ve told you how aixplora can help you, now it’s time to hear what
+          We’ve told you how AIxplora can help you, now it’s time to hear what
           our existing users are saying.
         </p>
       </div>
