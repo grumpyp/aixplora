@@ -58,10 +58,16 @@ export default function Benefits() {
           </p>
         </div>
 
-        <ul className="grid gap-8 grid-cols-1 lg:grid-cols-3">
-          {data?.map((benefit) => {
+        <ul className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+          {data?.map((benefit, ind) => {
             return (
-              <li className="flex flex-col gap-3" key={benefit.title}>
+              <li
+                className="flex flex-col gap-3"
+                key={benefit.title}
+                data-aos="fade-up"
+                data-aos-delay={`${ind * 50}`}
+                data-aos-duration="1000"
+              >
                 <figure>
                   <Image src={benefit.icon} alt={`${benefit.title} icon`} />
                 </figure>

@@ -7,7 +7,9 @@ export default function VideoDemo() {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   return (
-    <Container className="pt-20" id="videoDemo">
+    <Container className="pt-20" id="videoDemo"
+    data-aos="fade-up"
+    >
       <div className="relative p-8 gradient-bg rounded-3xl max-h-[39rem] overflow-hidden">
         <video
           autoPlay

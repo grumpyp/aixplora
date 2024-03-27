@@ -13,7 +13,7 @@ import CTACard from "./components/CTACard";
 export default function Home() {
   return (
     <main className="min-h-screen overflow-hidden">
-      <SEOConfig name="Home" />
+      <SEOConfig name="AIxplora" />
       <Header />
       <Hero />
       <HowItWorks />

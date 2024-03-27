@@ -6,7 +6,12 @@ import ctaBg from "../../public/static/cta-bg.svg";
 export default function CTACard() {
   return (
     <Container className="py-8 ">
-      <section className="cta-bg relative overflow-hidden rounded-[2rem]  py-[2.5rem] lg:py-[5rem]">
+      <section
+        className="cta-bg relative overflow-hidden rounded-[2rem]  py-[2.5rem] lg:py-[5rem]"
+        data-aos="flip-left"
+        data-aos-duration="800"
+
+      >
         <div className="flex flex-col justify-center text-center items-center gap-10 relative z-[5]">
           <h3 className="text-white mx-auto max-w-[31rem] ">
             <span className="opacity-40">

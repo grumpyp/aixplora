@@ -3,8 +3,12 @@ import Container from "./Container";
 import Image from "next/image";
 import heroImage from "../../public/static/aixplora-hero.png";
 import bgBlurs from "../../public/static/bg-blurs.svg";
+import { Parallax } from "react-scroll-parallax";
+import useMediaQuery from "@/hooks/useMediaQuery";
 
 function Hero() {
+  const isWeb = useMediaQuery(1024);
+
   return (
     <section id="hero" className="min-h-screen relative">
       <Container>
@@ -29,9 +33,11 @@ function Hero() {
           </div>
         </div>
 
-        <figure className="relative z-[5]">
-          <Image src={heroImage} alt="AIxplora dashboard" />
-        </figure>
+        <Parallax className="relative z-[5]" translateY={isWeb ? [10, -10] : [60, -60]}>
+          <figure className="relative z-[5]">
+            <Image src={heroImage} alt="AIxplora dashboard" />
+          </figure>
+        </Parallax>
       </Container>
       <figure className="absolute left-0 top-[10%] w-[100vw]">
         <Image src={bgBlurs} alt="blurs" />

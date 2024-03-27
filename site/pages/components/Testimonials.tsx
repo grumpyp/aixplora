@@ -69,10 +69,15 @@ export default function Testimonials() {
         </p>
       </div>
 
-      <ul className="grid grid-cols-1 gap-5 lg:grid-cols-3">
-        {reviews?.map((review) => {
+      <ul className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+        {reviews?.map((review, ind) => {
           return (
-            <li className="p-5 rounded-2xl bg-[#F8FAFF]" key={review.userName}>
+            <li className="p-5 rounded-2xl bg-[#F8FAFF]" key={review.userName}
+            
+            data-aos="fade-up"
+            data-aos-delay={`${ind * 50}`}
+            data-aos-duration="1000"
+            >
               <div className="mb-3 flex gap-3 items-center">
                 <Image
                   src={review.userImage}
