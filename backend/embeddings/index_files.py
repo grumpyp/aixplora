@@ -185,6 +185,7 @@ class Genie:
                 limit=3,
                 with_payload=True
             )
+            print(results)
             if specific_doc is not None:
                 # Without the clean it won't find the document
                 specific_doc_clean = specific_doc.replace('https://', '').replace('http://', '').replace('/', '_')

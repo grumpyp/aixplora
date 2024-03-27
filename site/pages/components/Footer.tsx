@@ -1,26 +1,51 @@
 import React from "react";
-import { AiFillYoutube } from "react-icons/ai";
-import { FaDiscord } from 'react-icons/fa';
+import { AiFillYoutube, AiFillGithub } from "react-icons/ai";
+import { FaAngleRight, FaDiscord } from "react-icons/fa";
+import Container from "./Container";
+import { IconAlignBoxTopRight } from "@tabler/icons-react";
 
 function Footer() {
   return (
-    <div className="mt-8">
-      <footer className="flex justify-between items-center p-4 bg-gray-800 text-white rounded-lg">
-        <div className="footer-left flex flex-col">
-          <a href="#" className="mb-2">Documentation</a>
-          <a href="mailto:info@aixplora.app">Contact</a>
-        </div>
-        <div className="footer-right flex flex-row items-center gap-x-6">
-          <a href="https://discord.gg/M2AuGZvgHq">
-            <FaDiscord className="cursor-pointer" size="28px"/>
+    <footer className="pt-8 pb-20">
+      <Container className="flex flex-col gap-8 justify-center lg:flex-row lg:justify-between items-center ">
+        <div className=" flex gap-5">
+          <a href="#" className="navlink flex gap-1 items-center">
+            Documentation
+            <FaAngleRight opacity={0.5} />
           </a>
-          <a href="https://www.youtube.com/@patrick-gerard/videos">
-            <AiFillYoutube className="cursor-pointer" size="28px"/>
+
+          <a
+            className="navlink flex gap-1 items-center"
+            href="mailto:info@aixplora.app"
+          >
+            Contact
+            <FaAngleRight opacity={0.5} />
           </a>
         </div>
-      </footer>
-      <div className="text-center text-white mt-4">© 2024 AIxplora. All rights reserved.</div>
-    </div>
+
+        <div className=" flex flex-row items-center gap-x-6">
+          <a href="https://discord.gg/M2AuGZvgHq" className="hover:opacity-50">
+            <FaDiscord className="cursor-pointer" size="28px" />
+          </a>
+          <a
+            href="https://www.youtube.com/@patrick-gerard/videos"
+            className="hover:opacity-50"
+          >
+            <AiFillYoutube className="cursor-pointer" size="28px" />
+          </a>
+          <a
+            href="https://github.com/grumpyp/aixplora"
+            className="hover:opacity-50"
+          >
+            <AiFillGithub className="cursor-pointer" size="28px" />
+          </a>
+        </div>
+
+        <div className="text-center opacity-50">
+          © 2024 AIxplora. All rights reserved.
+        </div>
+      </Container>
+    </footer>
   );
 }
 

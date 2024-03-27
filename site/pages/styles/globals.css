@@ -2,6 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+
+@font-face {
+  font-family: "Object Sans";
+  src: url("../../public/fonts/ObjectSans-Regular.otf");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Object Sans";
+  src: url("../../public/fonts/ObjectSans-Heavy.otf");
+  font-weight: bold;
+  font-style: normal;
+}
+
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -16,79 +31,262 @@
   }
 }
 
+
+
+html,
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  padding: 0;
+  margin: 0;
+  font-family: "Object Sans", sans-serif;
+  scroll-behavior: smooth;
+  overscroll-behavior-y: none;
 }
 
-.btn_3 {
-    align-items: center;
-  background: linear-gradient(144deg, #f68a71, #d801d1 80%, #ec0505);
-  -webkit-text-color: transparent;
-  border: 0;
-  border-radius: 8px;
-  box-shadow: rgba(17, 31, 53, 255) 0 15px 30px -5px;
-  box-sizing: border-box;
-  color: #ffffff;
-  display: flex;
-  font-size: 18px;
-  justify-content: center;
-  line-height: 1em;
-  font-family: "Poppins", sans-serif;
-  min-width: 100px;
-  padding: 3px;
-  text-decoration: none;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: all 0.3s;
+/* Typography */
+h1 {
+  font-weight: bold;
+  font-size: 2rem;
+letter-spacing: -0.768px;
+line-height: 100%;
+}
+
+
+h2 {
+  font-weight: bold;
+  line-height: 100%;
+}
+
+
+h3 {
+  font-weight: bold;
+  font-size: 1.5rem;
+letter-spacing: -0.576px;
+line-height: 100%;
+}
+
+
+/* For gradient text */
+.gradient-text {
+  background: linear-gradient(90deg, #F68A71 -2.29%, #D801D1 81.02%, #EC0505 113.41%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+}
+
+
+.navlink {
+  font-weight: bold;
+} 
+
+.navlink:hover {
+opacity: 0.5
+}
+
+
+
+/* BUTTONS */
+button {
+transition: all;
+}
+
+button:hover {
+  scale: 95%;
 }
 
 .btn_1 {
-  align-items: center;
-  background: linear-gradient(144deg, #f68a71, #d801d1 80%, #ec0505);
-  -webkit-text-color: transparent;
-  border: 0;
-  border-radius: 8px;
-  box-shadow: rgba(17, 31, 53, 255) 0 15px 30px -5px;
-  box-sizing: border-box;
-  color: #ffffff;
   display: flex;
-  font-size: 18px;
+padding: 1rem 3rem;
+justify-content: center;
+align-items: center;
+gap: 0.75rem;
+border-radius: 1000px;
+background: #182336;
+color: white
+}
+
+.btn_1_alt {
+  display: flex;
+padding: 1rem 3rem;
+justify-content: center;
+align-items: center;
+gap: 0.75rem;
+border-radius: 1000px;
+background: white;
+color: #182336;
+}
+
+.btn_2 {
+  display: flex;
+padding: 1rem 3rem;
+justify-content: center;
+align-items: center;
+gap: 0.75rem;
+border-radius: 1000px;
+background: rgba(24, 35, 54, 0.06);
+color: black
+}
+
+.btn_2_alt {
+  display: flex;
+padding: 1rem 3rem;
+justify-content: center;
+align-items: center;
+gap: 0.75rem;
+border-radius: 1000px;
+background: rgba(255, 255, 255, 0.06);
+color: white
+}
+
+
+.btn_3 {
+  align-items: center;
+  border: 0;
+  border-radius: 1000px;
+  box-sizing: border-box;
+  display: flex;
   justify-content: center;
   line-height: 1em;
-  font-family: "Poppins", sans-serif;
+  font-weight: bold;
   min-width: 100px;
-  padding: 3px;
+  padding-left: 3rem;
+  padding-right: 3rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
   text-decoration: none;
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
   white-space: nowrap;
   cursor: pointer;
-  transition: all 0.3s;
-}
-.logo {
-  font-family: "Poppins", sans-serif;
-}
-.hero {
-  font-family: "Poppins", sans-serif;
-}
-.btn_1:active,
-.btn_1:hover {
-  cursor: pointer;
-  background-color: linear-gradient(144deg, #f68a71, #d801d1 80%, #ec0505);
-
-  outline: 0;
+  border-image-slice: 1;
+  border-width: 1px;
+  border-image-source: linear-gradient(90deg, #F68A71 -2.29%, #D801D1 81.02%, #EC0505 113.41%);
+  --angle: 0deg;
+	background: linear-gradient(white, white) padding-box, conic-gradient(from var(--angle),  #F68A71, #D801D1 , #ffffff ) border-box;
+	border: 2px solid transparent;
+	animation: rotate-gradient 3s infinite linear;
 }
 
+@property --angle {
+	syntax: '<angle>';
+	inherits: true;
+	initial-value: 0deg;
+}
+
+@keyframes rotate-gradient {
+	from { --angle: 0deg; }
+	to { --angle: 360deg; }
+}
+
+
+
+.benefits-bg {
+  background: linear-gradient(180deg, rgba(248, 250, 255, 0.00) 0%, #F8FAFF 100%);
+}
+
+
+.gradient-bg {
+  background: var(--Linear-primary, linear-gradient(90deg, #F68A71 -2.29%, #D801D1 81.02%, #EC0505 113.41%));
+}
+
+
+/* FOr Moving Gradient */
+.cta-bg {
+background: linear-gradient(180deg, #45659C -59.16%, #182336 99.89%);
+  background-size: 400% 400%;
+  animation: backgroundChange 15s ease infinite;
+}
+
+@keyframes backgroundChange {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+
+
+/* md screens */
+@media (min-width: 768px) {
+   /* Typography */
+   h1 {
+    font-weight: bold;
+    font-size: 3.5rem;
+    letter-spacing: -1.344px;
+    line-height: 110%;
+  }
+
+
+  h2 {
+    font-weight: bold;
+    line-height: 100%;
+  }
+  
+  
+  h3 {
+    font-weight: bold;
+    font-size: 2.5rem;
+  letter-spacing: -0.96px;
+  line-height: 110%;
+  }
+}
+
+
+
+/* lg screens */
+@media (min-width: 1024px) {
+   /* Typography */
+   h1 {
+    font-weight: bold;
+    font-size: 3.5rem;
+    letter-spacing: -1.344px;
+    line-height: 110%;
+  }
+
+
+  h2 {
+    font-weight: bold;
+    line-height: 100%;
+  }
+  
+  
+  h3 {
+    font-weight: bold;
+    font-size: 2.5rem;
+  letter-spacing: -0.96px;
+  line-height: 110%;
+  }
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* OLD STYLES */
 /* Default styles: stacked buttons for small devices */
 .buttons {
     flex-direction: column;
@@ -104,12 +302,12 @@ body {
 }
 
 
-button span {
+/* button span {
   background-color: rgb(5, 6, 45);
   padding: 10px 20px;
   border-radius: 6px;
   transition: 300ms;
-}
+} */
 
 .btn_1:hover span {
   background: none;
@@ -325,6 +523,9 @@ button span {
 } */
 
 @media (max-width: 1200px) {
+ 
+  
+
   .hero_intro_text {
     line-height: 1.3em;
   }
