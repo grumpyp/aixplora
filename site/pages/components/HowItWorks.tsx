@@ -55,7 +55,6 @@ export default function HowItWorks() {
           className="flex flex-col w-full gap-5 mb-5 lg:flex-row"
           data-aos="fade-up"
           data-aos-duration="1000"
-
         >
           {data
             ?.filter((_, ind) => ind <= 2)

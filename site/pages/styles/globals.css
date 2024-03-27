@@ -214,7 +214,27 @@ background: linear-gradient(180deg, #45659C -59.16%, #182336 99.89%);
 
 /* md screens */
 @media (min-width: 768px) {
+   /* Typography */
+   h1 {
+    font-weight: bold;
+    font-size: 3.5rem;
+    letter-spacing: -1.344px;
+    line-height: 110%;
+  }
+
+
+  h2 {
+    font-weight: bold;
+    line-height: 100%;
+  }
   
+  
+  h3 {
+    font-weight: bold;
+    font-size: 2.5rem;
+  letter-spacing: -0.96px;
+  line-height: 110%;
+  }
 }
 
 

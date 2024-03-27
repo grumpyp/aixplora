@@ -4,13 +4,15 @@ import Image from "next/image";
 import heroImage from "../../public/static/aixplora-hero.png";
 import bgBlurs from "../../public/static/bg-blurs.svg";
 import { Parallax } from "react-scroll-parallax";
+import mac from "../../public/icons/mac.svg";
+import windows from "../../public/icons/windows.svg";
 import useMediaQuery from "@/hooks/useMediaQuery";
 
 function Hero() {
   const isWeb = useMediaQuery(1024);
 
   return (
-    <section id="hero" className="min-h-screen relative">
+    <section id="hero" className="relative lg:min-h-screen ">
       <Container>
         <div className="mx-auto text-center max-w-[54rem] relative z-[5]">
           <h1 className="mb-5">
@@ -24,22 +26,31 @@ function Hero() {
 
           <div className="flex justify-center flex-col gap-3 lg:flex-row lg:items-center">
             <a href="https://github.com/grumpyp/aixplora">
-              <button className="btn_1">Download for Mac</button>
+              <button className="w-full btn_1">
+                <Image src={mac} alt="mac" />
+                Download for Mac
+              </button>
             </a>
 
             <a href="https://www.dropbox.com/scl/fi/jnscprr2lvj1acr88xh09/AIxplora-Setup-0.0.2.exe?rlkey=0cl3xsmgqmzyo8o1rov08gcnl&dl=0">
-              <button className="btn_2">Download for Windows</button>
+              <button className="w-full btn_2">
+                <Image src={windows} alt="windows" />
+                Download for Windows
+              </button>
             </a>
           </div>
         </div>
 
-        <Parallax className="relative z-[5]" translateY={isWeb ? [10, -10] : [60, -60]}>
+        <Parallax
+          className="relative z-[5]"
+          translateY={isWeb ? [10, -10] : [20, -20]}
+        >
           <figure className="relative z-[5]">
             <Image src={heroImage} alt="AIxplora dashboard" />
           </figure>
         </Parallax>
       </Container>
-      <figure className="absolute left-0 top-[10%] w-[100vw]">
+      <figure className="absolute left-0 top-[32%] w-[100vw] lg:top-[10%]">
         <Image src={bgBlurs} alt="blurs" />
       </figure>
     </section>

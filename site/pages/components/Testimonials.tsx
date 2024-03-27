@@ -58,7 +58,7 @@ export default function Testimonials() {
   return (
     <Container className="py-20" id="testimonials">
       <div className="text-center mx-auto max-w-[33.5rem] mb-8">
-        <p className="font-bold mb-5 gradient-text">HOW IT WORKS</p>
+        <p className="font-bold mb-5 gradient-text">TESTIMONIALS</p>
         <h1 className="mb-5">
           Don’t just take our word for it.{" "}
           <span className="opacity-40">Trust our customers</span>
@@ -72,11 +72,12 @@ export default function Testimonials() {
       <ul className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
         {reviews?.map((review, ind) => {
           return (
-            <li className="p-5 rounded-2xl bg-[#F8FAFF]" key={review.userName}
-            
-            data-aos="fade-up"
-            data-aos-delay={`${ind * 50}`}
-            data-aos-duration="1000"
+            <li
+              className="p-5 rounded-2xl bg-[#F8FAFF]"
+              key={review.userName}
+              data-aos="fade-up"
+              data-aos-delay={`${ind * 50}`}
+              data-aos-duration="1000"
             >
               <div className="mb-3 flex gap-3 items-center">
                 <Image

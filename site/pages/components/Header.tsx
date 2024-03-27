@@ -39,10 +39,30 @@ export default function Header() {
 
         <div className="relative lg:hidden">
           <button onClick={toggleMenu}>
-            <Image src={menuOpen ?  close : hamburger} alt="Menu" />
+            <Image src={menuOpen ? close : hamburger} alt="Menu" />
           </button>
         </div>
       </div>
+
+      {menuOpen && (
+        <section className="absolute w-screen p-[6%] z-[20] top-[10vh]">
+          <div className="bg-white p-5 shadow-2xl rounded-2xl">
+            <Link
+              href={"/blog"}
+              className="flex justify-center navlink w-full mb-2 text-center px-12 py-3  transition-all"
+              onClick={toggleMenu}
+            >
+              Blog
+            </Link>
+
+            <a href="https://cloud.aixplora.app" onClick={toggleMenu}>
+              <button className="btn_3 w-full">
+                <span className="gradient-text">Try for free</span>
+              </button>
+            </a>
+          </div>
+        </section>
+      )}
     </header>
   );
 }
