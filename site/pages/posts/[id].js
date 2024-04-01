@@ -1,7 +1,8 @@
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { getPostData, getAllPostIds } from '../../utils/posts';
-import Navbar from "../components/Navbar";
+import Header from '../components/Header'
+import SEOConfig from '../components/SEOConfig'
 import Footer from "../components/Footer";
 import styles from './Post.module.css';
 
@@ -31,28 +32,28 @@ export default function Post({ postData }) {
     return <div>Loading...</div>;
   }
 
-  // Helper function to create the markup for dangerouslySetInnerHTML
-  const createMarkup = (html) => ({ __html: html });
-
   return (
     <>
+    <SEOConfig name={`${postData.title} | AIxplora blog`} />
       <main className="min-h-screen overflow-hidden p-6 sm:px-16 md:px-20 lg:px-24">
-        <Navbar />
+        <Header />
         <div className={styles.main}>
           <article className={styles.article}>
-            <h1 className={styles.title}>{postData.title}</h1>
+            <h1  className={styles.title}>{postData.title}</h1>
             <p className={styles.date}>{postData.date}</p>
-            <div className={styles.imageContainer}>
+            <div className={"w-full"}>
               <Image
-                src={postData.thumbnail}
+                src={postData.headerImage}
                 alt={`Thumbnail image of ${postData.title}`}
                 layout='responsive'
-                width={600}
+                width={800}
                 height={400}
               />
-            </div>
+            </div> <br/>
             
-            <div className={styles.content} dangerouslySetInnerHTML={createMarkup(postData.contentHtml)} />
+            <div className={"text-[#374151]"} dangerouslySetInnerHTML={{__html:postData.contentHtml}} />
+              {/* <ReactMarkdown remarkPlugins={[remarkHtml, rehypeRaw]}>{postData.contentHtml}</ReactMarkdown> */}
+              {/* the above gives a particular error that removes the render. */}
             
           </article>
         </div>
