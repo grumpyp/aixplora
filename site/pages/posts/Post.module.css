@@ -6,12 +6,12 @@
 }
 
 .article {
-  max-width: 800px;
+  max-width: 50rem;
   width: 100%;
 }
 
 .title {
-  font-size: 2rem;
+  font-size: 2.5rem;
   margin-bottom: 10px;
 }
 
@@ -33,24 +33,22 @@
 
 .content h2 {
   font-size: 24px; /* Larger font size for h2 headings */
-  color: #fff; /* Dark grey color */
   margin-top: 20px;
   margin-bottom: 10px;
 }
 
 .content h3 {
   font-size: 20px; /* Medium font size for h3 headings */
-  color: #fff; /* Medium grey color */
   margin-top: 18px;
   margin-bottom: 8px;
 }
 
 .content p {
   font-size: 16px; /* Standard font size for paragraph text */
-  color: #fff; /* Light grey color */
   line-height: 1.6; /* Spacing between lines */
   margin-top: 10px;
   margin-bottom: 10px;
+  color: rgba(0, 0, 0, 0.5)
 }
 
 .content hr {
@@ -68,7 +66,6 @@
 
 .content li {
   font-size: 16px; /* Matching paragraph text size for list items */
-  color: #fff; /* Light grey color */
   margin-bottom: 8px; /* Space between list items */
 }
   
