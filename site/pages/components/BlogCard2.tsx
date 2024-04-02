@@ -13,7 +13,7 @@ export default function BlogCard2({
   title,
 }: BlogCardProps) {
   return (
-    <Link href={href} passHref>
+    <Link href={href ?? ""} passHref>
       <article className="group w-[100%] flex flex-col items-start gap-10 my-7  lg:max-w-[24rem]">
         <span className="relative w-full h-[21em]">
           <Image
