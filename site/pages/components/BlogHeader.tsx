@@ -27,11 +27,11 @@ function BlogHeader() {
           </Link>
         </div>
         <div className="socials_callto_action flex flex-row items-center gap-x-6 z-10">
-          <Link href={"/register"} className="font-bold ">
+          <Link href={"https://cloud.aixplora.app/register"} className="font-bold ">
             Register
           </Link>
           <Link
-            href={"/login"}
+            href={"https://cloud.aixplora.app/login"}
             passHref
             className="buttons btn_3 flex justify-evenly gap-x-1 items-center"
           >
