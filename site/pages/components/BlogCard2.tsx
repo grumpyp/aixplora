@@ -21,7 +21,7 @@ export default function BlogCard2({
             layout="fill"
             objectFit="cover"
             alt={`Thumbnail image ${title}`}
-            className="rounded-2xl transition-all group-hover:scale-90"
+            className="rounded-2xl transition-all"
           />
         </span>
 
