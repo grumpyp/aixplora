@@ -5,6 +5,7 @@ export type Post = {
     thumbnail: string;
     author: string;
     intro: string;
+    authorImage: string;
   };
   
 export type PostsPageProps = {
