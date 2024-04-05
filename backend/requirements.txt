@@ -34,6 +34,7 @@ idna==3.4
 iniconfig==2.0.0
 joblib==1.2.0
 langchain==0.0.178
+litellm>=0.1.574
 lxml==4.9.2
 lz4==4.3.2
 marshmallow==3.19.0

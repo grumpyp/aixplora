@@ -1,4 +1,5 @@
 import openai
+import litellm
 
 from schemas.question import Document
 from database.database import Database
@@ -72,7 +73,7 @@ class Summarize:
                     text_split = text[words_to_feed * i:words_to_feed * (i + 1)]
                     time.sleep(0.25)
                     if self.model.startswith("gpt"):
-                        response = openai.ChatCompletion.create(
+                        response = litellm.completion(
                             api_key=f"{self.openai_api_key}",
                             model=f"{self.openai_model}",
                             temperature=0.2,
@@ -100,7 +101,7 @@ class Summarize:
                         raise ("The summary is still too long. Please try again.")
                 count_token = num_tokens_from_string("".join(summary), "cl100k_base")
                 if self.model.startswith("gpt"):
-                    response = openai.ChatCompletion.create(
+                    response = litellm.completion(
                         api_key=f"{self.openai_api_key}",
                         model=f"{self.openai_model}",
                         temperature=0.2,
@@ -121,7 +122,7 @@ class Summarize:
                     return {"summary": response["choices"][0]["message"]["content"], "summary_list": "<hr>".join(summary)}
             else:
                 if self.model.startswith("gpt"):
-                    response = openai.ChatCompletion.create(
+                    response = litellm.completion(
                         api_key=f"{self.openai_api_key}",
                         model=f"{self.openai_model}",
                         temperature=0.2,

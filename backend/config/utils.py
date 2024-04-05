@@ -1,9 +1,9 @@
-import openai
+import litellm
 
 def is_valid_api_key(openai_api_key: str):
-    openai.api_key = openai_api_key
+    litellm.api_key = openai_api_key
     try:
-        openai.ChatCompletion.create(
+        litellm.completion(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."}
